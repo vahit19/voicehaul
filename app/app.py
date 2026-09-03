@@ -57,7 +57,7 @@ h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif!important;letter-spacing:-.0
 
 LOOP_SVG = """
 <figure class="vh-fig">
-<svg viewBox="0 0 900 300" role="img" xmlns="http://www.w3.org/2000/svg"
+<svg viewBox="0 0 900 310" role="img" xmlns="http://www.w3.org/2000/svg"
  aria-label="One turn: the caller's state becomes an utterance, the model
  replies, the reply is measured into a delivery vector, and that vector is
  scored twice. Perceived empathy is what a rater sees and feeds nothing;
@@ -82,14 +82,15 @@ LOOP_SVG = """
 <rect x="404" y="106" width="126" height="64" rx="3" fill="#d3e7e3" stroke="#0d6f66" stroke-width="1.4"/>
 <text x="467" y="132" text-anchor="middle" class="dlab">model</text>
 <text x="467" y="149" text-anchor="middle" class="dsub">under test</text>
-<line x1="530" y1="138" x2="594" y2="138" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#ar)"/>
+<line x1="530" y1="138" x2="586" y2="138" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#ar)"/>
 <text x="562" y="128" text-anchor="middle" class="dedge">reply</text>
-<rect x="594" y="106" width="140" height="64" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
-<text x="664" y="128" text-anchor="middle" class="dlab">delivery vector</text>
-<text x="664" y="145" text-anchor="middle" class="dsub">rate, warmth, length,</text>
-<text x="664" y="159" text-anchor="middle" class="dsub">apology, acknowledgement</text>
-<path d="M734 122 L774 122 L774 52 L806 52" fill="none" stroke="#8f6414" stroke-width="1.4" marker-end="url(#arx)"/>
-<path d="M734 154 L774 154 L774 232 L806 232" fill="none" stroke="#0d6f66" stroke-width="1.4" marker-end="url(#ara)"/>
+<rect x="586" y="100" width="156" height="76" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
+<text x="664" y="124" text-anchor="middle" class="dlab">delivery vector</text>
+<text x="664" y="142" text-anchor="middle" class="dsub">rate, warmth,</text>
+<text x="664" y="155" text-anchor="middle" class="dsub">length, apology,</text>
+<text x="664" y="168" text-anchor="middle" class="dsub">acknowledgement</text>
+<path d="M742 120 L774 120 L774 52 L806 52" fill="none" stroke="#8f6414" stroke-width="1.4" marker-end="url(#arx)"/>
+<path d="M742 156 L774 156 L774 232 L806 232" fill="none" stroke="#0d6f66" stroke-width="1.4" marker-end="url(#ara)"/>
 <rect x="806" y="28" width="82" height="48" rx="3" fill="none" stroke="#8f6414" stroke-width="1.3"/>
 <text x="847" y="48" text-anchor="middle" class="dlab" fill="#8f6414">perceived</text>
 <text x="847" y="64" text-anchor="middle" class="dlab" fill="#8f6414">empathy</text>
@@ -97,7 +98,7 @@ LOOP_SVG = """
 <text x="847" y="228" text-anchor="middle" class="dlab" fill="#0d6f66">calibration</text>
 <text x="847" y="244" text-anchor="middle" class="dsub" fill="#0d6f66">hidden</text>
 <text x="888" y="94" text-anchor="end" class="dnote" fill="#8f6414">what a rater scores</text>
-<text x="888" y="274" text-anchor="end" class="dnote" fill="#0d6f66">what moves the caller</text>
+<text x="888" y="288" text-anchor="end" class="dnote" fill="#0d6f66">what moves the caller</text>
 <path d="M806 232 L768 232 L768 268 L80 268 L80 164" fill="none" stroke="#0d6f66"
  stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ara)"/>
 <text x="424" y="262" text-anchor="middle" class="dedge" fill="#0d6f66">drives the next state</text>
