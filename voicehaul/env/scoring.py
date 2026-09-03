@@ -39,9 +39,13 @@ def calibration(user: Affect, action: Action, standing: Optional[List[str]] = No
     quibble; it is the single most reliable predictor of a call going wrong.
     """
     ideal = constrain(ideal_action(user), standing or [])
-    err = 0.0
-    for k, w in _WEIGHTS.items():
-        err += w * abs(getattr(ideal, k) - getattr(action, k))
+    # Renormalise over what the adapter could actually see. A transcript-only
+    # adapter cannot measure speech rate; charging it the full error for a
+    # field it never observed is measurement error dressed as model error.
+    weights = {k: w for k, w in _WEIGHTS.items() if action.observed(k)}
+    total = sum(weights.values()) or 1.0
+    err = sum((w / total) * abs(getattr(ideal, k) - getattr(action, k))
+              for k, w in weights.items())
     score = 1.0 - 1.9 * err
     if standing:
         violated = sum(1 for d in standing if not satisfies(action, d))
@@ -62,8 +66,13 @@ def perceived_empathy(user: Affect, action: Action) -> float:
     Treat the gap between the two as a hypothesis this suite lets you test
     against real rater data, not as a result it establishes on its own.
     """
+    warmth = 0.55 * action.cheerfulness + 0.45 * action.acknowledgement
+    apology = min(1.0, 2 * action.apology_rate)
+    if not action.observed("speech_rate"):
+        # Vocal attunement is inaudible in a transcript. Drop the term and
+        # renormalise rather than scoring a guess.
+        return max(0.0, min(1.0, (0.36 * warmth + 0.09 * apology) / 0.45))
     ua = max(0.0, min(1.0, 0.5 + 0.5 * user.arousal))
     attunement = 1.0 - abs(action.arousal - ua)
-    warmth = 0.55 * action.cheerfulness + 0.45 * action.acknowledgement
     return max(0.0, min(1.0, 0.55 * attunement + 0.36 * warmth
-                        + 0.09 * min(1.0, 2 * action.apology_rate)))
+                        + 0.09 * apology))

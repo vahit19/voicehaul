@@ -5,8 +5,11 @@ type rather than in each policy that constructs one. constrain() is shared
 by the policies (to honour a request) and by the calibration function (so
 that honouring a request is never scored as a deviation from ideal)."""
 
-from dataclasses import dataclass
-from typing import Dict, List
+from dataclasses import dataclass, field
+from typing import Dict, FrozenSet, List
+
+FIELDS = ("speech_rate", "cheerfulness", "apology_rate",
+          "verbosity", "acknowledgement")
 
 DIRECTIVES = ["slow_down", "less_cheerful", "stop_apologizing",
               "be_concise", "acknowledge_me"]
@@ -19,6 +22,16 @@ class Action:
     apology_rate: float = 0.2
     verbosity: float = 0.5
     acknowledgement: float = 0.5  # explicit reflection of the user's state
+
+    #: Which fields were actually observed. An adapter that cannot see a
+    #: parameter says so here rather than substituting a guess, and every
+    #: scorer renormalises over what it was given. Scoring a dimension you did
+    #: not measure is not a conservative default - it is a fabricated error
+    #: term, and in this harness it made soothing structurally impossible.
+    measured: FrozenSet[str] = frozenset(FIELDS)
+
+    def observed(self, field_name: str) -> bool:
+        return field_name in self.measured
 
     def __post_init__(self):
         # Every field is a normalised delivery parameter, so the invariant

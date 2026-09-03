@@ -32,11 +32,23 @@ _APOLOGY = re.compile(
     r"\b(sorry|apolog(?:y|ies|ise|ize|ising|izing)|regret|my bad|"
     r"i do apologi[sz]e)\b", re.I)
 
+# Verified against real model transcripts, not against imagined ones: the
+# first version matched "I understand" but not "I can understand", and scored
+# a clear acknowledgement at zero on most turns. Widened to the auxiliary and
+# participle forms that instruction-tuned models actually produce.
 _ACK = re.compile(
-    r"(i hear you|i understand|that sounds|i can (?:see|imagine|hear)|"
-    r"it makes sense|that must (?:be|have)|i know (?:how|that)|"
-    r"you're right|i appreciate|thank you for (?:telling|letting|sharing)|"
-    r"i realise|i realize|that's frustrating|completely understand)", re.I)
+    "("
+    "i (?:can |do |totally |completely |absolutely |fully )*"
+    "(?:understand|hear|see|appreciate|realise|realize|recognise|recognize)"
+    "(?![a-z])"
+    "|understand(?:ing)? (?:your|that|how|why|the )"
+    "|i'?m sorry to hear"
+    "|that (?:sounds|must be|must have|is|'s) (?:really )?"
+    "(?:frustrating|difficult|hard|upsetting|stressful|awful)"
+    "|it makes sense|that makes sense"
+    "|you'?re right|thank you for (?:telling|letting|sharing|explaining)"
+    "|i know (?:how|that|this)"
+    ")", re.I)
 
 # Deliberately small and auditable. A learned classifier belongs here on real
 # data; a long hand-written list only looks more rigorous than it is.
@@ -71,21 +83,27 @@ def _saturate(count: float, first: float, step: float) -> float:
     return max(0.0, min(1.0, first + step * (count - 1)))
 
 
-def action_from_text(text: str, caller_energy: float,
+def action_from_text(text: str, caller_energy: float = 0.5,
                      duration_s: Optional[float] = None) -> Action:
     """Estimate delivery parameters from one model utterance.
 
-    caller_energy is used for speech_rate only, and only because a transcript
-    cannot supply it. Pass a measured rate through `duration_s` when audio is
-    available and the assumption disappears.
+    The returned Action declares which fields were actually observed. Without
+    `duration_s`, speech rate is not among them: pass a measured duration when
+    audio is available, and the gap closes.
     """
     f = text_features(text)
     words = f["words"]
 
+    measured = {"cheerfulness", "apology_rate", "verbosity", "acknowledgement"}
     if duration_s and duration_s > 0.3:
         speech_rate = min(1.0, (words / duration_s) / 2.2)
+        measured.add("speech_rate")
     else:
-        speech_rate = max(0.0, min(1.0, caller_energy))
+        # Neutral placeholder, and declared unmeasured so that nothing scores
+        # it. Substituting the caller's energy here - the previous behaviour -
+        # both injected a large fabricated error and made soothing impossible,
+        # because down-regulation is defined as speaking below the caller.
+        speech_rate = 0.5
 
     warmth = (f["warm_markers"] + 0.6 * f["exclamations"]
               + 0.35 * f["intensifiers"])
@@ -101,6 +119,7 @@ def action_from_text(text: str, caller_energy: float,
         # single acknowledgement at 0.30, which is measurement error, not
         # a property of the model.
         acknowledgement=_saturate(f["acknowledgements"], first=0.72, step=0.14),
+        measured=frozenset(measured),
     )
 
 

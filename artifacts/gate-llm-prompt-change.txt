@@ -1,0 +1,44 @@
+------------------------------------------------------------------------------------
+RELEASE GATE   baseline=llm-calm-regulating   candidate=llm-warm-mirroring
+------------------------------------------------------------------------------------
+suite   : llm-prompt-change  [5f47434cd83e]  10 conversations x 16 turns x 5 callers  seed=0
+unit    : one conversation (panel rows: one block of held-out states)
+testing : Welch two-sample, Holm-corrected across 7 dimensions
+
+      DIMENSION                     baseline  candidate     delta   holm p
+
+  what a fixed-prompt leaderboard reports
+  --    perceived empathy              0.505      0.523    +0.018   1.0000
+  --    calibration                    0.426      0.440    +0.015   1.0000
+
+  what the conversations report
+  --    calibration                    0.131      0.128    -0.003   1.0000
+  --    feedback uptake @10            0.233      0.233    +0.000   1.0000
+  --    left-over distress             0.991      0.990    -0.001   1.0000
+  --    conversation failure rate      1.000      1.000    +0.000   1.0000
+  --    calibration drift            -30.810    -30.645    +0.165   1.0000  (diagnostic)
+
+------------------------------------------------------------------------------------
+DIAGNOSIS
+------------------------------------------------------------------------------------
+conversations that ended badly : 10 baseline / 10 candidate
+onset localized in            : 10 of 10 failed candidate runs
+median onset turn             : 3
+  affect escalation           4
+  standing request dropped    4
+  delivery discontinuity      2
+
+That turn number is the deliverable. A score says a model is worse;
+this says which turn to look at and what changed there.
+
+------------------------------------------------------------------------------------
+WHAT THIS SUITE COULD NOT SEE
+------------------------------------------------------------------------------------
+smallest detectable regression : 0.67 Likert points
+  at n=10 conversations and 3 raters each, 80% power, alpha=0.05
+to resolve a 0.20-point change : n = 113 conversations
+
+------------------------------------------------------------------------------------
+VERDICT: INCONCLUSIVE
+------------------------------------------------------------------------------------
+  - nothing moved beyond noise at n=10; the suite can only resolve differences above 0.67 Likert points

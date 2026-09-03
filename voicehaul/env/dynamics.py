@@ -30,8 +30,14 @@ def step_user(user: Affect, action: Action, persona: Persona, cal: float,
         # to come down to. An agent that matches the user's energy perfectly is
         # maximally attuned and only weakly calming -- which is the whole
         # difference between mimicry and co-regulation.
-        downreg = max(0.0, min(1.0, user_energy - action.speech_rate))
-        d = -persona.relief * quality * 2.4 * (0.40 + 1.35 * downreg)
+        if action.observed("speech_rate"):
+            downreg = max(0.0, min(1.0, user_energy - action.speech_rate))
+            multiplier = 0.40 + 1.35 * downreg
+        else:
+            # Unknown, not zero. Zero would forbid the model from ever soothing
+            # anyone, which is a property of the adapter, not of the model.
+            multiplier = 1.0
+        d = -persona.relief * quality * 2.4 * multiplier
         nxt = user.nudge(distress=d, anger=d * 0.9, sadness=d * 0.5,
                          confusion=d * 0.8, calmness=-d * 0.7)
     else:
@@ -42,7 +48,8 @@ def step_user(user: Affect, action: Action, persona: Persona, cal: float,
                          confusion=esc * 0.4, calmness=-esc * 0.9)
 
     # Arousal contagion: out-pacing a distressed user escalates them.
-    gap = action.speech_rate - user_energy
+    gap = (action.speech_rate - user_energy
+           if action.observed("speech_rate") else 0.0)
     if gap > 0.0 and user.negative_load > 0.25:
         amp = 0.95 * gap * user.negative_load
         nxt = nxt.nudge(anger=amp, distress=amp * 0.6, calmness=-amp)

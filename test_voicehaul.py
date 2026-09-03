@@ -10,6 +10,7 @@ one case where the answer is known by construction.
 import random
 import sys
 
+from voicehaul.adapters.text import _ACK, action_from_text, text_features
 from voicehaul.affect import Affect
 from voicehaul.config import SuiteConfig
 from voicehaul.env import (Action, PERSONAS, calibration, constrain,
@@ -261,6 +262,52 @@ def test_selection_is_deterministic():
     eps = suite(CalibratedPolicy, 30)
     check("the same pool selects the same conversations twice",
           select_diverse(eps, 8) == select_diverse(eps, 8))
+
+
+# ------------------------------------------------------ text measurement --
+
+def test_text_adapter_declares_what_it_cannot_see():
+    a = action_from_text("I understand. Let me check that for you.")
+    check("a transcript-only adapter does not claim to measure speech rate",
+          not a.observed("speech_rate"), str(sorted(a.measured)))
+    b = action_from_text("I understand. Let me check.", duration_s=3.0)
+    check("a measured duration makes speech rate observable",
+          b.observed("speech_rate"))
+
+
+def test_unmeasured_fields_are_not_scored():
+    """The bug this guards: assigning the caller's energy to an unmeasured
+    speech rate injected a large fabricated error and made soothing impossible."""
+    u = Affect(distress=0.6, anger=0.4, calmness=0.1)
+    ideal = ideal_action(u)
+    partial = Action(0.99, ideal.cheerfulness, ideal.apology_rate,
+                     ideal.verbosity, ideal.acknowledgement,
+                     measured=frozenset({"cheerfulness", "apology_rate",
+                                         "verbosity", "acknowledgement"}))
+    check("an unobserved field contributes no calibration error",
+          abs(calibration(u, partial, []) - 1.0) < 1e-9,
+          "{:.4f}".format(calibration(u, partial, [])))
+    full = Action(0.99, ideal.cheerfulness, ideal.apology_rate,
+                  ideal.verbosity, ideal.acknowledgement)
+    check("the same field does count when it was observed",
+          calibration(u, full, []) < 0.95,
+          "{:.4f}".format(calibration(u, full, [])))
+
+
+def test_acknowledgement_regex_matches_real_model_output():
+    """Verified against transcripts, not against imagined phrasing."""
+    positive = ["I understand your frustration, let's address this.",
+                "I can understand that this is not resolving your issue.",
+                "That sounds really frustrating, and I want to help.",
+                "I hear you, and I will get this sorted."]
+    negative = ["Let me check that for you right away.",
+                "Absolutely, I'll ensure we handle this and find a resolution."]
+    check("acknowledgement is detected in every phrasing the model produced",
+          all(_ACK.search(t) for t in positive))
+    check("plain reassurance is not counted as acknowledgement",
+          not any(_ACK.search(t) for t in negative))
+    check("the pattern contains no stray escape characters",
+          chr(8) not in _ACK.pattern and chr(12) not in _ACK.pattern)
 
 
 # ---------------------------------------------------------------- registry --

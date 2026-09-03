@@ -54,14 +54,26 @@ def _failed(ep: Episode) -> float:
     return 1.0 if ep.failed else 0.0
 
 
-def _panel_perceived(policy_factory, block):
+#: Both panel dimensions read the same rollout. Without this memo each block is
+#: replayed once per dimension, which doubles the cost of every panel row - free
+#: for a simulator, and a real bill for a hosted model.
+_PANEL_MEMO = {}
+
+
+def _panel(policy_factory, block):
     from .metrics.outcome import turn_panel
-    return turn_panel(policy_factory, block)[0]
+    key = (getattr(policy_factory, "arm_name", id(policy_factory)), id(block))
+    if key not in _PANEL_MEMO:
+        _PANEL_MEMO[key] = turn_panel(policy_factory, block)
+    return _PANEL_MEMO[key]
+
+
+def _panel_perceived(policy_factory, block):
+    return _panel(policy_factory, block)[0]
 
 
 def _panel_calibration(policy_factory, block):
-    from .metrics.outcome import turn_panel
-    return turn_panel(policy_factory, block)[1]
+    return _panel(policy_factory, block)[1]
 
 
 for _d in [
@@ -214,9 +226,16 @@ def compare(baseline: str, candidate: str, cfg: Optional[SuiteConfig] = None,
     rep = GateReport(config=cfg, baseline_name=baseline, candidate_name=candidate)
 
     # -- dimensions ---------------------------------------------------------
+    _PANEL_MEMO.clear()
     blocks = _panel_blocks(cfg)
-    base_factory = lambda: get_policy(baseline)
-    cand_factory = lambda: get_policy(candidate)
+
+    def _factory(name):
+        f = lambda: get_policy(name)
+        f.arm_name = name
+        return f
+
+    base_factory = _factory(baseline)
+    cand_factory = _factory(candidate)
 
     raw = []
     for dim in dimensions():
