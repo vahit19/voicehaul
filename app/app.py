@@ -35,8 +35,9 @@ from voicehaul.report import render_text
 from voicehaul.runner import run_episode
 from voicehaul.select import budget_curve, equivalent_budget
 
-INK, INK2, MUTED, FAINT = "#131c1b", "#3a4b49", "#61756f", "#8b9d99"
-RULE, ACCENT, ALARM, AMBER, VIOLET = "#dbe3e1", "#0d6f66", "#ac4136", "#8f6414", "#6a56a3"
+INK, INK2, MUTED, FAINT = "#1c2725", "#41514e", "#64776f", "#8b9d98"
+RULE, ACCENT, ALARM, AMBER, VIOLET = ("#d8e0dd", "#0f766b", "#a8483d",
+                                      "#8a6420", "#6a5aa0")
 COLOR = {"mirror": ALARM, "flat_cheerful": AMBER, "drifter": VIOLET,
          "calibrated": ACCENT, "oracle": "#93a5a1"}
 LABEL = {"mirror": "mirror", "flat_cheerful": "flat", "drifter": "drifter",
@@ -48,14 +49,94 @@ PLABEL = {"distressed_billing": "billing dispute",
           "cautious_optimist": "calm caller"}
 
 CSS = """
-.gradio-container{max-width:1180px!important;font-family:"IBM Plex Sans",system-ui,sans-serif}
-h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif!important;letter-spacing:-.015em}
-.vh-note{font-size:.92rem;color:#61756f}
-.vh-fig svg{max-width:100%;height:auto;color:#3a4b49}
-.vh-fig figcaption{font-size:.85rem;color:#61756f;margin-top:.6rem;line-height:1.5}
-.dlab{font-family:"IBM Plex Sans",sans-serif;font-size:13px;font-weight:500;fill:#131c1b}
-.dsub{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:#8b9d99}
-.dedge,.dnote{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:#61756f}
+:root{
+  --vh-bg:#eef1f0; --vh-surface:#f8faf9; --vh-sunk:#e7ecea;
+  --vh-ink:#1c2725; --vh-ink2:#41514e; --vh-muted:#64776f; --vh-faint:#8b9d98;
+  --vh-rule:#d8e0dd; --vh-rule2:#c3cfcb;
+  --vh-accent:#0f766b; --vh-accent-soft:#dcebe7;
+  --vh-alarm:#a8483d; --vh-alarm-soft:#f2e0dc;
+  --vh-amber:#8a6420; --vh-amber-soft:#f1e7d3;
+  --vh-violet:#6a5aa0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --vh-bg:#111817; --vh-surface:#18211f; --vh-sunk:#141c1b;
+    --vh-ink:#e4ebe9; --vh-ink2:#bdc9c6; --vh-muted:#93a5a0; --vh-faint:#71847f;
+    --vh-rule:#27322f; --vh-rule2:#34413e;
+    --vh-accent:#54c3b3; --vh-accent-soft:#16302c;
+    --vh-alarm:#e08373; --vh-alarm-soft:#33211d;
+    --vh-amber:#d9a95a; --vh-amber-soft:#2f2718;
+    --vh-violet:#a695e0;
+  }
+}
+:root[data-theme="dark"], .dark{
+  --vh-bg:#111817; --vh-surface:#18211f; --vh-sunk:#141c1b;
+  --vh-ink:#e4ebe9; --vh-ink2:#bdc9c6; --vh-muted:#93a5a0; --vh-faint:#71847f;
+  --vh-rule:#27322f; --vh-rule2:#34413e;
+  --vh-accent:#54c3b3; --vh-accent-soft:#16302c;
+  --vh-alarm:#e08373; --vh-alarm-soft:#33211d;
+  --vh-amber:#d9a95a; --vh-amber-soft:#2f2718;
+  --vh-violet:#a695e0;
+}
+
+body, gradio-app, .gradio-container, .app, .main{
+  background:var(--vh-bg) !important; color:var(--vh-ink) !important; }
+.gradio-container{max-width:1180px !important; padding-top:1.6rem !important;
+  font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif !important; }
+.gradio-container p, .gradio-container li, .gradio-container td,
+.gradio-container span, .prose{color:var(--vh-ink2) !important;}
+h1,h2,h3,h4{font-family:"IBM Plex Serif",Georgia,serif !important;
+  letter-spacing:-.015em !important; color:var(--vh-ink) !important;}
+h1{font-size:2.15rem !important; line-height:1.12 !important;}
+h2{font-size:1.45rem !important;}
+h3{font-size:1.12rem !important;}
+a{color:var(--vh-accent) !important;}
+
+/* Panels, cards and inputs sit on the surface tone, never on raw white. */
+.block, .form, .panel, .gr-box, .gr-panel,
+.gradio-container .block{background:var(--vh-surface) !important;
+  border-color:var(--vh-rule) !important; box-shadow:none !important;}
+.gr-input, input, textarea, select,
+.gradio-container input[type="text"], .gradio-container textarea{
+  background:var(--vh-sunk) !important; color:var(--vh-ink) !important;
+  border-color:var(--vh-rule2) !important;}
+.gradio-container label span, .gradio-container .label-wrap span{
+  color:var(--vh-muted) !important; font-size:.82rem !important;}
+
+/* Tabs read as a rule with one live item, not as chunky buttons. */
+.tab-nav, .tabs > .tab-nav{border-bottom:1px solid var(--vh-rule) !important;
+  background:transparent !important;}
+.tab-nav button, button.tab{font-family:"IBM Plex Mono",monospace !important;
+  font-size:.8rem !important; color:var(--vh-muted) !important;
+  background:transparent !important; border:0 !important;
+  padding:.55rem .85rem !important;}
+.tab-nav button.selected, button.tab.selected{color:var(--vh-accent) !important;
+  border-bottom:2px solid var(--vh-accent) !important;}
+
+button.primary, .gr-button-primary{background:var(--vh-accent) !important;
+  border-color:var(--vh-accent) !important; color:#f4faf8 !important;
+  font-weight:500 !important;}
+button.secondary, .gr-button{background:var(--vh-sunk) !important;
+  color:var(--vh-ink2) !important; border-color:var(--vh-rule2) !important;}
+
+table thead th{background:transparent !important; color:var(--vh-faint) !important;}
+table td, table th{border-color:var(--vh-rule) !important;}
+.table-wrap, .dataframe{background:var(--vh-surface) !important;
+  border-color:var(--vh-rule) !important;}
+hr{border-color:var(--vh-rule) !important;}
+footer, .footer{display:none !important;}
+
+.vh-note{font-size:.9rem; color:var(--vh-muted);}
+.vh-fig{margin:1rem 0;}
+.vh-fig svg{max-width:100%; height:auto;}
+.vh-fig figcaption{font-size:.84rem; color:var(--vh-muted); margin-top:.6rem;
+  line-height:1.55; max-width:66ch;}
+.dlab{font-family:"IBM Plex Sans",sans-serif; font-size:13px; font-weight:500;
+  fill:var(--vh-ink);}
+.dsub{font-family:"IBM Plex Mono",monospace; font-size:10px; fill:var(--vh-faint);}
+.dedge,.dnote{font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  fill:var(--vh-muted);}
+.vh-stroke{stroke:var(--vh-ink2);} .vh-fill{fill:var(--vh-ink2);}
 """
 
 # ---------------------------------------------------------------------------
@@ -71,47 +152,47 @@ LOOP_SVG = """
  calibration drives the caller's next state.">
 <defs>
 <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
- orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3a4b49"/></marker>
+ orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--vh-ink2)"/></marker>
 <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
- orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0d6f66"/></marker>
+ orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--vh-accent)"/></marker>
 <marker id="arx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
- orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8f6414"/></marker>
+ orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--vh-amber)"/></marker>
 </defs>
-<rect x="14" y="112" width="132" height="52" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
+<rect x="14" y="112" width="132" height="52" rx="3" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2"/>
 <text x="80" y="134" text-anchor="middle" class="dlab">caller state</text>
 <text x="80" y="151" text-anchor="middle" class="dsub">6-dim affect</text>
-<line x1="146" y1="138" x2="212" y2="138" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#ar)"/>
+<line x1="146" y1="138" x2="212" y2="138" stroke="var(--vh-ink2)" stroke-width="1.2" marker-end="url(#ar)"/>
 <text x="179" y="128" text-anchor="middle" class="dedge">renders</text>
-<rect x="212" y="112" width="128" height="52" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
+<rect x="212" y="112" width="128" height="52" rx="3" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2"/>
 <text x="276" y="134" text-anchor="middle" class="dlab">utterance</text>
 <text x="276" y="151" text-anchor="middle" class="dsub">what is said</text>
-<line x1="340" y1="138" x2="404" y2="138" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#ar)"/>
-<rect x="404" y="106" width="126" height="64" rx="3" fill="#d3e7e3" stroke="#0d6f66" stroke-width="1.4"/>
+<line x1="340" y1="138" x2="404" y2="138" stroke="var(--vh-ink2)" stroke-width="1.2" marker-end="url(#ar)"/>
+<rect x="404" y="106" width="126" height="64" rx="3" fill="var(--vh-accent-soft)" stroke="var(--vh-accent)" stroke-width="1.4"/>
 <text x="467" y="132" text-anchor="middle" class="dlab">model</text>
 <text x="467" y="149" text-anchor="middle" class="dsub">under test</text>
-<line x1="530" y1="138" x2="586" y2="138" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#ar)"/>
+<line x1="530" y1="138" x2="586" y2="138" stroke="var(--vh-ink2)" stroke-width="1.2" marker-end="url(#ar)"/>
 <text x="562" y="128" text-anchor="middle" class="dedge">reply</text>
-<rect x="586" y="100" width="156" height="76" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
+<rect x="586" y="100" width="156" height="76" rx="3" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2"/>
 <text x="664" y="124" text-anchor="middle" class="dlab">delivery vector</text>
 <text x="664" y="142" text-anchor="middle" class="dsub">rate, warmth,</text>
 <text x="664" y="155" text-anchor="middle" class="dsub">length, apology,</text>
 <text x="664" y="168" text-anchor="middle" class="dsub">acknowledgement</text>
-<path d="M742 120 L774 120 L774 52 L806 52" fill="none" stroke="#8f6414" stroke-width="1.4" marker-end="url(#arx)"/>
-<path d="M742 156 L774 156 L774 232 L806 232" fill="none" stroke="#0d6f66" stroke-width="1.4" marker-end="url(#ara)"/>
-<rect x="806" y="28" width="82" height="48" rx="3" fill="none" stroke="#8f6414" stroke-width="1.3"/>
-<text x="847" y="48" text-anchor="middle" class="dlab" fill="#8f6414">perceived</text>
-<text x="847" y="64" text-anchor="middle" class="dlab" fill="#8f6414">empathy</text>
-<rect x="806" y="208" width="82" height="48" rx="3" fill="none" stroke="#0d6f66" stroke-width="1.3"/>
-<text x="847" y="228" text-anchor="middle" class="dlab" fill="#0d6f66">calibration</text>
-<text x="847" y="244" text-anchor="middle" class="dsub" fill="#0d6f66">hidden</text>
-<text x="888" y="94" text-anchor="end" class="dnote" fill="#8f6414">what a rater scores</text>
-<text x="888" y="288" text-anchor="end" class="dnote" fill="#0d6f66">what moves the caller</text>
-<path d="M806 232 L768 232 L768 268 L80 268 L80 164" fill="none" stroke="#0d6f66"
+<path d="M742 120 L774 120 L774 52 L806 52" fill="none" stroke="var(--vh-amber)" stroke-width="1.4" marker-end="url(#arx)"/>
+<path d="M742 156 L774 156 L774 232 L806 232" fill="none" stroke="var(--vh-accent)" stroke-width="1.4" marker-end="url(#ara)"/>
+<rect x="806" y="28" width="82" height="48" rx="3" fill="none" stroke="var(--vh-amber)" stroke-width="1.3"/>
+<text x="847" y="48" text-anchor="middle" class="dlab" fill="var(--vh-amber)">perceived</text>
+<text x="847" y="64" text-anchor="middle" class="dlab" fill="var(--vh-amber)">empathy</text>
+<rect x="806" y="208" width="82" height="48" rx="3" fill="none" stroke="var(--vh-accent)" stroke-width="1.3"/>
+<text x="847" y="228" text-anchor="middle" class="dlab" fill="var(--vh-accent)">calibration</text>
+<text x="847" y="244" text-anchor="middle" class="dsub" fill="var(--vh-accent)">hidden</text>
+<text x="888" y="94" text-anchor="end" class="dnote" fill="var(--vh-amber)">what a rater scores</text>
+<text x="888" y="288" text-anchor="end" class="dnote" fill="var(--vh-accent)">what moves the caller</text>
+<path d="M806 232 L768 232 L768 268 L80 268 L80 164" fill="none" stroke="var(--vh-accent)"
  stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ara)"/>
-<text x="424" y="262" text-anchor="middle" class="dedge" fill="#0d6f66">drives the next state</text>
-<line x1="847" y1="76" x2="847" y2="196" stroke="#8f6414" stroke-width="1.2" stroke-dasharray="3 5"/>
-<text x="856" y="134" class="dnote" fill="#8f6414">feeds</text>
-<text x="856" y="149" class="dnote" fill="#8f6414">nothing</text>
+<text x="424" y="262" text-anchor="middle" class="dedge" fill="var(--vh-accent)">drives the next state</text>
+<line x1="847" y1="76" x2="847" y2="196" stroke="var(--vh-amber)" stroke-width="1.2" stroke-dasharray="3 5"/>
+<text x="856" y="134" class="dnote" fill="var(--vh-amber)">feeds</text>
+<text x="856" y="149" class="dnote" fill="var(--vh-amber)">nothing</text>
 </svg>
 <figcaption>One turn. The same delivery vector is scored twice, and only one of
 the two changes what happens next. The observable score is the one with no
@@ -127,40 +208,40 @@ RATERS_SVG = """
  panel's own unreliability. A third path, the latent truth, exists only in
  simulation and is what validates the estimate.">
 <defs><marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
- orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3a4b49"/></marker>
+ orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--vh-ink2)"/></marker>
 <marker id="b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
- orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0d6f66"/></marker></defs>
-<rect x="14" y="128" width="118" height="52" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
+ orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--vh-accent)"/></marker></defs>
+<rect x="14" y="128" width="118" height="52" rx="3" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2"/>
 <text x="73" y="150" text-anchor="middle" class="dlab">one turn</text>
 <text x="73" y="167" text-anchor="middle" class="dsub">caller + reply</text>
-<path d="M132 144 L200 78" fill="none" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#b1)"/>
-<path d="M132 154 L200 154" fill="none" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#b1)"/>
-<path d="M132 164 L200 246" fill="none" stroke="#0d6f66" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#b2)"/>
-<rect x="200" y="52" width="150" height="52" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
+<path d="M132 144 L200 78" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2" marker-end="url(#b1)"/>
+<path d="M132 154 L200 154" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2" marker-end="url(#b1)"/>
+<path d="M132 164 L200 246" fill="none" stroke="var(--vh-accent)" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#b2)"/>
+<rect x="200" y="52" width="150" height="52" rx="3" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2"/>
 <text x="275" y="74" text-anchor="middle" class="dlab">human panel</text>
 <text x="275" y="91" text-anchor="middle" class="dsub">k raters, noisy</text>
-<rect x="200" y="128" width="150" height="52" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
+<rect x="200" y="128" width="150" height="52" rx="3" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2"/>
 <text x="275" y="150" text-anchor="middle" class="dlab">LLM judge</text>
 <text x="275" y="167" text-anchor="middle" class="dsub">cheap, unproven</text>
-<rect x="200" y="220" width="150" height="52" rx="3" fill="none" stroke="#0d6f66" stroke-width="1.4" stroke-dasharray="5 4"/>
-<text x="275" y="242" text-anchor="middle" class="dlab" fill="#0d6f66">latent truth</text>
-<text x="275" y="259" text-anchor="middle" class="dsub" fill="#0d6f66">simulation only</text>
-<path d="M350 78 L430 114" fill="none" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#b1)"/>
-<path d="M350 154 L430 134" fill="none" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#b1)"/>
-<rect x="430" y="98" width="176" height="58" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.2"/>
+<rect x="200" y="220" width="150" height="52" rx="3" fill="none" stroke="var(--vh-accent)" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="275" y="242" text-anchor="middle" class="dlab" fill="var(--vh-accent)">latent truth</text>
+<text x="275" y="259" text-anchor="middle" class="dsub" fill="var(--vh-accent)">simulation only</text>
+<path d="M350 78 L430 114" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2" marker-end="url(#b1)"/>
+<path d="M350 154 L430 134" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2" marker-end="url(#b1)"/>
+<rect x="430" y="98" width="176" height="58" rx="3" fill="none" stroke="var(--vh-ink2)" stroke-width="1.2"/>
 <text x="518" y="120" text-anchor="middle" class="dlab">correlate, then</text>
 <text x="518" y="137" text-anchor="middle" class="dlab">disattenuate</text>
 <text x="518" y="151" text-anchor="middle" class="dsub">divide out panel noise</text>
-<line x1="606" y1="127" x2="672" y2="127" stroke="#3a4b49" stroke-width="1.2" marker-end="url(#b1)"/>
-<rect x="672" y="98" width="150" height="58" rx="3" fill="none" stroke="#3a4b49" stroke-width="1.4"/>
+<line x1="606" y1="127" x2="672" y2="127" stroke="var(--vh-ink2)" stroke-width="1.2" marker-end="url(#b1)"/>
+<rect x="672" y="98" width="150" height="58" rx="3" fill="none" stroke="var(--vh-ink2)" stroke-width="1.4"/>
 <text x="747" y="122" text-anchor="middle" class="dlab">estimated rho</text>
 <text x="747" y="141" text-anchor="middle" class="dsub">what a customer gets</text>
-<path d="M350 246 L660 246 L660 172 L700 172 L700 160" fill="none" stroke="#0d6f66"
+<path d="M350 246 L660 246 L660 172 L700 172 L700 160" fill="none" stroke="var(--vh-accent)"
  stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#b2)"/>
-<text x="505" y="238" text-anchor="middle" class="dedge" fill="#0d6f66">is the estimate right?</text>
-<text x="886" y="196" text-anchor="end" class="dnote" fill="#0d6f66">this arrow does not exist on real data:</text>
-<text x="886" y="212" text-anchor="end" class="dnote" fill="#0d6f66">both measurements carry error and</text>
-<text x="886" y="228" text-anchor="end" class="dnote" fill="#0d6f66">neither one is the reference</text>
+<text x="505" y="238" text-anchor="middle" class="dedge" fill="var(--vh-accent)">is the estimate right?</text>
+<text x="886" y="196" text-anchor="end" class="dnote" fill="var(--vh-accent)">this arrow does not exist on real data:</text>
+<text x="886" y="212" text-anchor="end" class="dnote" fill="var(--vh-accent)">both measurements carry error and</text>
+<text x="886" y="228" text-anchor="end" class="dnote" fill="var(--vh-accent)">neither one is the reference</text>
 </svg>
 <figcaption>The estimator a customer can run uses only the two solid paths. The
 dashed path is the validation, and it is the reason this is built in a simulator
@@ -199,13 +280,13 @@ def _scale(value, floor, ceiling, colour):
         return ""
     pos = max(0.0, min(1.0, (value - floor) / (ceiling - floor)))
     return ('<div style="margin-top:.3rem"><div style="position:relative;'
-            'height:5px;background:#e8eeec;border-radius:3px">'
+            'height:5px;background:var(--vh-sunk);border-radius:3px">'
             '<div style="position:absolute;left:0;top:0;height:5px;width:{w:.0f}%;'
             'background:{c};border-radius:3px"></div>'
             '<div style="position:absolute;left:{w:.0f}%;top:-3px;width:2px;'
             'height:11px;background:{c}"></div></div>'
             '<div style="display:flex;justify-content:space-between;'
-            'font-family:IBM Plex Mono,monospace;font-size:.6rem;color:#8b9d99;'
+            'font-family:IBM Plex Mono,monospace;font-size:.6rem;color:var(--vh-faint);'
             'margin-top:2px"><span>floor {f:.2f}</span>'
             '<span>ceiling {t:.2f}</span></div></div>'
             ).format(w=100 * pos, c=colour, f=floor, t=ceiling)
@@ -227,14 +308,14 @@ def reading_panel(names):
         rows += (
             '<tr><td style="padding:.6rem .8rem .6rem 0;vertical-align:top;'
             'white-space:nowrap;font-family:IBM Plex Mono,monospace;'
-            'font-size:.85rem;border-bottom:1px solid #dbe3e1">{n}<br>'
+            'font-size:.85rem;border-bottom:1px solid var(--vh-rule)">{n}<br>'
             '<span style="font-size:.66rem;letter-spacing:.08em;'
-            'text-transform:uppercase;color:#8b9d99">{k}</span></td>'
+            'text-transform:uppercase;color:var(--vh-faint)">{k}</span></td>'
             '<td style="padding:.6rem .8rem;vertical-align:top;font-size:.87rem;'
-            'color:#3a4b49;border-bottom:1px solid #dbe3e1">{r}'
+            'color:var(--vh-ink2);border-bottom:1px solid var(--vh-rule)">{r}'
             '<div style="margin-top:.35rem;font-family:IBM Plex Mono,monospace;'
             'font-size:.72rem">{c}</div>'
-            '<div style="margin-top:.3rem;font-size:.78rem;color:#8b9d99">{s}</div>'
+            '<div style="margin-top:.3rem;font-size:.78rem;color:var(--vh-faint)">{s}</div>'
             '</td></tr>').format(n=n, k=b.kind, r=b.reading, c=cuts, s=b.source)
     return ('<div style="overflow-x:auto"><table style="border-collapse:collapse;'
             'width:100%;font-family:IBM Plex Sans,system-ui,sans-serif">{}'
@@ -272,17 +353,17 @@ CALLER_BLURB = {
 def _legend(entries, title):
     rows = "".join(
         ('<div style="display:flex;gap:.7rem;align-items:flex-start;'
-         'padding:.45rem 0;border-bottom:1px solid #eef2f1">'
+         'padding:.45rem 0;border-bottom:1px solid var(--vh-rule)">'
          '<div style="width:9px;height:9px;border-radius:50%;background:{c};'
          'margin-top:.35rem;flex:0 0 auto"></div>'
          '<div><b style="font-family:IBM Plex Mono,monospace;font-size:.84rem">'
          '{k}</b> <span style="color:{c};font-size:.8rem">{t}</span>'
-         '<div style="font-size:.85rem;color:#61756f;line-height:1.45">{d}</div>'
+         '<div style="font-size:.85rem;color:var(--vh-muted);line-height:1.45">{d}</div>'
          '</div></div>').format(c=c, k=k, t=t, d=d)
         for k, (t, c, d) in entries.items())
     return ('<details style="margin:.2rem 0 .8rem;font-family:IBM Plex Sans,'
             'system-ui,sans-serif"><summary style="cursor:pointer;font-size:.86rem;'
-            'color:#0d6f66">{}</summary><div style="margin-top:.5rem">{}</div>'
+            'color:var(--vh-accent)">{}</summary><div style="margin-top:.5rem">{}</div>'
             '</details>').format(title, rows)
 
 
@@ -298,72 +379,72 @@ def caller_legend():
 
 AUTHOR_CARD = """
 <div style="display:flex;flex-wrap:wrap;gap:1.4rem;align-items:flex-start;
- justify-content:space-between;border:1px solid #dbe3e1;border-radius:6px;
- background:#fff;padding:16px 20px;margin:0 0 1.1rem;
+ justify-content:space-between;border:1px solid var(--vh-rule);border-radius:6px;
+ background:var(--vh-surface);padding:16px 20px;margin:0 0 1.1rem;
  font-family:'IBM Plex Sans',system-ui,sans-serif">
   <div style="flex:1 1 340px;min-width:280px">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:.64rem;
-     letter-spacing:.13em;text-transform:uppercase;color:#8b9d99">
+     letter-spacing:.13em;text-transform:uppercase;color:var(--vh-faint)">
      built by</div>
     <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:1.35rem;
-     font-weight:600;color:#131c1b;margin:.2rem 0 .1rem">Vahit Feryad, PhD</div>
-    <div style="font-size:.9rem;color:#3a4b49">Applied AI research engineer
+     font-weight:600;color:var(--vh-ink);margin:.2rem 0 .1rem">Vahit Feryad, PhD</div>
+    <div style="font-size:.9rem;color:var(--vh-ink2)">Applied AI research engineer
      &middot; evaluation, benchmarking and agent reliability</div>
-    <div style="font-size:.84rem;color:#61756f;margin-top:.45rem;line-height:1.55">
+    <div style="font-size:.84rem;color:var(--vh-muted);margin-top:.45rem;line-height:1.55">
      PhD in electrical and electronics engineering &middot; 10+ years industrial
      R&amp;D &middot; 237 Google Scholar citations &middot; Istanbul</div>
   </div>
   <div style="flex:0 1 330px;min-width:270px">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:.64rem;
-     letter-spacing:.13em;text-transform:uppercase;color:#8b9d99;
+     letter-spacing:.13em;text-transform:uppercase;color:var(--vh-faint);
      margin-bottom:.4rem">the work this is built on</div>
-    <div style="font-size:.85rem;line-height:1.6;color:#3a4b49">
+    <div style="font-size:.85rem;line-height:1.6;color:var(--vh-ink2)">
       <a href="https://github.com/vahit19/LongHaul-Bench"
-       style="color:#0d6f66;font-weight:500">LongHaul-Bench</a>
+       style="color:var(--vh-accent);font-weight:500">LongHaul-Bench</a>
       &mdash; long-horizon agent reliability over 1,000+ sequential episodes,
       five-world programme, memory ablations<br>
       <a href="https://github.com/vahit19/runopsy"
-       style="color:#0d6f66;font-weight:500">Runopsy</a>
+       style="color:var(--vh-accent);font-weight:500">Runopsy</a>
       &mdash; causal failure-onset diagnosis with counterfactual replay
       (Apache-2.0, on PyPI)
     </div>
     <div style="margin-top:.6rem;font-family:'IBM Plex Mono',monospace;
      font-size:.78rem">
-      <a href="https://github.com/vahit19/voicehaul" style="color:#0d6f66">source</a>
+      <a href="https://github.com/vahit19/voicehaul" style="color:var(--vh-accent)">source</a>
       &nbsp;&middot;&nbsp;
       <a href="https://scholar.google.com/citations?hl=en&amp;user=JUtYZ1oAAAAJ"
-       style="color:#0d6f66">scholar</a>
+       style="color:var(--vh-accent)">scholar</a>
       &nbsp;&middot;&nbsp;
       <a href="https://www.linkedin.com/in/vahit-feryad-19517256/"
-       style="color:#0d6f66">linkedin</a>
+       style="color:var(--vh-accent)">linkedin</a>
       &nbsp;&middot;&nbsp;
-      <a href="https://vahit19.github.io/voicehaul/" style="color:#0d6f66">static report</a>
+      <a href="https://vahit19.github.io/voicehaul/" style="color:var(--vh-accent)">static report</a>
     </div>
   </div>
 </div>
 """
 
 TABS_MAP = """
-<div style="border:1px solid #dbe3e1;border-radius:6px;background:#f6f8f7;
+<div style="border:1px solid var(--vh-rule);border-radius:6px;background:var(--vh-sunk);
  padding:14px 18px;margin:.2rem 0 1.2rem;font-family:'IBM Plex Sans',system-ui,
  sans-serif">
  <div style="font-family:'IBM Plex Mono',monospace;font-size:.64rem;
-  letter-spacing:.13em;text-transform:uppercase;color:#8b9d99;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--vh-faint);
   margin-bottom:.6rem">what you can do on this page</div>
  <div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;
   font-size:.86rem">
  <tr><th style="text-align:left;padding:.3rem .8rem .45rem 0;font-size:.64rem;
-  letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;font-weight:500">
+  letter-spacing:.09em;text-transform:uppercase;color:var(--vh-faint);font-weight:500">
   tab</th>
  <th style="text-align:left;padding:.3rem .8rem .45rem;font-size:.64rem;
-  letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;font-weight:500">
+  letter-spacing:.09em;text-transform:uppercase;color:var(--vh-faint);font-weight:500">
   you choose</th>
  <th style="text-align:left;padding:.3rem 0 .45rem .8rem;font-size:.64rem;
-  letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;font-weight:500">
+  letter-spacing:.09em;text-transform:uppercase;color:var(--vh-faint);font-weight:500">
   you get</th></tr>
  {rows}
  </table></div>
- <div style="font-size:.82rem;color:#61756f;margin-top:.7rem">
+ <div style="font-size:.82rem;color:var(--vh-muted);margin-top:.7rem">
   Every tab already shows a result. Nothing calls an external service &mdash;
   the harness is pure Python and runs in this tab.</div>
 </div>
@@ -406,11 +487,11 @@ _TABS = [
 def tabs_map():
     rows = "".join(
         ('<tr><td style="padding:.4rem .8rem .4rem 0;vertical-align:top;'
-         'border-top:1px solid #e4ebe9;font-weight:500;white-space:nowrap">{t}</td>'
+         'border-top:1px solid var(--vh-rule);font-weight:500;white-space:nowrap">{t}</td>'
          '<td style="padding:.4rem .8rem;vertical-align:top;'
-         'border-top:1px solid #e4ebe9;color:#61756f">{i}</td>'
+         'border-top:1px solid var(--vh-rule);color:var(--vh-muted)">{i}</td>'
          '<td style="padding:.4rem 0 .4rem .8rem;vertical-align:top;'
-         'border-top:1px solid #e4ebe9;color:#3a4b49">{o}</td></tr>'
+         'border-top:1px solid var(--vh-rule);color:var(--vh-ink2)">{o}</td></tr>'
          ).format(t=t, i=i, o=o) for t, i, o in _TABS)
     return TABS_MAP.format(rows=rows)
 
@@ -453,13 +534,13 @@ def run_cost(target, cost_human, cost_judge, releases, raters, episodes):
         picked = cost_estimate(float(target), sb, 0.9, ratio, model, coverage)
         col = ACCENT if picked.saving_per_year > 0 else ALARM
         rows += (
-            '<tr><td style="padding:.55rem .7rem;border-bottom:1px solid #dbe3e1">'
-            '{n}<div style="font-size:.75rem;color:#8b9d99">1 judge rating = '
+            '<tr><td style="padding:.55rem .7rem;border-bottom:1px solid var(--vh-rule)">'
+            '{n}<div style="font-size:.75rem;color:var(--vh-faint)">1 judge rating = '
             '{r:.2f} human</div></td>'
-            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1">{c}</td>'
-            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1">{b}</td>'
-            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1">{w}</td>'
-            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1;'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--vh-rule)">{c}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--vh-rule)">{b}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--vh-rule)">{w}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--vh-rule);'
             'color:{col};font-weight:500">{y}</td></tr>'
         ).format(n=name, r=ratio, c=plain.conversations,
                  b=_money(plain.cost_baseline), w=_money(picked.cost_with_judge),
@@ -470,8 +551,8 @@ def run_cost(target, cost_human, cost_judge, releases, raters, episodes):
 
     head = "".join(
         '<th style="text-align:{a};padding:0 .7rem .5rem;font-size:.64rem;'
-        'letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;'
-        'border-bottom:1px solid #c6d2cf;font-weight:500">{h}</th>'.format(
+        'letter-spacing:.09em;text-transform:uppercase;color:var(--vh-faint);'
+        'border-bottom:1px solid var(--vh-rule2);font-weight:500">{h}</th>'.format(
             a="left" if i == 0 else "right", h=h)
         for i, h in enumerate(["dimension", "conversations",
                                "panel only, per release",
@@ -540,12 +621,12 @@ def gate_artifacts(rep, cfg):
 
 CI_SNIPPET = """<div style="font-family:'IBM Plex Sans',system-ui,sans-serif">
 <div style="font-family:'IBM Plex Mono',monospace;font-size:.64rem;
- letter-spacing:.13em;text-transform:uppercase;color:#8b9d99;
+ letter-spacing:.13em;text-transform:uppercase;color:var(--vh-faint);
  margin-bottom:.5rem">put it in a pipeline</div>
-<p style="font-size:.88rem;color:#3a4b49;margin:0 0 .6rem">
+<p style="font-size:.88rem;color:var(--vh-ink2);margin:0 0 .6rem">
 The gate exits non-zero on <b>BLOCK</b>, so it gates a release without any glue
 code. The JSON above is the same report a job would parse.</p>
-<pre style="background:#f6f8f7;border:1px solid #dbe3e1;border-radius:5px;
+<pre style="background:var(--vh-sunk);border:1px solid var(--vh-rule);border-radius:5px;
  padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;
  line-height:1.55;overflow-x:auto;margin:0"># .github/workflows/voice-eval.yml
 - name: Long-horizon regression gate
@@ -560,7 +641,7 @@ code. The JSON above is the same report a job would parse.</p>
   with:
     name: voice-eval
     path: artifacts/</pre>
-<p style="font-size:.82rem;color:#61756f;margin:.6rem 0 0">
+<p style="font-size:.82rem;color:var(--vh-muted);margin:.6rem 0 0">
 Every run is stamped with a suite id derived from the config, so two reports
 carrying the same id were measured the same way and two carrying different ids
 were not.</p></div>"""
@@ -576,13 +657,13 @@ def run_transcript(text):
     could not check by hand.
     """
     if not text or not text.strip():
-        return ("<div style='color:#8b9d99'>Paste a call above.</div>", None,
+        return ("<div style='color:var(--vh-faint)'>Paste a call above.</div>", None,
                 [], "", None)
 
     rep = analyse_transcript(text)
     agents = rep.agent_turns
     if not agents:
-        return ("<div style='color:#ac4136'>No agent turns found. Prefix lines "
+        return ("<div style='color:var(--vh-alarm)'>No agent turns found. Prefix lines "
                 "with <code>Caller:</code> and <code>Agent:</code>.</div>",
                 None, [], rep.parse_note, None)
 
@@ -610,7 +691,7 @@ def run_transcript(text):
         'did the agent do what it was asked?</div>'
         '<div style="font-size:1.7rem;font-weight:600;color:{c};line-height:1.15;'
         'margin:.25rem 0 .3rem">{h}</div>'
-        '<div style="font-size:.9rem;color:#3a4b49">{s}</div></div>'
+        '<div style="font-size:.9rem;color:var(--vh-ink2)">{s}</div></div>'
     ).format(c=colour, h=headline, s=sub)
 
     rows = []
@@ -688,15 +769,15 @@ def run_transcript(text):
 
 
 VERDICT_STYLE = {
-    "BLOCK": (ALARM, "#f3ddd9", "Do not ship"),
-    "SHIP": (ACCENT, "#d3e7e3", "Safe to ship"),
-    "INCONCLUSIVE": (MUTED, "#eef2f1", "Not enough evidence"),
-    "SATURATED": (AMBER, "#f3e8cf", "This suite cannot separate them"),
+    "BLOCK": (ALARM, "var(--vh-alarm-soft)", "Do not ship"),
+    "SHIP": (ACCENT, "var(--vh-accent-soft)", "Safe to ship"),
+    "INCONCLUSIVE": (MUTED, "var(--vh-rule)", "Not enough evidence"),
+    "SATURATED": (AMBER, "var(--vh-amber-soft)", "This suite cannot separate them"),
 }
 
 
 def _card(rep):
-    color, bg, headline = VERDICT_STYLE.get(rep.verdict, (MUTED, "#eef2f1", ""))
+    color, bg, headline = VERDICT_STYLE.get(rep.verdict, (MUTED, "var(--vh-rule)", ""))
     reasons = "".join("<li>{}</li>".format(r) for r in rep.reasons)
     return (
         '<div style="border:1px solid {c};background:{b};border-radius:6px;'
@@ -706,8 +787,8 @@ def _card(rep):
         'margin-bottom:.35rem">verdict</div>'
         '<div style="font-size:1.9rem;font-weight:600;color:{c};line-height:1.1">'
         '{v}</div>'
-        '<div style="font-size:1.05rem;color:#3a4b49;margin-top:.3rem">{h}</div>'
-        '<ul style="margin:.9rem 0 0;padding-left:1.1rem;color:#3a4b49;'
+        '<div style="font-size:1.05rem;color:var(--vh-ink2);margin-top:.3rem">{h}</div>'
+        '<ul style="margin:.9rem 0 0;padding-left:1.1rem;color:var(--vh-ink2);'
         'font-size:.92rem;line-height:1.55">{r}</ul></div>'
     ).format(c=color, b=bg, v=rep.verdict, h=headline, r=reasons)
 
@@ -720,7 +801,7 @@ def _table(rep):
     def row(d):
         gate = rep.gating.get(d.name, True)
         col = {"improved": ACCENT, "regressed": ALARM}.get(d.verdict, MUTED)
-        tag = "" if gate else ' <span style="color:#8b9d99">diagnostic</span>'
+        tag = "" if gate else ' <span style="color:var(--vh-faint)">diagnostic</span>'
         band = BANDS.get(d.name)
         chip, scale = "", ""
         if band is not None:
@@ -732,13 +813,13 @@ def _table(rep):
             chip = _chip(info["label"], info["colour"])
             scale = _scale(d.candidate, lo, hi, info["colour"])
         return (
-            '<tr><td style="padding:.55rem .7rem;border-bottom:1px solid #dbe3e1">'
+            '<tr><td style="padding:.55rem .7rem;border-bottom:1px solid var(--vh-rule)">'
             '{n}{t}{chip}{sc}</td>'
-            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1">{b:.3f}</td>'
-            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1;font-weight:500">{c:.3f}</td>'
-            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1;'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--vh-rule)">{b:.3f}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--vh-rule);font-weight:500">{c:.3f}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--vh-rule);'
             'color:{col};font-weight:500">{d:+.3f}</td>'
-            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1">{p:.4f}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--vh-rule)">{p:.4f}</td>'
             '</tr>').format(n=d.name, t=tag, chip=chip, sc=scale, b=d.baseline,
                             c=d.candidate, d=d.delta, p=d.p_holm, col=col)
 
@@ -746,14 +827,14 @@ def _table(rep):
     conv = [d for d in rep.dimensions if not d.name.startswith("panel:")]
     head = ('<tr>' + "".join(
         '<th style="text-align:{a};padding:0 .7rem .5rem;font-size:.66rem;'
-        'letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;'
-        'border-bottom:1px solid #c6d2cf;font-weight:500">{h}</th>'.format(
+        'letter-spacing:.09em;text-transform:uppercase;color:var(--vh-faint);'
+        'border-bottom:1px solid var(--vh-rule2);font-weight:500">{h}</th>'.format(
             a=("left" if i == 0 else "right"), h=h)
         for i, h in enumerate(["dimension", "baseline", "candidate", "delta",
                                "holm p"])) + '</tr>')
     sec = lambda t: ('<tr><td colspan="5" style="padding:1rem .7rem .4rem;'
                      'font-family:IBM Plex Mono,monospace;font-size:.68rem;'
-                     'letter-spacing:.1em;text-transform:uppercase;color:#8b9d99">'
+                     'letter-spacing:.1em;text-transform:uppercase;color:var(--vh-faint)">'
                      '{}</td></tr>').format(t)
     body = sec("what a fixed-prompt leaderboard reports")
     body += "".join(row(d) for d in panel)
@@ -771,7 +852,7 @@ def run_gate(baseline, candidate, episodes, turns):
     names = [d.name for d in rep.dimensions]
     imps = [d.improvement for d in rep.dimensions]
     cols = [ACCENT if d.verdict == "improved" else
-            ALARM if d.verdict == "regressed" else "#c6d2cf"
+            ALARM if d.verdict == "regressed" else "var(--vh-rule2)"
             for d in rep.dimensions]
     delta_fig = base_fig(330, "change, signed so positive is better", "")
     delta_fig.add_trace(go.Bar(y=names, x=imps, orientation="h",
@@ -895,7 +976,7 @@ def _evidence(ep, onset, injected):
         '<tr><td style="padding:.35rem .7rem;color:{c}">{k}</td>'
         '<td style="padding:.35rem .7rem;text-align:right;color:{c};'
         'font-weight:500">{v:.2f}</td>'
-        '<td style="padding:.35rem .7rem;color:#61756f;font-size:.85rem">{d}</td></tr>'
+        '<td style="padding:.35rem .7rem;color:var(--vh-muted);font-size:.85rem">{d}</td></tr>'
         .format(c=SIGNAL_COLOR.get(k, MUTED), k=k, v=v,
                 d=dict((n, why) for n, _w, why in COMPONENTS).get(k, ""))
         for k, v in ranked)
@@ -921,21 +1002,21 @@ def _evidence(ep, onset, injected):
     return (
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));'
         'gap:18px;font-family:IBM Plex Sans,system-ui,sans-serif">'
-        '<div style="border:1px solid #dbe3e1;border-radius:6px;padding:14px 16px">'
+        '<div style="border:1px solid var(--vh-rule);border-radius:6px;padding:14px 16px">'
         '<div style="font-family:IBM Plex Mono,monospace;font-size:.66rem;'
-        'letter-spacing:.11em;text-transform:uppercase;color:#8b9d99;'
+        'letter-spacing:.11em;text-transform:uppercase;color:var(--vh-faint);'
         'margin-bottom:.5rem">why turn {o} was flagged</div>'
         '<table style="border-collapse:collapse;width:100%;font-size:.88rem;'
         'font-family:IBM Plex Mono,monospace">{rows}</table></div>'
-        '<div style="border:1px solid #dbe3e1;border-radius:6px;padding:14px 16px">'
+        '<div style="border:1px solid var(--vh-rule);border-radius:6px;padding:14px 16px">'
         '<div style="font-family:IBM Plex Mono,monospace;font-size:.66rem;'
-        'letter-spacing:.11em;text-transform:uppercase;color:#8b9d99;'
+        'letter-spacing:.11em;text-transform:uppercase;color:var(--vh-faint);'
         'margin-bottom:.5rem">what the model changed at turn {o}</div>'
         '<table style="border-collapse:collapse;width:100%;font-size:.88rem;'
         'font-family:IBM Plex Mono,monospace">{ch}</table>'
-        '<div style="margin-top:.7rem;font-size:.85rem;color:#61756f">'
+        '<div style="margin-top:.7rem;font-size:.85rem;color:var(--vh-muted)">'
         'standing requests: <b>{st}</b><br>caller distress {d0:.2f} &rarr; {d1:.2f}'
-        '<br><span style="color:#0d6f66">{hit}</span></div></div></div>'
+        '<br><span style="color:var(--vh-accent)">{hit}</span></div></div></div>'
     ).format(o=onset, rows=rows, ch=changes, st=standing,
              d0=t.user_before.negative_load, d1=t.user_after.negative_load, hit=hit)
 
@@ -1019,7 +1100,7 @@ def run_budget(n_conv, n_raters, rater_sd, episodes):
             x=ns, y=[M.min_detectable_effect(sb, rater_sd, n, r) for n in ns],
             mode="lines", name="{} raters".format(r),
             line=dict(width=3 if r == int(n_raters) else 1.6,
-                      color=ACCENT if r == int(n_raters) else "#c6d2cf")))
+                      color=ACCENT if r == int(n_raters) else "var(--vh-rule2)")))
     fig.add_vline(x=int(n_conv), line=dict(color=ALARM, width=1.4, dash="dot"))
 
     ks = [k for k in (5, 10, 20, 40) if k <= len(eps)]
@@ -1177,13 +1258,13 @@ def headline_strip():
             'font-family:IBM Plex Sans,system-ui,sans-serif">')
     for col, kicker, value, note in cards:
         html += (
-            '<div style="border:1px solid #dbe3e1;border-left:3px solid {c};'
-            'border-radius:5px;padding:14px 16px;background:#fff">'
+            '<div style="border:1px solid var(--vh-rule);border-left:3px solid {c};'
+            'border-radius:5px;padding:14px 16px;background:var(--vh-surface)">'
             '<div style="font-family:IBM Plex Mono,monospace;font-size:.64rem;'
-            'letter-spacing:.11em;text-transform:uppercase;color:#8b9d99">{k}</div>'
+            'letter-spacing:.11em;text-transform:uppercase;color:var(--vh-faint)">{k}</div>'
             '<div style="font-family:IBM Plex Mono,monospace;font-size:1.75rem;'
             'font-weight:500;color:{c};line-height:1.1;margin:.35rem 0 .3rem">{v}</div>'
-            '<div style="font-size:.84rem;color:#61756f;line-height:1.45">{n}</div>'
+            '<div style="font-size:.84rem;color:var(--vh-muted);line-height:1.45">{n}</div>'
             '</div>').format(c=col, k=kicker, v=value, n=note)
     return html + "</div>"
 
@@ -1224,7 +1305,11 @@ else:
 POLICIES = ["calibrated", "mirror", "flat_cheerful", "drifter", "oracle"]
 
 with gr.Blocks(css=CSS, title="VoiceHaul",
-               theme=gr.themes.Soft(primary_hue="teal")) as demo:
+               theme=gr.themes.Soft(
+                   primary_hue="teal", secondary_hue="teal",
+                   neutral_hue="slate",
+                   font=["IBM Plex Sans", "system-ui", "sans-serif"],
+                   font_mono=["IBM Plex Mono", "monospace"])) as demo:
     gr.HTML(AUTHOR_CARD)
     gr.Markdown(
         "# Sounding right on every turn, and getting the conversation wrong\n"
