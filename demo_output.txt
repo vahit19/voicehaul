@@ -1,0 +1,141 @@
+------------------------------------------------------------------------------
+VOICEHAUL - long-horizon evaluation for empathic voice agents
+------------------------------------------------------------------------------
+suite      : 5 personas x 30 episodes x 40 turns = 1,200 scored turns
+personas   : distressed_billing, hostile_escalation, confused_elderly, grieving_claim, cautious_optimist
+guarantees : no network, no API key, deterministic under a fixed seed
+
+------------------------------------------------------------------------------
+[1] THE SAME MODELS, RANKED TWO WAYS
+------------------------------------------------------------------------------
+left  : a fixed-context turn panel. Every agent answers the same 400
+        held-out user states, each turn rated on its own - how a
+        prompt-set leaderboard works.
+right : the same agents actually holding 40-turn conversations.
+
+agent                panel:       panel: conversation:       conv:
+                  perceived  calibration     left-over   fail rate
+                    empathy                   distress            
+mirror                0.643        0.805         0.235         17%
+flat_cheerful         0.669        0.791         0.998        100%
+drifter               0.614        0.938         0.906         93%
+calibrated            0.599        0.946         0.138          0%
+oracle                0.599        1.000         0.125          0%
+
+  turn panel says the best model is : flat_cheerful
+  the conversations say it is       : oracle
+  rank correlation between the two  : rho = -0.90
+
+  The two rankings are anti-correlated. Not because turn-level rating
+  is wrong, but because it holds the context fixed - and in a real
+  conversation the model creates the context it is later scored on.
+
+------------------------------------------------------------------------------
+[2] WHICH USERS IT BREAKS ON
+------------------------------------------------------------------------------
+Left-over distress by persona. An aggregate score hides this; a
+regression that only hits angry callers is still a regression.
+
+agent           distressed_b hostile_esca confused_eld grieving_cla cautious_opt
+mirror                  0.19         0.71         0.04         0.16         0.09
+flat_cheerful           1.00         1.00         1.00         1.00         1.00
+drifter                 1.00         1.00         0.96         0.97         0.60
+calibrated              0.12         0.32         0.04         0.19         0.02
+oracle                  0.12         0.29         0.03         0.17         0.02
+
+  mirroring is near-harmless on calm users and 2.2x worse than the
+  calibrated policy on hostile ones. That is the actionable sentence.
+
+------------------------------------------------------------------------------
+[3] FEEDBACK UPTAKE: DOES A REQUEST SURVIVE THE CONVERSATION?
+------------------------------------------------------------------------------
+Share of explicit user requests ("slow down", "stop apologising", ...)
+still honoured N turns after the user made them.
+
+agent              FUR@1    FUR@5   FUR@10   FUR@20     half-life
+mirror              1.00     1.00     1.00     1.00      no decay
+flat_cheerful       0.00     0.00     0.00     0.00           n/a
+drifter             0.77     0.85     0.80     0.49    > 30 turns
+calibrated          1.00     1.00     1.00     1.00      no decay
+oracle              1.00     1.00     1.00     1.00      no decay
+
+  drifter honours 77% of requests immediately and 49% twenty turns
+  later, at an unchanged turn-level score. Only the lag exposes it.
+
+------------------------------------------------------------------------------
+[4] MIMICRY VS REGULATION
+------------------------------------------------------------------------------
+mimicry    = corr(agent vocal energy, user arousal)   -> sounds attuned
+regulation = negative affect removed per turn (x100)  -> actually helps
+
+agent             mimicry r      regulation       MAI
+mirror                +0.16            2.61      2.29
+flat_cheerful         -0.00           -1.37     -1.37
+drifter               -0.83            0.44      0.44
+calibrated            -0.56            3.80      3.80
+oracle                -0.54            3.82      3.82
+
+  the mirror tracks the user (+0.16); the calibrated policy moves
+  against them (-0.56) and removes 46% more distress per turn.
+  MAI ranking is stable for k in [1, 4] (1 distinct ordering).
+
+------------------------------------------------------------------------------
+[5] CORRUPTED FEEDBACK: WHEN THE CHANNEL ITSELF IS WRONG
+------------------------------------------------------------------------------
+A share of user requests reach the model as the opposite instruction
+(ASR error, or an adversarial user). The user still expects the original.
+
+agent            clean FUR@10   20% corrupt   40% corrupt        drop
+mirror                   1.00          0.85          0.68      -32.4p
+flat_cheerful            0.00          0.00          0.00        0.0p
+drifter                  0.80          0.77          0.78       -2.2p
+calibrated               1.00          0.85          0.70      -30.4p
+
+  the agents that listen best degrade most: perfect compliance with a
+  corrupted channel is itself a failure mode, and it is invisible to
+  any suite whose feedback channel is assumed clean.
+
+------------------------------------------------------------------------------
+[6] FAILURE-ONSET LOCALIZATION
+------------------------------------------------------------------------------
+A regression is injected at a known turn: the model loses its
+conditioning and reverts to a generic upbeat persona. The task is to
+name that turn from the conversation alone. Cheap deterministic
+diagnostics propose candidates; counterfactual replay confirms cause.
+
+fault severity conversations       top-1       top-3    median error
+1.00                      30      100.0%      100.0%        +0 turns
+0.70                      30       93.3%       96.7%        +0 turns
+0.50                      30       93.3%       93.3%        +0 turns
+0.35                      30       86.7%       90.0%        +0 turns
+
+  false positives on healthy runs : 0.0%  (n=30)
+  severity 1.00 is a full reversion; 0.35 blends the degraded persona
+  into the model's own policy, which is the realistic case. Accuracy
+  should always be reported against it, never as a single number.
+
+  example: persona=distressed_billing  true fault turn=20  predicted=20
+  ranked candidates: [20, 21, 22, 23, 24]
+
+------------------------------------------------------------------------------
+[7] HOW MANY CONVERSATIONS BEFORE A REGRESSION IS VISIBLE?
+------------------------------------------------------------------------------
+Human ratings are both the ground truth and the budget line. Between-
+conversation spread is measured from this suite; rater noise is set to
+0.9 Likert points. Two-sample, alpha=0.05, power=0.80.
+
+  measured between-conversation sd : 0.40 Likert points
+
+raters / conversation           N=30       N=100       N=300
+1                               0.71        0.39        0.22
+3                               0.47        0.26        0.15
+5                               0.41        0.22        0.13
+  (cells are the smallest true regression, in Likert points, that the
+   suite can detect at 80% power)
+
+  a 30-conversation suite with 3 raters cannot see anything smaller
+  than 0.47 points; catching a 0.20-point regression needs N = 168.
+
+wrote voicehaul_report.png
+
+done in 2.9s

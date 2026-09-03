@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voicehaul"
+version = "0.1.0"
+description = "Long-horizon evaluation for empathic voice agents"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Vahit Feryad" }]
+keywords = ["evaluation", "benchmark", "voice-ai", "speech", "reliability",
+            "long-horizon", "empathy", "failure-analysis"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []
+
+[project.optional-dependencies]
+plot = ["matplotlib>=3.5"]
+
+[project.urls]
+Homepage = "https://github.com/vahit19/voicehaul"
+
+[tool.setuptools.packages.find]
+include = ["voicehaul*"]

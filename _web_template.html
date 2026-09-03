@@ -1,0 +1,980 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VoiceHaul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --ground:#eff2f1; --surface:#ffffff; --sunk:#f6f8f7;
+  --ink:#131c1b; --ink-2:#3a4b49; --muted:#61756f; --faint:#8b9d99;
+  --rule:#dbe3e1; --rule-2:#c6d2cf;
+  --accent:#0d6f66; --accent-soft:#d3e7e3;
+  --alarm:#ac4136; --alarm-soft:#f3ddd9;
+  --amber:#8f6414; --amber-soft:#f3e8cf;
+  --violet:#6a56a3;
+  --shadow:0 1px 2px rgba(19,28,27,.06), 0 8px 24px -12px rgba(19,28,27,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0e1414; --surface:#161e1d; --sunk:#111818;
+    --ink:#e7eeec; --ink-2:#bccac7; --muted:#8ea19d; --faint:#69807b;
+    --rule:#26312f; --rule-2:#33403e;
+    --accent:#4ec3b2; --accent-soft:#173330;
+    --alarm:#e5796a; --alarm-soft:#33201d;
+    --amber:#dda94e; --amber-soft:#312716;
+    --violet:#a48ee0;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0e1414; --surface:#161e1d; --sunk:#111818;
+  --ink:#e7eeec; --ink-2:#bccac7; --muted:#8ea19d; --faint:#69807b;
+  --rule:#26312f; --rule-2:#33403e;
+  --accent:#4ec3b2; --accent-soft:#173330;
+  --alarm:#e5796a; --alarm-soft:#33201d;
+  --amber:#dda94e; --amber-soft:#312716;
+  --violet:#a48ee0;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.62; margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px; margin:0 auto; padding:0 24px 96px}
+.col{max-width:660px; margin-inline:auto}
+p{margin:0 0 1.05em}
+a{color:var(--accent); text-underline-offset:3px; text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{
+  outline:2px solid var(--accent); outline-offset:2px; border-radius:2px}
+
+/* ---- turn ruler: the page's one recurring device. Everything in this
+       project is indexed by turn, so the divider is a turn scale. ---- */
+.ruler{height:22px; margin:52px 0 26px; position:relative;
+  background-image:repeating-linear-gradient(to right,
+    var(--rule-2) 0 1px, transparent 1px 28px);
+  background-position:left bottom; background-size:100% 9px;
+  background-repeat:repeat-x;}
+.ruler::after{content:""; position:absolute; left:0; right:0; bottom:0;
+  height:1px; background:var(--rule)}
+
+h1{font-family:"IBM Plex Serif",Georgia,serif; font-weight:600;
+   font-size:clamp(38px,6vw,58px); line-height:1.02; letter-spacing:-.022em;
+   margin:0 0 14px; text-wrap:balance}
+h2{font-family:"IBM Plex Serif",Georgia,serif; font-weight:600;
+   font-size:clamp(23px,3vw,29px); line-height:1.2; letter-spacing:-.014em;
+   margin:0 0 10px; text-wrap:balance}
+h3{font-family:"IBM Plex Sans",sans-serif; font-weight:600; font-size:16px;
+   letter-spacing:-.005em; margin:26px 0 6px}
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--faint);
+  margin:0 0 9px}
+.lede{font-size:19px; line-height:1.55; color:var(--ink-2)}
+.note{font-size:14.5px; color:var(--muted)}
+.mono{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+
+/* ---- masthead ---- */
+header{padding:72px 0 0}
+.tagline{font-family:"IBM Plex Mono",monospace; font-size:12.5px;
+  letter-spacing:.05em; color:var(--accent); margin:0 0 20px}
+.headstat{display:flex; flex-wrap:wrap; gap:0; margin:30px 0 0;
+  border:1px solid var(--rule); border-radius:3px; overflow:hidden;
+  background:var(--surface)}
+.headstat > div{flex:1 1 180px; padding:16px 18px;
+  border-right:1px solid var(--rule)}
+.headstat > div:last-child{border-right:0}
+.headstat .k{font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--faint);
+  margin:0 0 5px}
+.headstat .v{font-family:"IBM Plex Mono",monospace; font-size:25px;
+  font-weight:500; line-height:1; font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em}
+.headstat .s{font-size:13px; color:var(--muted); margin:6px 0 0; line-height:1.4}
+.links{display:flex; flex-wrap:wrap; gap:10px; margin:24px 0 0}
+.links a{display:inline-flex; align-items:center; gap:7px;
+  font-family:"IBM Plex Mono",monospace; font-size:13px; text-decoration:none;
+  padding:8px 14px; border:1px solid var(--rule-2); border-radius:3px;
+  color:var(--ink-2); background:var(--surface)}
+.links a:hover{border-color:var(--accent); color:var(--accent)}
+.links a.pill-x{color:var(--faint); border-style:dashed}
+
+/* ---- panels ---- */
+.panel{background:var(--surface); border:1px solid var(--rule); border-radius:4px;
+  padding:22px; margin:22px 0; box-shadow:var(--shadow)}
+.panel.flat{box-shadow:none}
+.scroll{overflow-x:auto}
+
+table{border-collapse:collapse; width:100%; font-size:14px;
+  font-variant-numeric:tabular-nums}
+th{font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:500;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--faint);
+  text-align:right; padding:0 10px 8px; border-bottom:1px solid var(--rule-2);
+  white-space:nowrap; vertical-align:bottom}
+th:first-child,td:first-child{text-align:left; padding-left:0}
+td{padding:9px 10px; border-bottom:1px solid var(--rule); text-align:right;
+  font-family:"IBM Plex Mono",monospace}
+tbody tr:last-child td{border-bottom:0}
+td.name{font-family:"IBM Plex Sans",sans-serif; font-weight:500; white-space:nowrap}
+tr.hi td{background:var(--accent-soft)}
+tr.bad td{background:var(--alarm-soft)}
+.dot{display:inline-block; width:8px; height:8px; border-radius:50%;
+  margin-right:8px; vertical-align:1px}
+
+/* ---- controls ---- */
+.controls{display:flex; flex-wrap:wrap; gap:18px; align-items:flex-end;
+  margin:0 0 18px}
+.cgroup{display:flex; flex-direction:column; gap:6px}
+.cgroup > span{font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--faint)}
+.seg{display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--rule-2);
+  border-radius:3px; overflow:hidden; background:var(--sunk)}
+.seg button{font-family:"IBM Plex Mono",monospace; font-size:12.5px;
+  padding:7px 12px; border:0; border-right:1px solid var(--rule-2);
+  background:transparent; color:var(--ink-2); cursor:pointer; white-space:nowrap}
+.seg button:last-child{border-right:0}
+.seg button:hover{background:var(--surface)}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--surface);
+  font-weight:500}
+:root[data-theme="dark"] .seg button[aria-pressed="true"],
+.seg button[aria-pressed="true"]{color:#fff}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .seg button[aria-pressed="true"]{color:#08100f}}
+:root[data-theme="dark"] .seg button[aria-pressed="true"]{color:#08100f}
+
+.legend{display:flex; flex-wrap:wrap; gap:16px; margin:12px 0 0;
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--muted)}
+.legend i{display:inline-block; width:16px; height:2px; margin-right:7px;
+  vertical-align:4px; border-radius:1px}
+
+svg{display:block; max-width:100%; height:auto}
+.gridline{stroke:var(--rule); stroke-width:1}
+.axis{fill:var(--faint); font-family:"IBM Plex Mono",monospace; font-size:10px}
+.axlabel{fill:var(--muted); font-family:"IBM Plex Mono",monospace; font-size:10px;
+  letter-spacing:.08em; text-transform:uppercase}
+
+/* ---- turn log ---- */
+.log{max-height:280px; overflow-y:auto; border:1px solid var(--rule);
+  border-radius:3px; background:var(--sunk); margin:16px 0 0}
+.log table{font-size:12.5px}
+.log th{position:sticky; top:0; background:var(--sunk); padding:8px 10px;
+  z-index:1}
+.log td{padding:5px 10px; border-bottom:1px solid var(--rule)}
+.log td.ev{text-align:left; font-family:"IBM Plex Sans",sans-serif;
+  font-size:12.5px; color:var(--muted)}
+.tag{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  padding:1px 6px; border-radius:2px; margin-right:6px}
+.tag.req{background:var(--accent-soft); color:var(--accent)}
+.tag.shock{background:var(--amber-soft); color:var(--amber)}
+.bar{display:inline-block; height:8px; border-radius:1px; background:var(--alarm);
+  vertical-align:1px}
+
+/* ---- calculator ---- */
+.calc{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:20px; align-items:start}
+.field{display:flex; flex-direction:column; gap:7px}
+.field label{font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--faint)}
+.field .val{font-family:"IBM Plex Mono",monospace; font-size:19px;
+  font-variant-numeric:tabular-nums}
+input[type=range]{width:100%; accent-color:var(--accent)}
+.readout{border:1px solid var(--accent); border-radius:3px; padding:16px 18px;
+  background:var(--accent-soft)}
+.readout .big{font-family:"IBM Plex Mono",monospace; font-size:32px;
+  font-weight:500; line-height:1; font-variant-numeric:tabular-nums;
+  color:var(--accent)}
+
+.callout{border-left:2px solid var(--accent); padding:2px 0 2px 18px;
+  margin:20px 0; color:var(--ink-2)}
+.callout.warn{border-left-color:var(--amber)}
+
+.prov{background:var(--sunk); border:1px solid var(--rule); border-radius:4px;
+  padding:14px 18px; margin:24px 0 0; font-size:14.5px; color:var(--ink-2);
+  max-width:660px; margin-inline:auto}
+.q{display:flex; gap:18px; align-items:baseline; padding:20px 0;
+  border-top:1px solid var(--rule)}
+.q:first-of-type{border-top:0}
+.qn{font-family:"IBM Plex Mono",monospace; font-size:22px; font-weight:500;
+  color:var(--accent); line-height:1; flex:0 0 auto; min-width:32px}
+.qb{flex:1}
+.qb h3{margin:0 0 10px}
+.qb p{font-size:14.5px; color:var(--ink-2); margin:0 0 9px}
+.qt{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--accent) !important; margin:12px 0 0 !important}
+footer{margin-top:56px; padding-top:22px; border-top:1px solid var(--rule);
+  font-size:14px; color:var(--muted)}
+
+@media (max-width:640px){
+  body{font-size:15px}
+  .wrap{padding:0 16px 64px}
+  header{padding-top:48px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="col">
+    <p class="tagline">voicehaul · long-horizon evaluation for empathic voice agents</p>
+    <h1>Sounding right on every turn, and getting the conversation wrong.</h1>
+    <p class="lede">A turn-level rating tells you whether a response sounded right.
+    It cannot tell you whether a model still honours what the user asked for twenty
+    turns ago, whether its calibration decays as a session runs long, whether it is
+    regulating the user's affect or mirroring it back, or which turn broke a call
+    that ended badly.</p>
+    <p class="note">This measures those four things, then measures how much rating
+    budget you need before any of them is detectable. Runs in about fifteen seconds
+    with no API key and no network.</p>
+  </div>
+
+  <div class="headstat" id="headstat"></div>
+
+  <div class="links">
+    <a href="https://github.com/vahit19/voicehaul">Source on GitHub</a>
+    <a href="https://colab.research.google.com/github/vahit19/voicehaul/blob/main/VoiceHaul_demo.ipynb">Run it in Colab</a>
+    <a href="#programme">The research programme</a>
+    <a class="pill-x" href="#honest">What's simulated</a>
+  </div>
+
+  <div class="prov">
+    <p class="eyebrow" style="margin-bottom:.4rem">Provenance</p>
+    <p style="margin:0">The measurement design here is not new work. It is the
+    method from <a href="https://github.com/vahit19/LongHaul-Bench">LongHaul-Bench</a>
+    — a long-horizon reliability benchmark run over 1,000+ sequential episodes
+    with a five-world experimental programme and memory-strategy ablations — and
+    <a href="https://github.com/vahit19/runopsy">Runopsy</a>, a causal
+    failure-onset method using deterministic diagnostics plus counterfactual
+    replay. Both are carried across here from text agents to voice. Building this
+    instance took a day because the underlying method took two years.
+    <b>What follows is phase zero</b>: the synthetic validation step that has to
+    pass before any of it is pointed at real audio. The section at the bottom is
+    the part that matters.</p>
+  </div>
+</header>
+
+<div class="ruler"></div>
+
+<section>
+  <div class="col">
+    <p class="eyebrow">The finding</p>
+    <h2>The same five models, ranked two ways</h2>
+    <p>On the left, a fixed-context turn panel: every agent answers the same held-out
+    user states and each turn is rated on its own, the way a prompt-set leaderboard
+    works. On the right, the same agents actually holding forty-turn conversations.</p>
+  </div>
+  <div class="panel scroll">
+    <table id="headline"></table>
+  </div>
+  <div class="col">
+    <div class="callout">
+      <p style="margin:0">The turn panel's best model is the one that fails every
+      conversation. Rank correlation between the two orderings:
+      <b class="mono" id="rho-inline"></b>.</p>
+    </div>
+    <p>Not because turn-level rating is wrong — it is the right instrument for the
+    question it asks. It is because a turn panel holds the context fixed, and in a
+    real conversation <b>the model creates the context it is later scored on</b>. A
+    model that keeps users agitated is subsequently asked easier-looking questions.</p>
+  </div>
+</section>
+
+<div class="ruler"></div>
+
+<section>
+  <div class="col">
+    <p class="eyebrow">Explore</p>
+    <h2>Watch one conversation happen</h2>
+    <p>Pick a policy and a caller. The trace shows what the user is carrying, what a
+    turn-level rater would score, and what the turn was actually worth. The log below
+    marks every explicit request and every new grievance.</p>
+  </div>
+
+  <div class="panel">
+    <div class="controls">
+      <div class="cgroup"><span>policy</span><div class="seg" id="pick-agent"></div></div>
+      <div class="cgroup"><span>caller</span><div class="seg" id="pick-persona"></div></div>
+    </div>
+    <div class="scroll"><svg id="trace" viewBox="0 0 940 300" role="img"
+      aria-label="Per-turn trace of user distress, perceived empathy and calibration"></svg></div>
+    <div class="legend">
+      <span><i style="background:var(--alarm)"></i>distress the user is left carrying</span>
+      <span><i style="background:var(--amber)"></i>perceived empathy (turn-level rating)</span>
+      <span><i style="background:var(--accent)"></i>calibration (what the turn was worth)</span>
+    </div>
+    <div class="log"><table id="log"></table></div>
+    <p class="note" id="verdict" style="margin:14px 0 0"></p>
+  </div>
+
+  <div class="col">
+    <h3>What to look for</h3>
+    <p>Put <b>mirror</b> against the <b>hostile</b> caller. Perceived empathy stays
+    respectable the whole way down — it sounds attuned on every single turn — while
+    distress never comes down. It matches the caller's energy instead of sitting just
+    below it, so the caller has nowhere to come down to. No turn is bad. The
+    conversation is.</p>
+    <p>Then put <b>drifter</b> against anyone and watch what happens a dozen turns
+    after a request: it complies for a while, then quietly stops, and speech rate
+    creeps back up. The turn-level score barely moves.</p>
+  </div>
+</section>
+
+<div class="ruler"></div>
+
+<section>
+  <div class="col">
+    <p class="eyebrow">Metric one</p>
+    <h2>Does a request survive the conversation?</h2>
+    <p>Users voice explicit requests — <i>slow down</i>, <i>stop apologising</i>,
+    <i>be concise</i>. Uptake is the share still honoured some number of turns later.
+    Two policies with the same turn-level score can sit at opposite ends of this
+    curve.</p>
+  </div>
+  <div class="panel">
+    <div class="scroll"><svg id="uptake" viewBox="0 0 940 300" role="img"
+      aria-label="Directive compliance against turns since the request"></svg></div>
+  </div>
+</section>
+
+<div class="ruler"></div>
+
+<section>
+  <div class="col">
+    <p class="eyebrow">Metric two</p>
+    <h2>Mimicry is not regulation</h2>
+    <p>Two readings of the same behaviour. Horizontally: how closely the agent's vocal
+    energy tracks the user's — how attuned it sounds. Vertically: how much negative
+    affect it actually removes per turn. A single "empathy" score collapses these into
+    one number and loses the distinction that matters.</p>
+  </div>
+  <div class="panel">
+    <div class="scroll"><svg id="scatter" viewBox="0 0 940 380" role="img"
+      aria-label="Mimicry against regulation for five policies"></svg></div>
+  </div>
+  <div class="col">
+    <p class="eyebrow" style="margin-top:26px">Metric three</p>
+    <h3 style="margin-top:0">When the feedback channel itself is wrong</h3>
+    <p>A share of user requests reach the model as the <i>opposite</i> instruction — an
+    ASR error, or an adversarial user. The user still expects the original.</p>
+  </div>
+  <div class="panel scroll"><table id="corrupted"></table></div>
+  <div class="col">
+    <p class="note">The agents that listen best degrade most. Perfect compliance with
+    a corrupted channel is itself a failure mode, and it is invisible to any suite
+    whose feedback channel is assumed clean.</p>
+  </div>
+</section>
+
+<div class="ruler"></div>
+
+<section>
+  <div class="col">
+    <p class="eyebrow">Diagnosis</p>
+    <h2>Which turn broke it</h2>
+    <p>A regression is injected at a turn the diagnostic is never told about: the model
+    loses its conditioning and reverts to a generic upbeat persona. Four cheap
+    deterministic signals propose candidates, a walk-back finds where the anomalous
+    stretch begins, and counterfactual replay <i>gates</i> — if repairing the agent from
+    the proposed turn would not have changed the outcome, it returns no answer rather
+    than a wrong one.</p>
+    <p>Lower the severity to blend the fault into the model's own policy. That is the
+    realistic case, and the honest one to report.</p>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="cgroup"><span>fault severity</span>
+        <div class="seg" id="pick-sev"></div></div>
+    </div>
+    <div class="scroll"><svg id="onset" viewBox="0 0 940 250" role="img"
+      aria-label="Per-turn anomaly score with the injected fault marked"></svg></div>
+    <div class="scroll" style="margin-top:18px"><table id="sweep"></table></div>
+  </div>
+</section>
+
+<div class="ruler"></div>
+
+<section>
+  <div class="col">
+    <p class="eyebrow">Budget</p>
+    <h2>How many conversations before a regression is visible?</h2>
+    <p>Human ratings are both the ground truth and the budget line. Between-conversation
+    spread is measured from the suite; per-rater noise is yours to set. This is the
+    calculation that turns "we track regressions" into a number of conversations and a
+    cost.</p>
+  </div>
+  <div class="panel">
+    <div class="calc">
+      <div class="field">
+        <label for="f-n">conversations per arm</label>
+        <div class="val" id="v-n">100</div>
+        <input type="range" id="f-n" min="10" max="600" step="10" value="100">
+      </div>
+      <div class="field">
+        <label for="f-r">raters per conversation</label>
+        <div class="val" id="v-r">3</div>
+        <input type="range" id="f-r" min="1" max="12" step="1" value="3">
+      </div>
+      <div class="field">
+        <label for="f-s">rater noise (likert sd)</label>
+        <div class="val" id="v-s">0.90</div>
+        <input type="range" id="f-s" min="0.4" max="1.6" step="0.05" value="0.9">
+      </div>
+      <div class="readout">
+        <div class="k mono" style="font-size:10.5px; letter-spacing:.11em;
+          text-transform:uppercase; color:var(--accent); margin-bottom:6px">
+          smallest detectable regression</div>
+        <div class="big" id="v-mde">0.26</div>
+        <div class="note" style="margin:8px 0 0; color:var(--accent)">Likert points,
+        at 80% power, α = 0.05</div>
+      </div>
+    </div>
+    <div class="scroll" style="margin-top:22px"><table id="powertable"></table></div>
+  </div>
+  <div class="col">
+    <p class="note" id="power-note"></p>
+  </div>
+</section>
+
+<div class="ruler"></div>
+
+<section id="honest">
+  <div class="col">
+    <p class="eyebrow">Read this part carefully</p>
+    <h2>What is real and what is simulated</h2>
+    <p><b>Simulated:</b> the users, the agents, and the affect dynamics. The five
+    agents are deterministic policy simulators, not language models — each embodies
+    exactly one known failure mode. The user model and both scoring functions are
+    written by hand.</p>
+    <p><b>Real:</b> the metrics, the estimators, the statistics, and the localization
+    algorithm. Those are the deliverable.</p>
+    <p>The reason for a synthetic environment is not convenience. <b>You cannot
+    validate a measurement instrument without ground truth you control.</b> If you only
+    ever run an eval against real models, a metric that reports the wrong thing and a
+    model that behaves badly are indistinguishable. Here the fault turn is known, the
+    failure mode is known, and the ideal policy is known — so "93% accurate at severity
+    0.5 with no false positives" is a checkable statement about the <i>method</i>, not a
+    leaderboard entry.</p>
+    <div class="callout warn">
+      <p style="margin:0">The rank-correlation result is the one to read sceptically.
+      I encoded the hypothesis that turn-level raters reward attunement and warmth
+      while outcomes reward down-regulation, and the environment then confirms it —
+      which is close to circular on its own. Its value is that the hypothesis is now
+      <i>falsifiable</i> against real rater data: fit the perceived-empathy function to
+      real human ratings, keep the outcome measure, and the same code reports whether
+      the gap survives. If it doesn't, that is a genuinely useful negative result about
+      a class of eval suites.</p>
+    </div>
+
+    <h3>Plugging in a real model</h3>
+    <p>The design property that makes this practical: the harness needs no privileged
+    access to the model under test. Both sides of the conversation are scored from
+    audio — the user's affect trajectory from expression measurement on the user
+    channel, and the agent's delivery parameters from expression measurement plus
+    transcript statistics on the agent channel. The same metrics apply to a model you
+    own, one you licence, and a competitor's public endpoint.</p>
+    <p>Two things I would fix before trusting it on real audio, in order. The compact
+    affect basis is currently a hand-written alias map over a 48-category readout; that
+    projection should be <i>fitted</i> against human ratings of the same clips, because
+    everything downstream inherits its error. And apology and acknowledgement detection
+    uses English keyword lists; for a multilingual suite that has to become a small
+    classifier. The prosodic features generalise, the lexical ones do not.</p>
+  </div>
+</section>
+
+
+<div class="ruler"></div>
+
+<section id="programme">
+  <div class="col">
+    <p class="eyebrow">The programme</p>
+    <h2>What this is phase zero of</h2>
+    <p>Everything above is the part that can be done in a synthetic environment,
+    and it is the smallest part. It establishes that the instrument measures what
+    it claims to measure on a case where the answer is known by construction.
+    That is a precondition, not a result.</p>
+    <p>The four questions below are the actual research. Each is a quarter or more
+    of work, each is gated on data that does not exist yet, and each produces both
+    a publishable finding and a product surface. They are listed with their cost
+    rather than their promise, because a benchmark that is oversold once is never
+    trusted again.</p>
+  </div>
+
+  <div class="col">
+    <div class="q">
+      <div class="qn">01</div>
+      <div class="qb">
+        <h3>Does the gap survive contact with real raters?</h3>
+        <p><b>Why it matters.</b> The headline result rests on a hypothesis
+        encoded by hand: that turn-level raters reward attunement and warmth while
+        conversation outcomes reward down-regulation. In a synthetic world that is
+        close to circular. Against real ratings it becomes falsifiable, and it is
+        the one claim everything else depends on.</p>
+        <p><b>What answering it takes.</b> Several hundred real conversations,
+        each rated twice — turn by turn in isolation, and once at the conversation
+        level — with multiple raters per item, because the power table above is
+        what says how many. This is a rating-panel study, not a code change.</p>
+        <p><b>What it produces.</b> Either a validated instrument, or a clean
+        negative result about a whole class of evaluation suites. Both are worth
+        publishing; one of them is worth building a product on.</p>
+        <p class="qt">One to two quarters, almost all of it data collection and
+        inter-rater reliability work</p>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="qn">02</div>
+      <div class="qb">
+        <h3>Is the measurement invariant across languages?</h3>
+        <p><b>Why it matters.</b> Down-regulation is a cultural norm as much as an
+        acoustic one. Speaking below someone's energy may not soothe identically in
+        every language, and the lexical features here are English-only by
+        construction. If the instrument is not invariant, a cross-language
+        leaderboard compares different quantities and calls it one score. For a
+        fifty-language product that is not a footnote.</p>
+        <p><b>What answering it takes.</b> Parallel evaluation corpora across
+        several typologically distinct languages, native-speaker rater panels, and
+        formal measurement-invariance testing — configural, metric, scalar.</p>
+        <p><b>What it produces.</b> A methods paper of the kind cited by everyone
+        who later builds a multilingual voice benchmark, and a defensible answer to
+        the first question a serious enterprise buyer asks.</p>
+        <p class="qt">Two to three quarters, running partly in parallel with 01</p>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="qn">03</div>
+      <div class="qb">
+        <h3>Can the affect projection be learned instead of hand-written?</h3>
+        <p><b>Why it matters.</b> A 48-category expression readout is collapsed
+        onto a six-dimension basis by an alias map written by hand. Every metric
+        downstream inherits that projection's error and nobody currently knows how
+        large it is. This is the least glamorous item here and probably the
+        highest-leverage one.</p>
+        <p><b>What answering it takes.</b> Paired data — expression measurement and
+        human ratings on the same clips — then fitting the projection against the
+        ratings rather than asserting it, with held-out validation.</p>
+        <p><b>What it produces.</b> A measurable accuracy improvement across every
+        metric at once, and a reusable component rather than a bespoke one.</p>
+        <p class="qt">A quarter once the data from 01 exists; it cannot start
+        before</p>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="qn">04</div>
+      <div class="qb">
+        <h3>Does optimising for these metrics produce better models?</h3>
+        <p><b>Why it matters.</b> The real test of an evaluation is not whether it
+        correlates with human judgement. It is whether using it as a training
+        signal moves a model on held-out human judgement. This is where evaluation
+        stops being measurement and becomes post-training, and it is the only one
+        of these four that changes what a model is rather than what we know about
+        it.</p>
+        <p><b>What answering it takes.</b> Everything above, plus a model that can
+        actually be fine-tuned and a held-out human evaluation that was never used
+        for training.</p>
+        <p><b>What it produces.</b> The finding that would justify the whole
+        programme, or the finding that these metrics are diagnostic but not
+        optimisable — which is itself important and rarely reported.</p>
+        <p class="qt">Four quarters or more, and it should not be started early</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p style="margin:0">None of these four compresses by working harder: three
+      are gated on rating data that has to be collected, and the fourth is gated on
+      the other three. That is the shape of the work — not a tool to be delivered,
+      but an instrument that earns authority by being maintained, versioned,
+      contamination-checked and re-validated as the models it measures keep moving.
+      A benchmark nobody maintains stops being cited in about a year.</p>
+    </div>
+
+    <h3>Why the fast part was fast</h3>
+    <p>The two projects this one is built on took about two years between them.
+    LongHaul-Bench ran a five-world experimental programme over a thousand-plus
+    sequential episodes per run under hard edge constraints, comparing frozen,
+    append-only, reflect, gated and oracle memory strategies with full ablations
+    and statistical analysis. Runopsy is the causal failure-onset method that the
+    localization section above is a port of.</p>
+    <p>That is why this instance came together quickly, and it is also why it would
+    be wrong to call it quick work. The fast part is the part that was already
+    solved. What is left — validating a measurement instrument against human
+    judgement, establishing that it holds across languages, and finding out whether
+    it can be optimised against — is ordinary research on an ordinary research
+    timescale.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <p style="margin:0">Vahit Feryad ·
+    <a href="https://github.com/vahit19/runopsy">Runopsy</a> ·
+    <a href="https://github.com/vahit19/LongHaul-Bench">LongHaul-Bench</a> ·
+    <a href="https://scholar.google.com/citations?hl=en&amp;user=JUtYZ1oAAAAJ">Scholar</a></p>
+    <p class="note" style="margin:8px 0 0">Apache-2.0. Pure standard library;
+    matplotlib is optional and only draws the static chart.</p>
+  </div>
+</footer>
+
+</div>
+
+<script id="vh-data" type="application/json">__DATA__</script>
+<script>
+(function(){
+"use strict";
+var D = JSON.parse(document.getElementById("vh-data").textContent);
+
+var COLORS = {mirror:"--alarm", flat_cheerful:"--amber", drifter:"--violet",
+              calibrated:"--accent", oracle:"--faint"};
+function tok(n){ return getComputedStyle(document.documentElement)
+  .getPropertyValue(n).trim(); }
+function agentColor(a){ return "var(" + (COLORS[a] || "--muted") + ")"; }
+var LABEL = {mirror:"mirror", flat_cheerful:"flat", drifter:"drifter",
+             calibrated:"calibrated", oracle:"oracle"};
+var PLABEL = {distressed_billing:"billing", hostile_escalation:"hostile",
+              confused_elderly:"confused", grieving_claim:"grieving",
+              cautious_optimist:"calm"};
+var AGENTS = D.headline.map(function(r){ return r.agent; });
+function esc(s){ return String(s).replace(/[&<>]/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
+function pct(x){ return (100*x).toFixed(0) + "%"; }
+
+/* ---------- masthead stats ---------- */
+(function(){
+  var mirror = D.headline.filter(function(r){return r.agent==="mirror";})[0];
+  var sw = D.localization[3];
+  var stats = [
+    {k:"panel vs outcome", v:"ρ = " + D.rho.toFixed(2),
+     s:"the turn panel's top model fails every conversation"},
+    {k:"onset localization", v:pct(sw.top1),
+     s:"top-1 at the hardest fault severity, " + pct(D.false_positive_rate) +
+       " false positives"},
+    {k:"suite", v:D.config.episodes*D.config.turns + " turns",
+     s:D.config.personas.length + " callers × " + D.config.episodes +
+       " conversations × " + D.config.turns + " turns, deterministic"}
+  ];
+  document.getElementById("headstat").innerHTML = stats.map(function(s){
+    return '<div><p class="k">'+esc(s.k)+'</p><div class="v">'+esc(s.v)+
+      '</div><p class="s">'+esc(s.s)+'</p></div>'; }).join("");
+  document.getElementById("rho-inline").textContent = "ρ = " + D.rho.toFixed(2);
+})();
+
+/* ---------- headline table ---------- */
+(function(){
+  var best = D.headline.reduce(function(a,b){
+    return b.panel_perceived > a.panel_perceived ? b : a; });
+  var head = '<thead><tr><th>policy</th>' +
+    '<th>panel:<br>perceived empathy</th><th>panel:<br>calibration</th>' +
+    '<th>conversation:<br>left-over distress</th><th>conversation:<br>fail rate</th>' +
+    '<th>calibration drift<br>pts / 10 turns</th></tr></thead>';
+  var body = D.headline.map(function(r){
+    var cls = r.agent === best.agent ? "bad" : (r.fail_rate === 0 ? "hi" : "");
+    return '<tr class="'+cls+'"><td class="name"><span class="dot" style="background:'+
+      agentColor(r.agent)+'"></span>'+esc(LABEL[r.agent])+'</td>'+
+      '<td>'+r.panel_perceived.toFixed(3)+'</td>'+
+      '<td>'+r.panel_calibration.toFixed(3)+'</td>'+
+      '<td>'+r.tail_load.toFixed(3)+'</td>'+
+      '<td>'+pct(r.fail_rate)+'</td>'+
+      '<td>'+(r.drift>=0?"+":"")+r.drift.toFixed(2)+'</td></tr>'; }).join("");
+  document.getElementById("headline").innerHTML = head+"<tbody>"+body+"</tbody>";
+})();
+
+/* ---------- shared chart helpers ---------- */
+function axes(W,H,pad,xmax,ymax,xlab,ylab,yfmt,xstep){
+  var s = "", i, x, y;
+  for(i=0;i<=4;i++){
+    y = pad.t + (H-pad.t-pad.b)*i/4;
+    s += '<line class="gridline" x1="'+pad.l+'" y1="'+y.toFixed(1)+'" x2="'+
+      (W-pad.r)+'" y2="'+y.toFixed(1)+'"/>';
+    s += '<text class="axis" x="'+(pad.l-8)+'" y="'+(y+3.5).toFixed(1)+
+      '" text-anchor="end">'+yfmt(ymax*(1-i/4))+'</text>';
+  }
+  for(i=0;i<=xmax;i+=xstep){
+    x = pad.l + (W-pad.l-pad.r)*i/xmax;
+    s += '<text class="axis" x="'+x.toFixed(1)+'" y="'+(H-pad.b+16)+
+      '" text-anchor="middle">'+i+'</text>';
+  }
+  s += '<text class="axlabel" x="'+(W-pad.r)+'" y="'+(H-6)+
+    '" text-anchor="end">'+xlab+'</text>';
+  s += '<text class="axlabel" x="'+pad.l+'" y="'+(pad.t-12)+'">'+ylab+'</text>';
+  return s;
+}
+/* Labels sitting on near-identical values collide; push them apart in y,
+   keeping the order they came in. */
+function dodge(ys, gap){
+  var idx = ys.map(function(y,i){ return {y:y, i:i}; });
+  idx.sort(function(a,b){ return a.y - b.y; });
+  for(var k=1;k<idx.length;k++){
+    if(idx[k].y - idx[k-1].y < gap) idx[k].y = idx[k-1].y + gap;
+  }
+  var out = new Array(ys.length);
+  idx.forEach(function(o){ out[o.i] = o.y; });
+  return out;
+}
+function path(vals,W,H,pad,ymax){
+  var n = vals.length, d = "", i, x, y;
+  for(i=0;i<n;i++){
+    x = pad.l + (W-pad.l-pad.r)*i/(n-1);
+    y = pad.t + (H-pad.t-pad.b)*(1 - vals[i]/ymax);
+    d += (i?"L":"M") + x.toFixed(1) + " " + y.toFixed(1);
+  }
+  return d;
+}
+
+/* ---------- conversation explorer ---------- */
+var curAgent = "mirror", curPersona = "hostile_escalation";
+function segButtons(host, items, cur, cb){
+  host.innerHTML = items.map(function(it){
+    return '<button type="button" data-v="'+esc(it.v)+'" aria-pressed="'+
+      (it.v===cur)+'">'+esc(it.t)+'</button>'; }).join("");
+  host.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    Array.prototype.forEach.call(host.querySelectorAll("button"), function(x){
+      x.setAttribute("aria-pressed", String(x===b)); });
+    cb(b.getAttribute("data-v"));
+  });
+}
+function drawTrace(){
+  var ep = D.episodes[curAgent + "|" + curPersona];
+  var W=940, H=300, pad={l:44,r:16,t:30,b:34};
+  var turns = ep.turns, n = turns.length;
+  var fmt2 = function(v){ return v.toFixed(2); };
+  var s = axes(W,H,pad,n-1,1,"turn","level",fmt2,5);
+  var series = [
+    {k:"d", c:"var(--alarm)", w:2.4},
+    {k:"p", c:"var(--amber)", w:1.6},
+    {k:"c", c:"var(--accent)", w:1.6}
+  ];
+  series.forEach(function(se){
+    var vals = turns.map(function(t){ return t[se.k]; });
+    s += '<path d="'+path(vals,W,H,pad,1)+'" fill="none" stroke="'+se.c+
+      '" stroke-width="'+se.w+'" stroke-linejoin="round"/>';
+  });
+  turns.forEach(function(t,i){
+    if(!t.nd) return;
+    var x = pad.l + (W-pad.l-pad.r)*i/(n-1);
+    s += '<line x1="'+x.toFixed(1)+'" y1="'+pad.t+'" x2="'+x.toFixed(1)+'" y2="'+
+      (H-pad.b)+'" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2 3" opacity=".55"/>';
+  });
+  document.getElementById("trace").innerHTML = s;
+
+  var rows = turns.map(function(t,i){
+    var ev = "";
+    if(t.sh) ev += '<span class="tag shock">new grievance</span>';
+    if(t.nd) ev += '<span class="tag req">"'+esc(t.nd.replace(/_/g," "))+'"</span>';
+    return '<tr><td>'+i+'</td><td>'+t.d.toFixed(2)+
+      '</td><td><span class="bar" style="width:'+(t.d*90).toFixed(0)+'px"></span></td>'+
+      '<td>'+t.p.toFixed(2)+'</td><td>'+t.c.toFixed(2)+'</td>'+
+      '<td>'+t.r.toFixed(2)+'</td><td class="ev">'+ev+'</td></tr>'; }).join("");
+  document.getElementById("log").innerHTML =
+    '<thead><tr><th>turn</th><th>distress</th><th></th><th>perceived</th>'+
+    '<th>calib</th><th>rate</th><th style="text-align:left">what the caller did</th>'+
+    '</tr></thead><tbody>'+rows+'</tbody>';
+
+  var last = turns[turns.length-1];
+  document.getElementById("verdict").innerHTML = ep.failed
+    ? '<b style="color:var(--alarm)">Conversation failed.</b> The caller is left '+
+      'carrying '+last.d.toFixed(2)+' of negative affect after '+n+' turns.'
+    : '<b style="color:var(--accent)">Conversation held.</b> The caller is left '+
+      'carrying '+last.d.toFixed(2)+' of negative affect after '+n+' turns.';
+}
+segButtons(document.getElementById("pick-agent"),
+  AGENTS.map(function(a){ return {v:a, t:LABEL[a]}; }), curAgent,
+  function(v){ curAgent = v; drawTrace(); });
+segButtons(document.getElementById("pick-persona"),
+  D.config.personas.map(function(p){ return {v:p, t:PLABEL[p]||p}; }), curPersona,
+  function(v){ curPersona = v; drawTrace(); });
+drawTrace();
+
+/* ---------- uptake curves ---------- */
+(function(){
+  var W=940, H=300, pad={l:44,r:120,t:30,b:34};
+  var s = axes(W,H,pad,25,1,"turns since the request","compliance",
+    function(v){return v.toFixed(2);},5);
+  var curves = AGENTS.map(function(a){
+    return D.uptake[a].curve.map(function(v){ return v===null ? 0 : v; }); });
+  curves.forEach(function(c,i){
+    s += '<path d="'+path(c,W,H,pad,1)+'" fill="none" stroke="'+
+      agentColor(AGENTS[i])+'" stroke-width="2" stroke-linejoin="round"/>';
+  });
+  var ends = curves.map(function(c){
+    return pad.t + (H-pad.t-pad.b)*(1-c[c.length-1]); });
+  var placed = dodge(ends, 13);
+  AGENTS.forEach(function(a,i){
+    if(Math.abs(placed[i]-ends[i]) > 1){
+      s += '<line x1="'+(W-pad.r+2)+'" y1="'+ends[i].toFixed(1)+'" x2="'+
+        (W-pad.r+8)+'" y2="'+placed[i].toFixed(1)+'" stroke="'+agentColor(a)+
+        '" stroke-width="1" opacity=".5"/>';
+    }
+    s += '<text class="axis" x="'+(W-pad.r+11)+'" y="'+(placed[i]+3.5).toFixed(1)+
+      '" fill="'+agentColor(a)+'">'+LABEL[a]+'</text>';
+  });
+  var d1 = D.uptake.drifter.curve[0], d20 = D.uptake.drifter.curve[19];
+  s += '<text class="axis" x="'+(pad.l+8)+'" y="'+(H-pad.b-10)+
+    '" fill="var(--violet)">drifter: '+pct(d1)+' → '+pct(d20)+' by turn 20</text>';
+  document.getElementById("uptake").innerHTML = s;
+})();
+
+/* ---------- mimicry / regulation scatter ---------- */
+(function(){
+  var W=940, H=380, pad={l:60,r:30,t:34,b:46};
+  var xs = D.headline.map(function(r){return r.mimicry;});
+  var ys = D.headline.map(function(r){return r.regulation;});
+  var xmin=-1, xmax=0.6, ymin=Math.min(-2, Math.min.apply(null,ys)-.5),
+      ymax=Math.max.apply(null,ys)+.7;
+  function px(v){ return pad.l + (W-pad.l-pad.r)*(v-xmin)/(xmax-xmin); }
+  function py(v){ return pad.t + (H-pad.t-pad.b)*(1-(v-ymin)/(ymax-ymin)); }
+  var s = "", i, v;
+  for(i=0;i<=4;i++){
+    v = ymin + (ymax-ymin)*i/4;
+    s += '<line class="gridline" x1="'+pad.l+'" y1="'+py(v).toFixed(1)+'" x2="'+
+      (W-pad.r)+'" y2="'+py(v).toFixed(1)+'"/>';
+    s += '<text class="axis" x="'+(pad.l-8)+'" y="'+(py(v)+3.5).toFixed(1)+
+      '" text-anchor="end">'+v.toFixed(1)+'</text>';
+  }
+  for(v=-1; v<=0.6001; v+=0.4){
+    s += '<text class="axis" x="'+px(v).toFixed(1)+'" y="'+(H-pad.b+16)+
+      '" text-anchor="middle">'+(v>0?"+":"")+v.toFixed(1)+'</text>';
+  }
+  s += '<line x1="'+px(0)+'" y1="'+pad.t+'" x2="'+px(0)+'" y2="'+(H-pad.b)+
+    '" stroke="var(--rule-2)" stroke-width="1"/>';
+  s += '<line x1="'+pad.l+'" y1="'+py(0).toFixed(1)+'" x2="'+(W-pad.r)+'" y2="'+
+    py(0).toFixed(1)+'" stroke="var(--rule-2)" stroke-width="1"/>';
+  s += '<text class="axlabel" x="'+(W-pad.r)+'" y="'+(H-8)+
+    '" text-anchor="end">mimicry — correlation with the caller\'s vocal energy</text>';
+  s += '<text class="axlabel" x="'+pad.l+'" y="'+(pad.t-14)+
+    '">regulation — negative affect removed per turn</text>';
+  s += '<text class="axis" x="'+px(-0.98)+'" y="'+(H-pad.b-9)+
+    '" fill="var(--faint)">← counter-moves the caller</text>';
+  s += '<text class="axis" x="'+px(0.55)+'" y="'+(H-pad.b-9)+
+    '" text-anchor="end" fill="var(--faint)">echoes the caller →</text>';
+  var lab = dodge(D.headline.map(function(r){ return py(r.regulation); }), 15);
+  D.headline.forEach(function(r,i){
+    var x=px(r.mimicry), y=py(r.regulation);
+    s += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="7" fill="'+
+      agentColor(r.agent)+'"/>';
+    if(Math.abs(lab[i]-y) > 1){
+      s += '<line x1="'+(x+8).toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+
+        (x+14).toFixed(1)+'" y2="'+lab[i].toFixed(1)+'" stroke="'+
+        agentColor(r.agent)+'" stroke-width="1" opacity=".55"/>';
+    }
+    s += '<text class="axis" x="'+(x+17).toFixed(1)+'" y="'+(lab[i]+4).toFixed(1)+
+      '" fill="var(--ink-2)" style="font-size:12px">'+LABEL[r.agent]+'</text>';
+  });
+  document.getElementById("scatter").innerHTML = s;
+})();
+
+/* ---------- corrupted feedback ---------- */
+(function(){
+  var head = '<thead><tr><th>policy</th><th>clean</th><th>20% corrupted</th>'+
+    '<th>40% corrupted</th><th>drop</th></tr></thead>';
+  var body = D.corrupted.map(function(r){
+    var drop = 100*(r.c40 - r.clean);
+    return '<tr><td class="name"><span class="dot" style="background:'+
+      agentColor(r.agent)+'"></span>'+esc(LABEL[r.agent])+'</td>'+
+      '<td>'+r.clean.toFixed(2)+'</td><td>'+r.c20.toFixed(2)+'</td>'+
+      '<td>'+r.c40.toFixed(2)+'</td><td>'+drop.toFixed(1)+' pts</td></tr>'; }).join("");
+  document.getElementById("corrupted").innerHTML = head+"<tbody>"+body+"</tbody>";
+})();
+
+/* ---------- onset localization ---------- */
+var curSev = 0;
+function drawOnset(){
+  var sw = D.localization[curSev], ex = sw.example;
+  var W=940, H=250, pad={l:44,r:16,t:34,b:34};
+  var sc = ex.scores, n = sc.length;
+  var ymax = Math.max.apply(null, sc) * 1.12;
+  var s = "", i;
+  for(i=0;i<=3;i++){
+    var y = pad.t + (H-pad.t-pad.b)*i/3;
+    s += '<line class="gridline" x1="'+pad.l+'" y1="'+y.toFixed(1)+'" x2="'+
+      (W-pad.r)+'" y2="'+y.toFixed(1)+'"/>';
+    s += '<text class="axis" x="'+(pad.l-8)+'" y="'+(y+3.5).toFixed(1)+
+      '" text-anchor="end">'+(ymax*(1-i/3)).toFixed(1)+'</text>';
+  }
+  var bw = (W-pad.l-pad.r)/n;
+  sc.forEach(function(v,i){
+    var h = (H-pad.t-pad.b)*v/ymax;
+    var isFault = (i === ex.true);
+    s += '<rect x="'+(pad.l+i*bw+1).toFixed(1)+'" y="'+(H-pad.b-h).toFixed(1)+
+      '" width="'+(bw-2).toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+
+      (isFault ? "var(--alarm)" : "var(--rule-2)")+'" rx="1"/>';
+  });
+  for(i=0;i<n;i+=5){
+    s += '<text class="axis" x="'+(pad.l+i*bw+bw/2).toFixed(1)+'" y="'+(H-pad.b+16)+
+      '" text-anchor="middle">'+i+'</text>';
+  }
+  var fx = pad.l + ex.true*bw + bw/2;
+  s += '<text class="axis" x="'+fx.toFixed(1)+'" y="'+(pad.t-12)+
+    '" text-anchor="middle" fill="var(--alarm)" style="font-size:11px">'+
+    'fault injected at turn '+ex.true+' · predicted '+ex.predicted+'</text>';
+  s += '<text class="axlabel" x="'+(W-pad.r)+'" y="'+(H-4)+
+    '" text-anchor="end">turn</text>';
+  s += '<text class="axlabel" x="'+pad.l+'" y="'+(pad.t-12)+'">anomaly score</text>';
+  document.getElementById("onset").innerHTML = s;
+
+  var head = '<thead><tr><th>fault severity</th><th>conversations</th>'+
+    '<th>top-1 (±1 turn)</th><th>top-3</th><th>false positives<br>on healthy runs</th>'+
+    '</tr></thead>';
+  var body = D.localization.map(function(r,i){
+    return '<tr class="'+(i===curSev?"hi":"")+'"><td class="name">'+
+      r.severity.toFixed(2)+(r.severity===1?" — full reversion":
+        (r.severity===0.35?" — blended, realistic":""))+'</td>'+
+      '<td>'+r.n+'</td><td>'+pct(r.top1)+'</td><td>'+pct(r.top3)+'</td>'+
+      '<td>'+pct(D.false_positive_rate)+'</td></tr>'; }).join("");
+  document.getElementById("sweep").innerHTML = head+"<tbody>"+body+"</tbody>";
+}
+segButtons(document.getElementById("pick-sev"),
+  D.localization.map(function(r,i){ return {v:String(i), t:r.severity.toFixed(2)}; }),
+  "0", function(v){ curSev = parseInt(v,10); drawOnset(); });
+drawOnset();
+
+/* ---------- power calculator ---------- */
+(function(){
+  var Z = 1.959964 + 0.841621;
+  var sb = D.power.sigma_between;
+  function mde(n, r, rs){
+    var eff = Math.sqrt(sb*sb + (rs*rs)/r);
+    return Z * eff * Math.sqrt(2/n);
+  }
+  function reqN(target, r, rs){
+    var eff = Math.sqrt(sb*sb + (rs*rs)/r);
+    return Math.ceil(2 * Math.pow(Z*eff/target, 2));
+  }
+  var fn=document.getElementById("f-n"), fr=document.getElementById("f-r"),
+      fs=document.getElementById("f-s");
+  function update(){
+    var n=+fn.value, r=+fr.value, rs=+fs.value;
+    document.getElementById("v-n").textContent = n;
+    document.getElementById("v-r").textContent = r;
+    document.getElementById("v-s").textContent = rs.toFixed(2);
+    document.getElementById("v-mde").textContent = mde(n,r,rs).toFixed(2);
+
+    var Ns=[30,100,300,1000];
+    var head = '<thead><tr><th>raters / conversation</th>'+Ns.map(function(x){
+      return '<th>N = '+x+'</th>'; }).join("")+'</tr></thead>';
+    var body = [1,3,5,10].map(function(rr){
+      return '<tr'+(rr===r?' class="hi"':'')+'><td class="name">'+rr+'</td>'+
+        Ns.map(function(x){ return '<td>'+mde(x,rr,rs).toFixed(2)+'</td>'; }).join("")+
+        '</tr>'; }).join("");
+    document.getElementById("powertable").innerHTML = head+"<tbody>"+body+"</tbody>"+
+      '<caption style="caption-side:bottom; text-align:left; padding-top:10px; '+
+      'font-size:13px; color:var(--muted); font-family:\'IBM Plex Sans\',sans-serif">'+
+      'Cells are the smallest true regression, in Likert points, the suite can '+
+      'detect at 80% power.</caption>';
+
+    document.getElementById("power-note").innerHTML =
+      'Measured between-conversation spread for this suite is <b class="mono">'+
+      sb.toFixed(2)+'</b> Likert points. At your current settings, catching a '+
+      '0.20-point regression would need <b class="mono">N = '+reqN(0.2,r,rs)+
+      '</b> conversations per arm; a 0.50-point one needs <b class="mono">N = '+
+      reqN(0.5,r,rs)+'</b>.';
+  }
+  [fn,fr,fs].forEach(function(el){ el.addEventListener("input", update); });
+  update();
+})();
+})();
+</script>
