@@ -19,6 +19,7 @@ import plotly.graph_objects as go
 
 from voicehaul.bands import BANDS, COLOURS, describe
 from voicehaul.config import SuiteConfig
+from voicehaul.cost import CostModel, estimate as cost_estimate
 from voicehaul.env import PERSONAS
 from voicehaul.gate import compare
 from voicehaul import metrics as M
@@ -403,6 +404,86 @@ def tabs_map():
          'border-top:1px solid #e4ebe9;color:#3a4b49">{o}</td></tr>'
          ).format(t=t, i=i, o=o) for t, i, o in _TABS)
     return TABS_MAP.format(rows=rows)
+
+
+
+def _money(x):
+    return "${:,.0f}".format(x)
+
+
+def run_cost(target, cost_human, cost_judge, releases, raters, episodes):
+    """Turn the measured statistics into a number a budget holder can act on."""
+    eps = [run_episode(get_policy("calibrated"), PERSONAS[i % len(PERSONAS)],
+                       seed=i, n_turns=40) for i in range(int(episodes))]
+    sb = M.stdev([1.0 + 6.0 * e.mean_perceived for e in eps])
+
+    ks = [k for k in (5, 10, 20, 40) if k <= len(eps)]
+    coverage = 1.0
+    if ks:
+        k = ks[len(ks) // 2]
+        eq = equivalent_budget(eps, k)
+        if eq:
+            coverage = max(0.2, min(1.0, float(k) / eq))
+
+    model = CostModel(cost_per_human_rating=float(cost_human),
+                      cost_per_judge_rating=float(cost_judge),
+                      releases_per_year=int(releases),
+                      raters_per_conversation=int(raters))
+
+    ratios = {"perceived empathy": 0.29, "did it actually help": 0.01}
+    if SUB:
+        for r in SUB["rows"]:
+            if r["segment"] == "all":
+                nice = ("perceived empathy" if r["dimension"] == "perceived_empathy"
+                        else "did it actually help")
+                ratios[nice] = r["ratio_estimated"]
+
+    rows = ""
+    for name, ratio in ratios.items():
+        plain = cost_estimate(float(target), sb, 0.9, ratio, model, 1.0)
+        picked = cost_estimate(float(target), sb, 0.9, ratio, model, coverage)
+        col = ACCENT if picked.saving_per_year > 0 else ALARM
+        rows += (
+            '<tr><td style="padding:.55rem .7rem;border-bottom:1px solid #dbe3e1">'
+            '{n}<div style="font-size:.75rem;color:#8b9d99">1 judge rating = '
+            '{r:.2f} human</div></td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1">{c}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1">{b}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1">{w}</td>'
+            '<td style="padding:.55rem .7rem;text-align:right;border-bottom:1px solid #dbe3e1;'
+            'color:{col};font-weight:500">{y}</td></tr>'
+        ).format(n=name, r=ratio, c=plain.conversations,
+                 b=_money(plain.cost_baseline), w=_money(picked.cost_with_judge),
+                 y=_money(picked.saving_per_year), col=col)
+
+    worst = min(ratios.values())
+    verdict = cost_estimate(float(target), sb, 0.9, worst, model, coverage)
+
+    head = "".join(
+        '<th style="text-align:{a};padding:0 .7rem .5rem;font-size:.64rem;'
+        'letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;'
+        'border-bottom:1px solid #c6d2cf;font-weight:500">{h}</th>'.format(
+            a="left" if i == 0 else "right", h=h)
+        for i, h in enumerate(["dimension", "conversations",
+                               "panel only, per release",
+                               "with judge + selection", "saved per year"]))
+
+    table = ('<div style="overflow-x:auto"><table style="border-collapse:collapse;'
+             'width:100%;font-family:IBM Plex Mono,monospace;font-size:.86rem;'
+             'font-variant-numeric:tabular-nums"><tr>{}</tr>{}</table></div>'
+             ).format(head, rows)
+
+    note = ("**Read the bottom row first.** On whether a turn actually helped, "
+            "the judge is worth {r:.2f} human ratings - below the {f:.2f} floor "
+            "where substitution stops being honest. The saving there is **zero**, "
+            "and that is the finding: this is the dimension a voice team most "
+            "needs and the one an automated rater cannot cover.\n\n"
+            "{note}\n\n"
+            "Diversity selection independently cuts the conversation count to "
+            "**{cov:.0%}** of a random sample for the same coverage of "
+            "caller-state space, which applies whether or not a judge is in the "
+            "loop.").format(r=worst, f=0.25, note=verdict.note, cov=coverage)
+    return table, note
 
 
 VERDICT_STYLE = {
@@ -1059,6 +1140,31 @@ with gr.Blocks(css=CSS, title="VoiceHaul",
             _b0 = run_budget(100, 3, 0.9, 40)
             b_plot = gr.Plot(value=_b0[0])
             b_md = gr.Markdown(value=_b0[1])
+
+            gr.Markdown(
+                "---\n### What that costs\n\n"
+                "A statistic is not a decision until it has a price on it. "
+                "Enter what a rating costs you and the same measurements become "
+                "a line in a budget. Nothing below is estimated that is not "
+                "measured above.")
+            with gr.Row():
+                k_target = gr.Slider(0.05, 0.60, 0.20, step=0.05,
+                                     label="regression you want to catch (Likert)")
+                k_ch = gr.Slider(0.25, 12.0, 3.0, step=0.25,
+                                 label="cost of one human rating ($)")
+                k_cj = gr.Slider(0.001, 0.20, 0.01, step=0.001,
+                                 label="cost of one judge rating ($)")
+            with gr.Row():
+                k_rel = gr.Slider(1, 52, 12, step=1, label="releases per year")
+                k_r = gr.Slider(1, 10, 3, step=1, label="raters per conversation")
+                k_ep = gr.Slider(20, 60, 40, step=10,
+                                 label="suite size used to measure the spread")
+            k_btn = gr.Button("Price it", variant="primary")
+            _k0 = run_cost(0.20, 3.0, 0.01, 12, 3, 40)
+            k_tbl = gr.HTML(value=_k0[0])
+            k_md = gr.Markdown(value=_k0[1])
+            k_btn.click(run_cost, [k_target, k_ch, k_cj, k_rel, k_r, k_ep],
+                        [k_tbl, k_md])
             b_btn.click(run_budget, [b_n, b_r, b_sd, b_ep], [b_plot, b_md])
 
         with gr.Tab("How to read the numbers"):
