@@ -4,9 +4,8 @@ emoji: 🎚️
 colorFrom: green
 colorTo: gray
 sdk: gradio
-sdk_version: 6.26.0
+sdk_version: 5.49.1
 app_file: app.py
-hardware: zero-a10g
 pinned: false
 license: apache-2.0
 short_description: Long-horizon evaluation and judge substitution for voice AI

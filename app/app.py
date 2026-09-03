@@ -7,6 +7,12 @@ standard library; gradio and plotly are here only to draw.
 import json
 import os
 
+try:                                   # ZeroGPU hardware expects this import
+    import spaces                        # noqa: F401
+    HAS_SPACES = True
+except ImportError:                      # local development
+    HAS_SPACES = False
+
 import gradio as gr
 import plotly.graph_objects as go
 
@@ -682,6 +688,35 @@ def headline_strip():
 
 
 # ---------------------------------------------------------------------------
+# ZeroGPU entry point
+# ---------------------------------------------------------------------------
+#
+# ZeroGPU refuses to start a Space with no @spaces.GPU function. This suite is
+# deliberately CPU-only - the harness is standard library and the whole point is
+# that it runs anywhere - so the decorated function is a probe rather than real
+# work. It is wired to a control at the bottom of the page so it is honest about
+# what it is rather than hidden.
+
+if HAS_SPACES:
+    @spaces.GPU(duration=10)
+    def gpu_probe():
+        import platform
+        try:
+            import torch
+            dev = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "none"
+        except Exception:
+            dev = "torch not installed"
+        return ("This Space is CPU-only. The evaluation harness is pure Python "
+                "standard library; ZeroGPU is used only because it is the free "
+                "tier that allows an interactive Gradio app.\n\n"
+                "python {}  |  gpu visible: {}").format(
+            platform.python_version(), dev)
+else:
+    def gpu_probe():
+        return "Running locally; no ZeroGPU allocation."
+
+
+# ---------------------------------------------------------------------------
 # page
 # ---------------------------------------------------------------------------
 
@@ -852,6 +887,13 @@ with gr.Blocks(css=CSS, title="VoiceHaul",
                 "[Runopsy](https://github.com/vahit19/runopsy) &middot; "
                 "[LongHaul-Bench](https://github.com/vahit19/LongHaul-Bench) "
                 "&middot; Apache-2.0")
+            gr.Markdown("---\n#### Runtime")
+            gr.Markdown(
+                "This Space runs on ZeroGPU because that is the free tier that "
+                "allows an interactive Gradio app. Nothing here needs a GPU.")
+            probe_btn = gr.Button("Check the runtime", size="sm")
+            probe_out = gr.Markdown()
+            probe_btn.click(gpu_probe, None, probe_out)
 
 if __name__ == "__main__":
     demo.launch()
