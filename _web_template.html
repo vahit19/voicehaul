@@ -204,6 +204,20 @@ input[type=range]{width:100%; accent-color:var(--accent)}
 .qb p{font-size:14.5px; color:var(--ink-2); margin:0 0 9px}
 .qt{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.09em;
   text-transform:uppercase; color:var(--accent) !important; margin:12px 0 0 !important}
+table.vh{border-collapse:collapse;width:100%;font-size:14px;
+  font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+table.vh th{font-size:10.5px;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--faint);text-align:right;
+  padding:0 10px 8px;border-bottom:1px solid var(--rule-2);vertical-align:bottom;
+  line-height:1.35}
+table.vh th:first-child,table.vh td:first-child{text-align:left;padding-left:0}
+table.vh td{padding:9px 10px;border-bottom:1px solid var(--rule);text-align:right}
+table.vh tbody tr:last-child td{border-bottom:0}
+table.vh td.nm{font-family:"IBM Plex Sans",sans-serif;font-weight:500;
+  white-space:nowrap}
+table.vh tr.bad td{background:var(--alarm-soft)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;
+  margin:22px 0}
 footer{margin-top:56px; padding-top:22px; border-top:1px solid var(--rule);
   font-size:14px; color:var(--muted)}
 
@@ -236,6 +250,7 @@ footer{margin-top:56px; padding-top:22px; border-top:1px solid var(--rule);
   <div class="links">
     <a href="https://github.com/vahit19/voicehaul">Source on GitHub</a>
     <a href="https://colab.research.google.com/github/vahit19/voicehaul/blob/main/VoiceHaul_demo.ipynb">Run it in Colab</a>
+    <a href="#substitution">Judge substitution</a>
     <a href="#programme">The research programme</a>
     <a class="pill-x" href="#honest">What's simulated</a>
   </div>
@@ -484,6 +499,101 @@ footer{margin-top:56px; padding-top:22px; border-top:1px solid var(--rule);
   </div>
 </section>
 
+
+
+<div class="ruler"></div>
+
+<section id="substitution">
+  <div class="col">
+    <p class="eyebrow">The commercial question</p>
+    <h2>When can an automated rater replace a human one?</h2>
+    <p>A human panel is the trusted measurement and the dominant cost line. An
+    LLM judge is cheap and of unknown trustworthiness. Every voice-evaluation
+    contract runs into the same question, and the honest answer today is
+    &ldquo;sometimes, and we cannot tell you when&rdquo;.</p>
+    <p>That answer is not one number. It is a number <i>per dimension</i> and
+    <i>per caller segment</i>: a judge can track how empathic a turn sounds and
+    be near-blind to whether it actually helped.</p>
+  </div>
+
+  <div class="panel scroll">
+    <table class="vh">
+      <thead><tr><th>dimension</th><th>n</th><th>judge &rho;<br>estimated</th>
+      <th>1 judge rating<br>= N human</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">perceived empathy</td><td>160</td>
+            <td>0.18</td><td>0.29</td>
+            <td style="color:var(--amber)">supplement</td></tr>
+        <tr class="bad"><td class="nm">did it actually help</td><td>160</td>
+            <td>0.01</td><td>0.01</td>
+            <td>human only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <div class="callout">
+      <p style="margin:0">A single agreement figure would have reported
+      <b>0.18</b> and hidden a twenty-fold spread across segments. On
+      whether a turn actually helped, the judge scores <b>0.00</b> with hostile
+      callers &mdash; blind precisely on the calls that generate escalations.</p>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="panel scroll">
+      <p class="eyebrow">perceived empathy, by caller</p>
+      <table class="vh"><thead><tr><th>caller</th><th>judge &rho;</th>
+      <th>= N human</th></tr></thead><tbody><tr><td class="nm">confused elderly</td><td>0.07</td><td>0.04</td></tr><tr><td class="nm">distressed billing</td><td>0.16</td><td>0.11</td></tr><tr><td class="nm">hostile escalation</td><td>0.14</td><td>0.21</td></tr><tr><td class="nm">cautious optimist</td><td>0.20</td><td>0.28</td></tr><tr><td class="nm">grieving claim</td><td>0.37</td><td>1.56</td></tr></tbody></table>
+    </div>
+    <div class="panel scroll">
+      <p class="eyebrow">did it actually help, by caller</p>
+      <table class="vh"><thead><tr><th>caller</th><th>judge &rho;</th>
+      <th>= N human</th></tr></thead><tbody><tr><td class="nm">hostile escalation</td><td>0.00</td><td>0.00</td></tr><tr><td class="nm">distressed billing</td><td>0.01</td><td>0.00</td></tr><tr><td class="nm">grieving claim</td><td>0.01</td><td>0.00</td></tr><tr><td class="nm">confused elderly</td><td>0.02</td><td>0.01</td></tr><tr><td class="nm">cautious optimist</td><td>0.05</td><td>0.01</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <div class="col">
+    <h3>The method</h3>
+    <p>Standard psychometrics, not a new idea. The reliability of one human
+    rating, the Spearman&ndash;Brown formula for a panel of <i>k</i>, and the
+    correlation between judge and consensus corrected for that
+    consensus&rsquo;s own unreliability. Inverting Spearman&ndash;Brown gives
+    the substitution ratio:</p>
+    <p style="text-align:center;font-family:'IBM Plex Mono',monospace;
+       font-size:15px;margin:18px 0">k* = &rho;<sub>g</sub>(1 &minus;
+       &rho;<sub>h</sub>) / [&rho;<sub>h</sub>(1 &minus;
+       &rho;<sub>g</sub>)]</p>
+
+    <h3>The estimator is validated &mdash; which real data cannot do</h3>
+    <p>A customer estimates the judge&rsquo;s reliability by correlating it
+    against a human consensus and dividing out that consensus&rsquo;s
+    unreliability. Whether that estimate is <i>right</i> is unknowable in the
+    field: both measurements carry error and neither is the reference. Here the
+    latent quality is known by construction.</p>
+  </div>
+
+  <div class="panel scroll">
+    <table class="vh">
+      <thead><tr><th>dimension</th>
+      <th>estimated &rho;<br>what a customer computes</th>
+      <th>true &rho;<br>known here</th><th>error</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">perceived empathy</td><td>0.178</td>
+            <td>0.189</td><td>-0.011</td></tr>
+        <tr><td class="nm">did it actually help</td><td>0.014</td>
+            <td>0.016</td><td>-0.002</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p class="note">Note what does not go away: estimating the judge&rsquo;s
+    reliability <i>requires</i> human ratings, and the estimate expires whenever
+    the judge model, the domain or the rubric changes. This is a recurring
+    measurement, not a setting.</p>
+  </div>
+</section>
 
 <div class="ruler"></div>
 
