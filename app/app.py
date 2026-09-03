@@ -5,6 +5,7 @@ standard library; gradio and plotly are here only to draw.
 """
 
 import json
+import math
 import os
 
 try:                                   # ZeroGPU hardware expects this import
@@ -600,13 +601,40 @@ def substitution_figs():
         pts = pairs.get(dim, [])
         if not pts:
             continue
+        xs = [p["theta"] for p in pts]
         for key, color, name in (("panel", ACCENT, "human panel"),
                                  ("judge", ALARM, "LLM judge")):
+            ys = [p[key] for p in pts]
             scatter.add_trace(go.Scatter(
-                x=[p["theta"] for p in pts], y=[p[key] for p in pts],
-                mode="markers", name="{} - {}".format(name, dim.replace("_", " ")),
-                marker=dict(size=6, color=color, opacity=0.45,
-                            symbol="circle" if dash is None else "x")))
+                x=xs, y=ys, mode="markers", name=name,
+                marker=dict(size=6, color=color, opacity=0.40)))
+            # Least-squares line plus the spread around it. Both raters point
+            # the same way on average - the judge is not backwards - so slope
+            # alone would be a misleading picture. What separates them is the
+            # scatter, and scatter is what reliability measures.
+            n = len(xs)
+            if n >= 3:
+                mx = sum(xs) / n
+                my = sum(ys) / n
+                num = sum((xs[i] - mx) * (ys[i] - my) for i in range(n))
+                den = sum((xs[i] - mx) ** 2 for i in range(n))
+                if den > 0:
+                    b = num / den
+                    a = my - b * mx
+                    resid = [ys[i] - (a + b * xs[i]) for i in range(n)]
+                    sd = math.sqrt(sum(r * r for r in resid) / max(1, n - 2))
+                    lo, hi = min(xs), max(xs)
+                    scatter.add_trace(go.Scatter(
+                        x=[lo, hi, hi, lo], y=[a + b * lo - sd, a + b * hi - sd,
+                                               a + b * hi + sd, a + b * lo + sd],
+                        fill="toself", mode="lines", showlegend=False,
+                        line=dict(width=0), fillcolor=color, opacity=0.10,
+                        hoverinfo="skip"))
+                    scatter.add_trace(go.Scatter(
+                        x=[lo, hi], y=[a + b * lo, a + b * hi], mode="lines",
+                        name="{}: slope {:+.1f}, spread &plusmn;{:.1f}".format(
+                            name, b, sd),
+                        line=dict(color=color, width=3)))
         break   # one dimension keeps the picture readable
 
     bars = base_fig(340, "human ratings one judge rating is worth", "")
@@ -754,9 +782,14 @@ with gr.Blocks(css=CSS, title="VoiceHaul",
             if s_scatter is not None:
                 gr.Markdown(
                     "Each dot is one turn. Horizontal axis: the quality the turn "
-                    "actually had. Vertical: what each rater said. A rater that "
-                    "tracks quality makes a diagonal cloud; one that does not "
-                    "makes a horizontal band.")
+                    "actually had; vertical: what each rater said. The shaded "
+                    "band is one standard deviation around each fit.\n\n"
+                    "**Both lines slope the same way** &mdash; the judge is not "
+                    "backwards, it points in the right direction on average. What "
+                    "separates them is the spread around the line, and that is "
+                    "exactly what reliability measures. A rater can be unbiased "
+                    "and still be useless for deciding anything about a single "
+                    "call.")
                 gr.Plot(value=s_scatter)
                 gr.Markdown("**And how far the answer moves between segments.** "
                             "Anything left of the dashed line cannot substitute.")
