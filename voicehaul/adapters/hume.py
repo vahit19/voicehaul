@@ -9,6 +9,7 @@ from typing import Dict, List, Optional
 
 from ..affect import Affect
 from ..env import Action
+from .audio import ExpressionSource, TranscriptSource
 
 
 class HumeExpressionMeasurement:

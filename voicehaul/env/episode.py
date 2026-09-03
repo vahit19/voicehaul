@@ -20,6 +20,9 @@ class Turn:
     perceived: float = 0.0
     shock: float = 0.0
     faulted: bool = False
+    #: What was actually said, when a real model is under test.
+    utterance: str = ""
+    reply: str = ""
 
 
 @dataclass

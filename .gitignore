@@ -10,3 +10,5 @@ dist/
 .venv/
 artifacts/inspect-logs/
 logs/
+.voicehaul-cache/
+llm_gate.log

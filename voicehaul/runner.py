@@ -5,6 +5,7 @@ from typing import List, Optional
 
 from .policies import VoicePolicy
 from .env import (Action, DIRECTIVES, Episode, Persona, Turn, apply_shock,
+                  caller_utterance,
                   calibration, maybe_directive, perceived_empathy, satisfies,
                   step_user)
 
@@ -37,9 +38,21 @@ def run_episode(policy: VoicePolicy, persona: Persona, seed: int, n_turns: int =
     user = persona.start
     standing: List[str] = []
     streak = 0
+    _last_action = Action()
+    _last_said = None
 
     for t in range(n_turns):
         user, shock = apply_shock(user, persona, rng)
+
+        # A directive is decided before the turn is spoken, so the caller can
+        # voice it and a real model has to pick it up from the conversation
+        # rather than from an out-of-band signal.
+        pending = maybe_directive(user, _last_action, persona, standing, rng)
+        said = caller_utterance(persona, user, t, pending, shock > 0, rng,
+                                last=_last_said)
+        _last_said = said
+        if hasattr(policy, "hear"):
+            policy.hear(said)
 
         action = policy.act(user, t)
         faulted = fault_turn is not None and t >= fault_turn
@@ -54,7 +67,7 @@ def run_episode(policy: VoicePolicy, persona: Persona, seed: int, n_turns: int =
         streak = streak + 1 if cal < 0.58 else 0
         nxt = step_user(user, action, persona, cal, streak, standing, rng)
 
-        new_d = maybe_directive(user, action, persona, standing, rng)
+        new_d = pending
         if new_d is not None:
             standing.append(new_d)
             delivered = new_d
@@ -67,8 +80,11 @@ def run_episode(policy: VoicePolicy, persona: Persona, seed: int, n_turns: int =
                              user_after=nxt, calibration=cal,
                              standing_directives=list(standing),
                              new_directive=new_d, directive_violated=violated,
-                             perceived=perc, shock=shock, faulted=faulted))
+                             perceived=perc, shock=shock, faulted=faulted,
+                             utterance=said,
+                             reply=getattr(policy, "_last_reply", "")))
         user = nxt
+        _last_action = action
 
     return ep
 

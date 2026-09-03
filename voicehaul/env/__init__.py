@@ -11,10 +11,12 @@ from .dynamics import apply_shock, maybe_directive, step_user
 from .episode import Episode, Turn
 from .personas import PERSONAS, Persona
 from .scoring import calibration, ideal_action, perceived_empathy
+from .utterance import caller_utterance
 
 __all__ = [
     "Action", "DIRECTIVES", "constrain", "satisfies",
     "apply_shock", "maybe_directive", "step_user",
     "Episode", "Turn", "PERSONAS", "Persona",
     "calibration", "ideal_action", "perceived_empathy",
+    "caller_utterance",
 ]
