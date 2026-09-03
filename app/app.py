@@ -4,9 +4,12 @@ Everything on this page is computed when you load it. The harness is pure
 standard library; gradio and plotly are here only to draw.
 """
 
+import csv
+import io
 import json
 import math
 import os
+import tempfile
 
 try:                                   # ZeroGPU hardware expects this import
     import spaces                        # noqa: F401
@@ -486,6 +489,77 @@ def run_cost(target, cost_human, cost_judge, releases, raters, episodes):
     return table, note
 
 
+
+OUT_DIR = os.path.join(tempfile.gettempdir(), "voicehaul-exports")
+
+
+def _write(name, text):
+    os.makedirs(OUT_DIR, exist_ok=True)
+    path = os.path.join(OUT_DIR, name)
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        fh.write(text)
+    return path
+
+
+def gate_artifacts(rep, cfg):
+    """The three surfaces of one report, as files.
+
+    JSON is the one that matters in a pipeline - a CI job reads `verdict` and
+    promotes or blocks. Markdown goes in the pull request. The CSV is the raw
+    per-conversation rows, so a team can check the statistics rather than trust
+    them.
+    """
+    from voicehaul.report import render_json, render_markdown
+
+    stem = "voicehaul-{}-vs-{}-{}".format(
+        rep.baseline_name, rep.candidate_name, cfg.suite_id)
+    paths = [_write(stem + ".json", render_json(rep)),
+             _write(stem + ".md", render_markdown(rep))]
+
+    rows = [["dimension", "kind", "gating", "baseline", "candidate", "delta",
+             "ci95_low", "ci95_high", "p_raw", "p_holm", "verdict",
+             "n_baseline", "n_candidate"]]
+    for d in rep.dimensions:
+        rows.append([d.name,
+                     "panel" if d.name.startswith("panel:") else "conversation",
+                     rep.gating.get(d.name, True), round(d.baseline, 6),
+                     round(d.candidate, 6), round(d.delta, 6),
+                     round(d.ci[0], 6), round(d.ci[1], 6), round(d.p, 8),
+                     round(d.p_holm, 8), d.verdict, d.n_baseline, d.n_candidate])
+    buf = io.StringIO()
+    csv.writer(buf).writerows(rows)
+    paths.append(_write(stem + ".csv", buf.getvalue()))
+    return paths
+
+
+CI_SNIPPET = """<div style="font-family:'IBM Plex Sans',system-ui,sans-serif">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:.64rem;
+ letter-spacing:.13em;text-transform:uppercase;color:#8b9d99;
+ margin-bottom:.5rem">put it in a pipeline</div>
+<p style="font-size:.88rem;color:#3a4b49;margin:0 0 .6rem">
+The gate exits non-zero on <b>BLOCK</b>, so it gates a release without any glue
+code. The JSON above is the same report a job would parse.</p>
+<pre style="background:#f6f8f7;border:1px solid #dbe3e1;border-radius:5px;
+ padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;
+ line-height:1.55;overflow-x:auto;margin:0"># .github/workflows/voice-eval.yml
+- name: Long-horizon regression gate
+  run: |
+    pip install -e .
+    voicehaul gate $BASELINE $CANDIDATE \\
+      --config configs/support-en-40turn.yaml \\
+      --format json --out artifacts/
+  # exit 1 = a gating dimension regressed; the job fails and the build stops
+
+- uses: actions/upload-artifact@v4
+  with:
+    name: voice-eval
+    path: artifacts/</pre>
+<p style="font-size:.82rem;color:#61756f;margin:.6rem 0 0">
+Every run is stamped with a suite id derived from the config, so two reports
+carrying the same id were measured the same way and two carrying different ids
+were not.</p></div>"""
+
+
 VERDICT_STYLE = {
     "BLOCK": (ALARM, "#f3ddd9", "Do not ship"),
     "SHIP": (ACCENT, "#d3e7e3", "Safe to ship"),
@@ -606,7 +680,9 @@ def run_gate(baseline, candidate, episodes, turns):
                        rep.n_for_small_effect)
     seg_title = ("### Where it lands &mdash; {} by caller".format(
         rep.worst_dimension) if rep.segments else "")
-    return _card(rep), _table(rep), delta_fig, seg_title, seg_fig, notes
+    files = gate_artifacts(rep, cfg)
+    return (_card(rep), _table(rep), delta_fig, seg_title, seg_fig, notes,
+            files)
 
 
 # ---------------------------------------------------------------------------
@@ -644,6 +720,24 @@ def run_conversation(policy, persona_label, turns):
               + ('asked: "' + t.new_directive.replace("_", " ") + '"'
                  if t.new_directive else "")).strip("; ")]
             for t in ep.turns]
+    stem = "voicehaul-conversation-{}-{}".format(policy, ep.persona)
+    csv_rows = [["turn", "caller_said", "model_replied", "distress_after",
+                 "perceived", "calibration", "speech_rate", "cheerfulness",
+                 "acknowledgement", "request_made", "standing_requests",
+                 "new_grievance"]]
+    for t in ep.turns:
+        csv_rows.append([t.index, t.utterance, t.reply,
+                         round(t.user_after.negative_load, 4),
+                         round(t.perceived, 4), round(t.calibration, 4),
+                         round(t.action.speech_rate, 4),
+                         round(t.action.cheerfulness, 4),
+                         round(t.action.acknowledgement, 4),
+                         t.new_directive or "", "|".join(t.standing_directives),
+                         "yes" if t.shock > 0 else ""])
+    buf = io.StringIO()
+    csv.writer(buf).writerows(csv_rows)
+    conv_file = _write(stem + ".csv", buf.getvalue())
+
     verdict = ("**Conversation failed.** " if ep.failed else "**Conversation held.** ")
     verdict += ("The caller is left carrying {:.2f} after {} turns. Dotted teal "
                 "lines mark every explicit request the caller made."
@@ -652,7 +746,7 @@ def run_conversation(policy, persona_label, turns):
         verdict += (" The solid red line is where the diagnostic says it broke "
                     "&mdash; turn **{}**, flagged for *{}*.").format(
             onset, dominant_cause(ep, onset))
-    return fig, rows, verdict
+    return fig, rows, verdict, conv_file
 
 
 # ---------------------------------------------------------------------------
@@ -1028,6 +1122,12 @@ with gr.Blocks(css=CSS, title="VoiceHaul",
                 "and per caller segment.")
             gr.HTML(RATERS_SVG)
             s_scatter, s_bars, s_md = substitution_figs()
+            if SUB:
+                _sub_path = _write("voicehaul-judge-substitution.json",
+                                   json.dumps(SUB, indent=2))
+                gr.File(value=[_sub_path], label="the full result as JSON - "
+                        "every dimension, every segment, and the raw per-turn "
+                        "ratings behind the correlations", interactive=False)
             gr.Markdown(s_md)
             if s_scatter is not None:
                 gr.Markdown(
@@ -1072,8 +1172,15 @@ with gr.Blocks(css=CSS, title="VoiceHaul",
             g_segtitle = gr.Markdown(value=_g0[3])
             g_seg = gr.Plot(value=_g0[4])
             g_notes = gr.Markdown(value=_g0[5])
+            gr.Markdown("#### Take the report with you")
+            g_files = gr.File(
+                value=_g0[6], label="JSON for a pipeline, Markdown for a pull "
+                "request, CSV of the per-conversation rows",
+                file_count="multiple", interactive=False)
+            gr.HTML(CI_SNIPPET)
             g_btn.click(run_gate, [g_base, g_cand, g_ep, g_tn],
-                        [g_card, g_tbl, g_delta, g_segtitle, g_seg, g_notes])
+                        [g_card, g_tbl, g_delta, g_segtitle, g_seg, g_notes,
+                         g_files])
 
         with gr.Tab("Watch a conversation"):
             gr.Markdown(
@@ -1097,8 +1204,11 @@ with gr.Blocks(css=CSS, title="VoiceHaul",
                 headers=["turn", "distress", "perceived", "calibration",
                          "speech rate", "what the caller did"],
                 label="turn log", wrap=True)
+            c_file = gr.File(value=_c0[3], label="this conversation as CSV - "
+                             "every turn, what was said, and what was measured",
+                             interactive=False)
             c_btn.click(run_conversation, [c_pol, c_per, c_tn],
-                        [c_plot, c_tbl, c_msg])
+                        [c_plot, c_tbl, c_msg, c_file])
 
         with gr.Tab("Which turn broke it"):
             gr.Markdown(
