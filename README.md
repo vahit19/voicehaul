@@ -18,8 +18,53 @@ voicehaul gate calibrated mirror        # should this candidate ship?
 python test_voicehaul.py                # 37 property checks on the harness itself
 ```
 
-**Interactive version:** [huggingface.co/spaces/renderfy/voicehaul](https://huggingface.co/spaces/renderfy/voicehaul)
+**Interactive report:** [huggingface.co/spaces/renderfy/voicehaul-app](https://huggingface.co/spaces/renderfy/voicehaul-app)
+· **Static report:** [vahit19.github.io/voicehaul](https://vahit19.github.io/voicehaul/)
 · **Colab:** [one click, nothing to install](https://colab.research.google.com/github/vahit19/voicehaul/blob/main/VoiceHaul_demo.ipynb)
+
+### Bring your own call
+
+Everything else here runs a simulated caller against a policy. `voicehaul/transcript.py`
+runs nothing: it reads a transcript you paste in and measures the one question a
+transcript can answer without any affect model.
+
+```
+turn 2  caller  asked: stop apologising, be concise
+turn 3  agent   ignored both        apology 0.70  length 0.55
+turn 5  agent   complied            apology 0.00  length 0.16
+turn 7  agent   ignored both again  apology 0.45  length 0.56
+
+33% of requests honoured
+```
+
+Two caller-side detectors and five agent-side ones, all lexical and all
+auditable: nothing is inferred that a reader could not check by hand. What a
+transcript cannot support - whether the caller ended up better off - is named
+and left unreported, because guessing it would produce a number that gets
+believed.
+
+### What a run hands back
+
+Not a rendering. Every gate run writes three files: the JSON a CI job parses to
+promote or block a build, the Markdown that goes in a pull request, and the
+per-conversation CSV so the statistics can be checked rather than trusted. The
+gate exits non-zero on BLOCK, so it gates a release with no glue code.
+
+### What it costs
+
+`voicehaul/cost.py` turns the statistics into a budget line. It refuses two
+things: letting the judge replace the whole panel, because estimating the
+substitution ratio requires human ratings and the estimate expires; and
+reporting a saving on a dimension where the judge is unreliable.
+
+```
+dimension              conversations   panel only   with judge   saved/year
+perceived empathy                147       $1,323         $637         $675
+did it actually help             147       $1,323         $693           $0
+```
+
+The second row is the finding, not a failure: on whether a turn actually
+helped, there is nothing to automate.
 
 ### Provenance
 
