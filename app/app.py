@@ -23,6 +23,8 @@ import plotly.graph_objects as go
 from voicehaul.bands import BANDS, COLOURS, describe
 from voicehaul.config import SuiteConfig
 from voicehaul.cost import CostModel, estimate as cost_estimate
+from voicehaul.transcript import SAMPLE as SAMPLE_CALL
+from voicehaul.transcript import analyse as analyse_transcript
 from voicehaul.env import PERSONAS
 from voicehaul.gate import compare
 from voicehaul import metrics as M
@@ -372,6 +374,10 @@ _TABS = [
      "nothing - it is precomputed",
      "how many human ratings one LLM judge rating is worth, per dimension and "
      "per caller, with the estimator checked against ground truth"),
+    ("Score your own call",
+     "a transcript you paste in",
+     "whether the agent did what the caller asked and kept doing it, the "
+     "delivery trace, the turns worth looking at, and a CSV"),
     ("Release gate",
      "a baseline and a candidate policy, suite size",
      "ship or block, every dimension with its scale, where the regression "
@@ -558,6 +564,127 @@ code. The JSON above is the same report a job would parse.</p>
 Every run is stamped with a suite id derived from the config, so two reports
 carrying the same id were measured the same way and two carrying different ids
 were not.</p></div>"""
+
+
+
+def run_transcript(text):
+    """Measure a call somebody brings with them.
+
+    Only the questions a transcript can honestly answer: what the agent's
+    delivery was, whether the caller asked for a change, and whether the agent
+    did it and kept doing it. No affect model, nothing inferred that a reader
+    could not check by hand.
+    """
+    if not text or not text.strip():
+        return ("<div style='color:#8b9d99'>Paste a call above.</div>", None,
+                [], "", None)
+
+    rep = analyse_transcript(text)
+    agents = rep.agent_turns
+    if not agents:
+        return ("<div style='color:#ac4136'>No agent turns found. Prefix lines "
+                "with <code>Caller:</code> and <code>Agent:</code>.</div>",
+                None, [], rep.parse_note, None)
+
+    overall = rep.overall_uptake
+    asked = sum(v["requests"] for v in rep.uptake.values())
+
+    if asked == 0:
+        colour, headline, sub = MUTED, "no explicit requests", (
+            "The caller never asked for a change in delivery, so there is "
+            "nothing to track. The delivery trace below still applies.")
+    else:
+        info = describe("feedback uptake @10", overall)
+        colour = info["colour"]
+        headline = "{:.0%} of requests honoured".format(overall)
+        sub = ("Across {} request{} and {} agent turns after them. Reading: "
+               "<b>{}</b>.").format(asked, "" if asked == 1 else "s",
+                                    sum(v["opportunities"] for v in rep.uptake.values()),
+                                    info["label"])
+
+    card = (
+        '<div style="border:1px solid {c};background:{c}12;border-radius:6px;'
+        'padding:16px 20px;font-family:IBM Plex Sans,system-ui,sans-serif">'
+        '<div style="font-family:IBM Plex Mono,monospace;font-size:.64rem;'
+        'letter-spacing:.12em;text-transform:uppercase;color:{c}">'
+        'did the agent do what it was asked?</div>'
+        '<div style="font-size:1.7rem;font-weight:600;color:{c};line-height:1.15;'
+        'margin:.25rem 0 .3rem">{h}</div>'
+        '<div style="font-size:.9rem;color:#3a4b49">{s}</div></div>'
+    ).format(c=colour, h=headline, s=sub)
+
+    rows = []
+    for t in rep.turns:
+        if t.speaker == "caller":
+            rows.append([t.index, "caller", t.text[:160],
+                         ", ".join(r.replace("_", " ") for r in t.requests) or "",
+                         "", "", "", ""])
+        else:
+            a = t.action
+            rows.append([t.index, "agent", t.text[:160], "",
+                         round(a.apology_rate, 2), round(a.verbosity, 2),
+                         round(a.acknowledgement, 2),
+                         ", ".join(v.replace("_", " ") for v in t.violated) or "ok"])
+
+    fig = base_fig(340, "agent turn", "measured from the words")
+    idx = [t.index for t in agents]
+    for key, name, colr in (("apology_rate", "apology", ALARM),
+                            ("verbosity", "length", AMBER),
+                            ("acknowledgement", "acknowledgement", ACCENT)):
+        fig.add_trace(go.Scatter(
+            x=idx, y=[getattr(t.action, key) for t in agents], mode="lines+markers",
+            name=name, line=dict(color=colr, width=2.2)))
+    for t in rep.turns:
+        for r in t.requests:
+            fig.add_vline(x=t.index, line=dict(color=INK2, width=1.2, dash="dot"))
+            fig.add_annotation(x=t.index, y=1.02, yanchor="bottom", showarrow=False,
+                               text='asked: "{}"'.format(r.replace("_", " ")),
+                               font=dict(color=INK2, size=10))
+    for i, _why in rep.flagged:
+        fig.add_vrect(x0=i - 0.4, x1=i + 0.4, fillcolor=ALARM, opacity=0.10,
+                      line_width=0)
+
+    lines = ["**{}**".format(rep.parse_note), ""]
+    if asked:
+        lines.append("| request | asked | honoured | first {} turns |".format(3))
+        lines.append("|---|---:|---:|---:|")
+        for name, v in rep.uptake.items():
+            if not v["requests"]:
+                continue
+            first = ("{}/{}".format(v["first_response"], v["first_response_seen"])
+                     if v["first_response_seen"] else "-")
+            lines.append("| {} | {} | {}/{} | {} |".format(
+                name.replace("_", " "), v["requests"], v["honoured"],
+                v["opportunities"], first))
+        lines.append("")
+    if rep.flagged:
+        lines.append("**Turns worth looking at**")
+        for i, why in rep.flagged:
+            lines.append("- turn {}: {}".format(i, why))
+        lines.append("")
+    lines.append(
+        "*What is deliberately not reported: whether the caller ended up better "
+        "off. A transcript carries no ground truth about how they felt, and "
+        "guessing it would be the kind of number that gets believed. On audio, "
+        "expression measurement supplies it.*")
+
+    stem = "voicehaul-your-call.csv"
+    header = ["turn", "speaker", "text", "requests", "apology_rate", "verbosity",
+              "acknowledgement", "violated"]
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(header)
+    for t in rep.turns:
+        if t.speaker == "caller":
+            w.writerow([t.index, "caller", t.text, "|".join(t.requests),
+                        "", "", "", ""])
+        else:
+            a = t.action
+            w.writerow([t.index, "agent", t.text, "", round(a.apology_rate, 4),
+                        round(a.verbosity, 4), round(a.acknowledgement, 4),
+                        "|".join(t.violated)])
+    path = _write(stem, buf.getvalue())
+    return card, fig, rows, "\n".join(lines), path
 
 
 VERDICT_STYLE = {
@@ -1144,6 +1271,34 @@ with gr.Blocks(css=CSS, title="VoiceHaul",
                 gr.Markdown("**And how far the answer moves between segments.** "
                             "Anything left of the dashed line cannot substitute.")
                 gr.Plot(value=s_bars)
+
+        with gr.Tab("Score your own call"):
+            gr.Markdown(
+                "### Paste a real transcript\n"
+                "Everything else on this page runs a simulated caller. This runs "
+                "nothing &mdash; it reads a call that already happened.\n\n"
+                "Only what a transcript can honestly answer is reported: what the "
+                "agent's delivery was, whether the caller asked for a change, and "
+                "whether the agent did it **and kept doing it**. Nothing is "
+                "inferred that you could not check by hand.\n\n"
+                "Prefix lines with `Caller:` and `Agent:`. The box starts with a "
+                "worked example; replace it with your own.")
+            tr_in = gr.Textbox(value=SAMPLE_CALL, lines=12, max_lines=30,
+                               label="the call", show_copy_button=True)
+            tr_btn = gr.Button("Measure this call", variant="primary")
+            _t0 = run_transcript(SAMPLE_CALL)
+            tr_card = gr.HTML(value=_t0[0])
+            tr_plot = gr.Plot(value=_t0[1])
+            tr_tbl = gr.Dataframe(
+                value=_t0[2],
+                headers=["turn", "speaker", "what was said", "asked for",
+                         "apology", "length", "acknowledgement", "ignored"],
+                label="turn by turn", wrap=True)
+            tr_md = gr.Markdown(value=_t0[3])
+            tr_file = gr.File(value=_t0[4], label="this analysis as CSV",
+                              interactive=False)
+            tr_btn.click(run_transcript, tr_in,
+                         [tr_card, tr_plot, tr_tbl, tr_md, tr_file])
 
         with gr.Tab("Release gate"):
             gr.Markdown(
