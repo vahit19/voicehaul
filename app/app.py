@@ -79,10 +79,16 @@ CSS = """
   --vh-violet:#a695e0;
 }
 
-body, gradio-app, .gradio-container, .app, .main{
+html, body, gradio-app, .gradio-container, .app, .main, .wrap, #root,
+.contain, .fillable{
   background:var(--vh-bg) !important; color:var(--vh-ink) !important; }
-.gradio-container{max-width:1180px !important; padding-top:1.6rem !important;
+gradio-app{display:block; min-height:100vh;}
+.gradio-container{max-width:1180px !important; margin:0 auto !important;
+  padding:1.8rem 1.2rem 3rem !important;
   font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif !important; }
+/* Gradio wraps every component in a block; without this the cards read as a
+   stack of white rectangles rather than as one page. */
+.gradio-container > .main, .gradio-container .contain{background:transparent !important;}
 .gradio-container p, .gradio-container li, .gradio-container td,
 .gradio-container span, .prose{color:var(--vh-ink2) !important;}
 h1,h2,h3,h4{font-family:"IBM Plex Serif",Georgia,serif !important;
@@ -96,6 +102,11 @@ a{color:var(--vh-accent) !important;}
 .block, .form, .panel, .gr-box, .gr-panel,
 .gradio-container .block{background:var(--vh-surface) !important;
   border-color:var(--vh-rule) !important; box-shadow:none !important;}
+/* Markdown and raw HTML are page text, not objects: no border, no fill. */
+.gradio-container .block.padded:has(> .md),
+.gradio-container .md, .gradio-container .prose,
+.gradio-container .html-container{background:transparent !important;
+  border:0 !important; padding-left:0 !important; padding-right:0 !important;}
 .gr-input, input, textarea, select,
 .gradio-container input[type="text"], .gradio-container textarea{
   background:var(--vh-sunk) !important; color:var(--vh-ink) !important;
