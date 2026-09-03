@@ -19,9 +19,14 @@ def apply_shock(user: Affect, persona: Persona, rng: random.Random) -> "tuple":
 
 
 def step_user(user: Affect, action: Action, persona: Persona, cal: float,
-              streak: int, standing: List[str], rng: random.Random) -> Affect:
-    """User affect dynamics: good calibration soothes, miscalibration escalates."""
-    quality = cal - 0.58
+              streak: int, standing: List[str], rng: random.Random,
+              neutral: float = 0.58) -> Affect:
+    """Caller affect dynamics: good calibration soothes, miscalibration escalates.
+
+    `neutral` is the break-even calibration. See SuiteConfig.neutral_calibration
+    for why it is a parameter rather than a constant.
+    """
+    quality = cal - neutral
     user_energy = max(0.0, min(1.0, 0.5 + 0.5 * user.arousal))
 
     if quality >= 0:

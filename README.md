@@ -226,6 +226,51 @@ earns authority by being maintained, versioned, contamination-checked and
 re-validated as the models it measures keep moving — and stops being cited about
 a year after anyone stops doing that.
 
+## Judge substitution: when can an automated rater replace a human one?
+
+This is the commercial question underneath every voice-evaluation contract. A
+human panel is the trusted measurement and the dominant cost line; an LLM judge
+is cheap and of unknown trustworthiness. The honest answer today is "sometimes,
+and we cannot tell you when".
+
+`python run_substitution.py` scores the same turns three ways - the latent
+truth, a human panel, and a real LLM judge - and reports how many human ratings
+one judge rating is worth, per dimension and per caller segment.
+
+```
+dimension                   n judge rho 1 judge =  human saving     verdict
+perceived_empathy         160      0.18      0.29            5%  supplement
+actual_help               160      0.01      0.01            0%  human only
+
+  perceived_empathy, by segment
+    confused_elderly            0.07 judge rho     0.04 = 1 judge
+    grieving_claim              0.37 judge rho     1.56 = 1 judge
+```
+
+A single agreement figure would have reported 0.18 and hidden a twenty-fold
+spread across segments. On `actual_help` with hostile callers the judge scores
+0.00 - it is blind exactly on the calls that generate escalations.
+
+The method is standard psychometrics: reliability of one human rating, the
+Spearman-Brown formula for a panel of k, and the disattenuated correlation
+between judge and consensus. Inverting Spearman-Brown gives the substitution
+ratio.
+
+**The estimator is validated, which is the part real data cannot do.** A
+customer computes the judge's reliability by correlating it against a human
+consensus and dividing out that consensus's own unreliability. Whether that
+estimate is right is unknowable in the field, because both measurements carry
+error. Here the latent quality is known by construction:
+
+| dimension | estimated rho | true rho | error |
+|---|---:|---:|---:|
+| perceived_empathy | 0.178 | 0.189 | -0.011 |
+| actual_help | 0.014 | 0.016 | -0.002 |
+
+Note what does not go away: estimating the judge's reliability requires human
+ratings, and the estimate expires whenever the judge model, the domain or the
+rubric changes. This is a recurring measurement, not a setting.
+
 ## Architecture
 
 Layered after Runopsy, and for the same reason: an evaluation result is only

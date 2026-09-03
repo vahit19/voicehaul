@@ -102,6 +102,16 @@ for _d in [
     register_dimension(_d)
 
 
+#: Bounds a gating dimension can be pinned against. Used only to detect that a
+#: comparison is meaningless, never to score.
+_BOUNDS = {
+    "calibration": (0.0, 1.0),
+    "feedback uptake @10": (0.0, 1.0),
+    "left-over distress": (0.0, 1.0),
+    "conversation failure rate": (0.0, 1.0),
+}
+
+
 # ---------------------------------------------------------------------------
 # results
 # ---------------------------------------------------------------------------
@@ -149,6 +159,7 @@ class GateReport:
     failures_baseline: int = 0
     mde: float = float("nan")
     n_for_small_effect: int = 0
+    saturated: List[str] = field(default_factory=list)
     verdict: str = "INCONCLUSIVE"
     reasons: List[str] = field(default_factory=list)
 
@@ -187,7 +198,8 @@ def _suite(policy_name: str, cfg: SuiteConfig,
         persona = get_persona(names[i % len(names)])
         ep = run_episode(get_policy(policy_name), persona,
                          seed=cfg.seed + seed_offset + i, n_turns=cfg.turns,
-                         corrupt_p=cfg.corrupt_p)
+                         corrupt_p=cfg.corrupt_p,
+                         neutral=cfg.neutral_calibration)
         out.append((ep, persona))
     return out
 
@@ -209,7 +221,8 @@ def _panel_blocks(cfg: SuiteConfig, stride: int = 3) -> List[List[Tuple[int, obj
     for i in range(cfg.episodes):
         persona = get_persona(names[i % len(names)])
         ep = run_episode(get_policy("oracle"), persona,
-                         seed=cfg.seed + 5000 + i, n_turns=cfg.turns)
+                         seed=cfg.seed + 5000 + i, n_turns=cfg.turns,
+                         neutral=cfg.neutral_calibration)
         blocks.append([(t.index, t.user_before) for t in ep.turns][::stride])
     return blocks
 
@@ -317,7 +330,33 @@ def compare(baseline: str, candidate: str, cfg: Optional[SuiteConfig] = None,
     rep.n_for_small_effect = required_n(0.20, sb, cfg.rater_sigma,
                                         cfg.raters_per_conversation)
 
+    # -- did the outcome measures leave any room to move? --------------------
+    # A dimension pinned against its bound in BOTH arms cannot separate them,
+    # and a delta computed there is arithmetic rather than evidence. The gate
+    # says so rather than reporting the number as if it meant something.
+    for d in rep.dimensions:
+        if not rep.gating.get(d.name, True):
+            continue
+        lo, hi = _BOUNDS.get(d.name, (None, None))
+        if lo is None:
+            continue
+        at_bound = (abs(d.baseline - lo) < 0.02 and abs(d.candidate - lo) < 0.02) or                    (abs(d.baseline - hi) < 0.02 and abs(d.candidate - hi) < 0.02)
+        if at_bound:
+            rep.saturated.append(d.name)
+
     # -- verdict ------------------------------------------------------------
+    if rep.saturated and len(rep.saturated) >= 2:
+        rep.verdict = "SATURATED"
+        rep.reasons.append(
+            "{} sat against a bound in both arms: this suite cannot separate "
+            "these two systems".format(", ".join(rep.saturated)))
+        rep.reasons.append(
+            "the environment's break-even calibration is {:.2f}, which is "
+            "outside the range this class of system reaches; re-anchor it with "
+            "`voicehaul calibrate` before grading again".format(
+                cfg.neutral_calibration))
+        return rep
+
     if rep.regressions:
         rep.verdict = "BLOCK"
         for d in rep.regressions:

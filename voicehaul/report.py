@@ -104,6 +104,22 @@ def render_text(rep: GateReport) -> str:
         add("dimensions with too little data: {}".format(
             ", ".join(d.name for d in under)))
 
+    if rep.saturated:
+        add("")
+        add(RULE)
+        add("SATURATION WARNING")
+        add(RULE)
+        add("These dimensions sat against a bound in BOTH arms, so the deltas")
+        add("above are arithmetic rather than evidence:")
+        for name in rep.saturated:
+            add("  - {}".format(name))
+        add("")
+        add("The break-even calibration for this suite is {:.2f}. If the systems"
+            .format(rep.config.neutral_calibration))
+        add("under test cannot reach it, every conversation escalates and the")
+        add("suite has no discriminative power. Re-anchor with:")
+        add("    voicehaul calibrate <reference policy>")
+
     add("")
     add(RULE)
     add("VERDICT: {}".format(rep.verdict))
@@ -198,6 +214,7 @@ def to_dict(rep: GateReport) -> Dict[str, Any]:
                       "candidate": s.candidate, "delta": s.delta}
                      for s in rep.segments],
         "worst_dimension": rep.worst_dimension,
+        "saturated": rep.saturated,
         "diagnosis": {
             "failures_baseline": rep.failures_baseline,
             "failures_candidate": rep.failures_candidate,

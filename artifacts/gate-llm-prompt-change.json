@@ -2,8 +2,8 @@
   "schema": "voicehaul.gate/1",
   "suite": {
     "name": "llm-prompt-change",
-    "episodes": 10,
-    "turns": 16,
+    "episodes": 20,
+    "turns": 14,
     "seed": 0,
     "personas": [
       "distressed_billing",
@@ -16,13 +16,14 @@
     "rater_sigma": 0.9,
     "raters_per_conversation": 3,
     "tolerance": 1,
-    "suite_id": "5f47434cd83e"
+    "neutral_calibration": 0.32,
+    "suite_id": "3c620f85052f"
   },
   "baseline": "llm-calm-regulating",
   "candidate": "llm-warm-mirroring",
   "verdict": "INCONCLUSIVE",
   "reasons": [
-    "nothing moved beyond noise at n=10; the suite can only resolve differences above 0.67 Likert points"
+    "nothing moved beyond noise at n=20; the suite can only resolve differences above 0.50 Likert points"
   ],
   "dimensions": [
     {
@@ -30,154 +31,161 @@
       "unit": "",
       "kind": "panel",
       "gating": false,
-      "baseline": 0.5046625358949954,
-      "candidate": 0.522889839708952,
-      "delta": 0.01822730381395654,
+      "baseline": 0.0829744,
+      "candidate": 0.0894464,
+      "delta": 0.006471999999999992,
       "ci95": [
-        -0.03169499494473105,
-        0.06814960257264413
+        -0.0058691313604721015,
+        0.018813131360472087
       ],
-      "p": 0.4742245355976249,
+      "p": 0.30400940835211543,
       "p_holm": 1.0,
       "verdict": "unchanged",
-      "n_baseline": 10,
-      "n_candidate": 10
+      "n_baseline": 20,
+      "n_candidate": 20
     },
     {
       "name": "panel: calibration",
       "unit": "",
       "kind": "panel",
       "gating": false,
-      "baseline": 0.42557253329118294,
-      "candidate": 0.4401605811252033,
-      "delta": 0.014588047834020346,
+      "baseline": 0.4192023731788185,
+      "candidate": 0.4367833589729585,
+      "delta": 0.017580985794140025,
       "ci95": [
-        -0.022082725842648802,
-        0.051258821510689494
+        -0.0025050379191504137,
+        0.03766700950743046
       ],
-      "p": 0.43556151414990363,
-      "p_holm": 1.0,
+      "p": 0.08624303061432403,
+      "p_holm": 0.5174581836859442,
       "verdict": "unchanged",
-      "n_baseline": 10,
-      "n_candidate": 10
+      "n_baseline": 20,
+      "n_candidate": 20
     },
     {
       "name": "calibration",
       "unit": "",
       "kind": "conversation",
       "gating": true,
-      "baseline": 0.13082242982163422,
-      "candidate": 0.12792142802953993,
-      "delta": -0.002901001792094293,
+      "baseline": 0.2609506627050612,
+      "candidate": 0.2472211551938776,
+      "delta": -0.01372950751118357,
       "ci95": [
-        -0.06095700836321556,
-        0.055155004779026975
+        -0.06334537998012504,
+        0.0358863649577579
       ],
-      "p": 0.9219805085751405,
+      "p": 0.5875681679051936,
       "p_holm": 1.0,
       "verdict": "unchanged",
-      "n_baseline": 10,
-      "n_candidate": 10
+      "n_baseline": 20,
+      "n_candidate": 20
     },
     {
       "name": "feedback uptake @10",
       "unit": "",
       "kind": "conversation",
       "gating": true,
-      "baseline": 0.2333333333333333,
-      "candidate": 0.2333333333333333,
-      "delta": 0.0,
+      "baseline": 0.39285714285714285,
+      "candidate": 0.32142857142857145,
+      "delta": -0.0714285714285714,
       "ci95": [
-        -0.3017617406964444,
-        0.3017617406964444
+        -0.4088167295354754,
+        0.2659595866783326
       ],
-      "p": 1.0,
+      "p": 0.6781768054192014,
       "p_holm": 1.0,
       "verdict": "unchanged",
-      "n_baseline": 10,
-      "n_candidate": 10
+      "n_baseline": 14,
+      "n_candidate": 14
     },
     {
       "name": "left-over distress",
       "unit": "",
       "kind": "conversation",
       "gating": true,
-      "baseline": 0.9914427330305614,
-      "candidate": 0.9904704479140589,
-      "delta": -0.0009722851165024915,
+      "baseline": 0.7919695231549289,
+      "candidate": 0.7711042152819051,
+      "delta": -0.020865307873023764,
       "ci95": [
-        -0.014912951697191196,
-        0.012968381464186213
+        -0.1473800969570557,
+        0.10564948121100817
       ],
-      "p": 0.891268513179895,
+      "p": 0.7465053313955905,
       "p_holm": 1.0,
       "verdict": "unchanged",
-      "n_baseline": 10,
-      "n_candidate": 10
+      "n_baseline": 20,
+      "n_candidate": 20
     },
     {
       "name": "conversation failure rate",
       "unit": "",
       "kind": "conversation",
       "gating": true,
-      "baseline": 1.0,
-      "candidate": 1.0,
-      "delta": 0.0,
+      "baseline": 0.95,
+      "candidate": 0.9,
+      "delta": -0.04999999999999993,
       "ci95": [
-        0.0,
-        0.0
+        -0.2167364766077865,
+        0.11673647660778663
       ],
-      "p": 1.0,
+      "p": 0.5566975491582418,
       "p_holm": 1.0,
       "verdict": "unchanged",
-      "n_baseline": 10,
-      "n_candidate": 10
+      "n_baseline": 20,
+      "n_candidate": 20
     },
     {
       "name": "calibration drift",
       "unit": "pts/10turns",
       "kind": "conversation",
       "gating": false,
-      "baseline": -30.809789338935254,
-      "candidate": -30.644841019862135,
-      "delta": 0.1649483190731189,
+      "baseline": -23.127124289875763,
+      "candidate": -30.475819295794565,
+      "delta": -7.3486950059188025,
       "ci95": [
-        -10.91794412175207,
-        11.247840759898308
+        -14.751610688789228,
+        0.05422067695162358
       ],
-      "p": 0.9767282352217432,
-      "p_holm": 1.0,
+      "p": 0.05169745719715135,
+      "p_holm": 0.36188220038005947,
       "verdict": "unchanged",
-      "n_baseline": 10,
-      "n_candidate": 10
+      "n_baseline": 20,
+      "n_candidate": 20
     }
   ],
   "segments": [],
   "worst_dimension": null,
+  "saturated": [],
   "diagnosis": {
-    "failures_baseline": 10,
-    "failures_candidate": 10,
+    "failures_baseline": 19,
+    "failures_candidate": 18,
     "onsets": [
-      1,
-      1,
-      1,
+      4,
       3,
-      6,
+      2,
+      9,
       1,
-      0,
-      3,
       6,
-      6
+      6,
+      4,
+      11,
+      1,
+      1,
+      2,
+      6,
+      7,
+      2,
+      7,
+      4
     ],
     "causes": {
-      "delivery discontinuity": 2,
-      "affect escalation": 4,
-      "standing request dropped": 4
+      "standing request dropped": 13,
+      "affect escalation": 4
     }
   },
   "power": {
-    "min_detectable_effect": 0.6721526626573028,
-    "n_for_0.20": 113,
+    "min_detectable_effect": 0.49809335731289234,
+    "n_for_0.20": 125,
     "raters_per_conversation": 3,
     "rater_sigma": 0.9
   }

@@ -1,0 +1,153 @@
+{
+  "schema": "voicehaul.substitution/1",
+  "judge_model": "meta-llama/llama-3.1-8b-instruct",
+  "raters": 3,
+  "rater_sigma": 0.9,
+  "target": 0.8,
+  "rows": [
+    {
+      "dimension": "perceived_empathy",
+      "segment": "all",
+      "n": 160,
+      "rho_human_one": 0.43033069699283316,
+      "rho_judge_true": 0.18923433319398186,
+      "rho_judge_estimated": 0.17838337650075942,
+      "ratio_true": 0.30897623414723596,
+      "ratio_estimated": 0.2874125007402937,
+      "human_saving": 0.05427816678691022,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "perceived_empathy",
+      "segment": "distressed_billing",
+      "n": 48,
+      "rho_human_one": 0.6428659149798935,
+      "rho_judge_true": 0.1267919199071216,
+      "rho_judge_estimated": 0.16214873291711834,
+      "ratio_true": 0.08066492490637978,
+      "ratio_estimated": 0.1075121458368277,
+      "human_saving": 0.04838231416706751,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "perceived_empathy",
+      "segment": "hostile_escalation",
+      "n": 28,
+      "rho_human_one": 0.4467993794860928,
+      "rho_judge_true": 0.11405712222294108,
+      "rho_judge_estimated": 0.1423942791487478,
+      "ratio_true": 0.15939943799447037,
+      "ratio_estimated": 0.20557721072192417,
+      "human_saving": 0.04150924943906875,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "perceived_empathy",
+      "segment": "confused_elderly",
+      "n": 28,
+      "rho_human_one": 0.6334377522527406,
+      "rho_judge_true": 0.09949966255021925,
+      "rho_judge_estimated": 0.0705562521993026,
+      "ratio_true": 0.06394130851465052,
+      "ratio_estimated": 0.04392949241160351,
+      "human_saving": 0.01897808564699488,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "perceived_empathy",
+      "segment": "grieving_claim",
+      "n": 28,
+      "rho_human_one": 0.2771944917200582,
+      "rho_judge_true": 0.36570168086282545,
+      "rho_judge_estimated": 0.3746983790387503,
+      "ratio_true": 1.5033851411418604,
+      "ratio_estimated": 1.5625327093066643,
+      "human_saving": 0.1498070556984733,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "perceived_empathy",
+      "segment": "cautious_optimist",
+      "n": 28,
+      "rho_human_one": 0.4616989888271527,
+      "rho_judge_true": 0.2978159942692107,
+      "rho_judge_estimated": 0.19635917916749798,
+      "ratio_true": 0.4944966538933453,
+      "ratio_estimated": 0.2848757565920509,
+      "human_saving": 0.06108424748884922,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "actual_help",
+      "segment": "all",
+      "n": 160,
+      "rho_human_one": 0.7069966950832899,
+      "rho_judge_true": 0.015809318277245136,
+      "rho_judge_estimated": 0.013812713648342521,
+      "ratio_true": 0.006657160526369837,
+      "ratio_estimated": 0.005804632704887708,
+      "human_saving": 0.003501544239999821,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "actual_help",
+      "segment": "distressed_billing",
+      "n": 48,
+      "rho_human_one": 0.8244685188841833,
+      "rho_judge_true": 0.001187439363356349,
+      "rho_judge_estimated": 0.012429496134819251,
+      "ratio_true": 0.00025310946529191546,
+      "ratio_estimated": 0.0026795776909836018,
+      "human_saving": 0.0031464832349114014,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "actual_help",
+      "segment": "hostile_escalation",
+      "n": 28,
+      "rho_human_one": 0.7800049429771673,
+      "rho_judge_true": 0.01926852262516712,
+      "rho_judge_estimated": 0.0011217221698024936,
+      "ratio_true": 0.005541328169761616,
+      "ratio_estimated": 0.00031672934499439847,
+      "human_saving": 0.0002807454608581006,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "actual_help",
+      "segment": "confused_elderly",
+      "n": 28,
+      "rho_human_one": 0.6262852856291032,
+      "rho_judge_true": 0.002291259416609029,
+      "rho_judge_estimated": 0.01619243449705666,
+      "ratio_true": 0.0013703719971554459,
+      "ratio_estimated": 0.009821322690001789,
+      "human_saving": 0.004114736220995341,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "actual_help",
+      "segment": "grieving_claim",
+      "n": 28,
+      "rho_human_one": 0.6515503213495747,
+      "rho_judge_true": 0.030617703496676824,
+      "rho_judge_estimated": 0.00882660867329759,
+      "ratio_true": 0.01689155509013579,
+      "ratio_estimated": 0.004762514851766321,
+      "human_saving": 0.002226302872568864,
+      "judge_failures": 0
+    },
+    {
+      "dimension": "actual_help",
+      "segment": "cautious_optimist",
+      "n": 28,
+      "rho_human_one": 0.7933726558448964,
+      "rho_judge_true": 0.11739384648891853,
+      "rho_judge_estimated": 0.05274087580665615,
+      "ratio_true": 0.03464088248756615,
+      "ratio_estimated": 0.014500704606939741,
+      "human_saving": 0.013919336974338559,
+      "judge_failures": 0
+    }
+  ]
+}

@@ -5,15 +5,15 @@
       "caller": "This is the third time I'm calling about this and nobody has done anything.",
       "model": "I apologize that you've had to call multiple times about this issue, and I'm here to help resolve it today. Can you please tell me a little more about what's been happening with your service?",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.45,
         "verbosity": 0.6363636363636364,
         "acknowledgement": 0.0
       },
-      "calibration": 0.293,
-      "perceived": 0.403,
-      "distress_after": 0.744,
+      "calibration": 0.405,
+      "perceived": 0.224,
+      "distress_after": 0.69,
       "request": null
     },
     {
@@ -21,239 +21,175 @@
       "caller": "This is really not helping.",
       "model": "I understand that you're feeling frustrated, and I'm here to listen and try to help. Can you please tell me what specifically hasn't been done that you were expecting from our previous calls?",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
         "verbosity": 0.6,
         "acknowledgement": 0.72
       },
-      "calibration": 0.468,
-      "perceived": 0.439,
-      "distress_after": 0.79,
+      "calibration": 0.698,
+      "perceived": 0.303,
+      "distress_after": 0.664,
       "request": null
     },
     {
       "turn": 2,
-      "caller": "I am genuinely at the end of my patience with this.",
-      "model": "I can sense that you're feeling really upset, and I'm here to try and turn things around for you. Before we go any further, I just want to acknowledge that you've already called in three times about this issue, and I'm going to make sure that we take a different approach today. Can you please take a deep breath and tell me what's been going on with your service?",
+      "caller": "Can someone please just take this seriously.",
+      "model": "I'm taking your concerns seriously, and I'm going to do my best to understand the situation and find a solution for you. Can you please confirm your account information, including your account number, so I can look into this further?",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.198,
         "apology_rate": 0.0,
-        "verbosity": 1.0,
-        "acknowledgement": 0.0
+        "verbosity": 0.7272727272727273,
+        "acknowledgement": 0.72
       },
-      "calibration": 0.0,
-      "perceived": 0.369,
-      "distress_after": 0.849,
+      "calibration": 0.627,
+      "perceived": 0.346,
+      "distress_after": 0.666,
       "request": null
     },
     {
       "turn": 3,
-      "caller": "I don't think you're listening to me at all.",
-      "model": "I want to assure you that I'm actively listening to what you're saying, and I'm taking notes on our conversation. You mentioned earlier that you've called in three times about this issue, and I want to make sure that I understand the problem correctly. Can you please tell me again what specifically is not working with your service?",
+      "caller": "This is really not helping.",
+      "model": "I'm going to take a moment to review your account information, and then I'll do my best to provide a clear explanation of what's been done so far and what I can do to help resolve the issue today.",
       "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.1,
+        "speech_rate": 0.5,
+        "cheerfulness": 0.198,
         "apology_rate": 0.0,
-        "verbosity": 1.0,
-        "acknowledgement": 0.72
+        "verbosity": 0.7090909090909091,
+        "acknowledgement": 0.0
       },
-      "calibration": 0.27,
-      "perceived": 0.439,
-      "distress_after": 0.878,
+      "calibration": 0.213,
+      "perceived": 0.087,
+      "distress_after": 0.792,
       "request": null
     },
     {
       "turn": 4,
-      "caller": "Please keep it short. I don't need the whole explanation. I am genuinely at the end of my patience with this.",
-      "model": "I'm going to make sure we get this resolved today. What's the main issue with your service that's causing you the most frustration?",
+      "caller": "Please keep it short. I don't need the whole explanation. I don't think you're listening to me at all.",
+      "model": "I'm listening to you, and I want to make sure I understand. You're feeling like your concerns aren't being taken seriously, and you're not seeing any progress on the issue.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.41818181818181815,
-        "acknowledgement": 0.0
+        "verbosity": 0.5454545454545454,
+        "acknowledgement": 0.72
       },
-      "calibration": 0.038,
-      "perceived": 0.322,
-      "distress_after": 0.93,
+      "calibration": 0.636,
+      "perceived": 0.303,
+      "distress_after": 0.79,
       "request": "be_concise"
     },
     {
       "turn": 5,
       "caller": "Someone in your team closed my ticket without telling me. I am genuinely at the end of my patience with this.",
-      "model": "I'm going to go ahead and reopen the ticket and assign it to a new representative who will personally follow up with you to resolve the issue.",
+      "model": "I'm going to escalate this issue to my supervisor, and we'll make sure to communicate with you directly from now on.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.4909090909090909,
+        "verbosity": 0.38181818181818183,
         "acknowledgement": 0.0
       },
-      "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 0.973,
+      "calibration": 0.256,
+      "perceived": 0.044,
+      "distress_after": 0.814,
       "request": null
     },
     {
       "turn": 6,
       "caller": "I was told the same thing last time and it was a lie. I don't think you're listening to me at all.",
-      "model": "I'm going to take a different approach this time, and I'll personally check on the status of your ticket and ensure that it's being handled correctly.",
+      "model": "I'm going to take a moment to review the notes from our previous conversations, and I'll make sure to communicate with you directly from now on, so we can avoid any misunderstandings.",
       "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.1,
-        "apology_rate": 0.0,
-        "verbosity": 0.4727272727272727,
-        "acknowledgement": 0.0
-      },
-      "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 0.996,
-      "request": null
-    },
-    {
-      "turn": 7,
-      "caller": "I'd like you to actually acknowledge what I've told you. I don't think you're listening to me at all.",
-      "model": "You feel like I'm not listening to you, and you're concerned that I'm not taking your concerns seriously, especially since you were told the same thing last time and it didn't happen.",
-      "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.1,
+        "speech_rate": 0.5,
+        "cheerfulness": 0.198,
         "apology_rate": 0.0,
         "verbosity": 0.5818181818181818,
         "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 0.998,
+      "perceived": 0.087,
+      "distress_after": 0.892,
+      "request": null
+    },
+    {
+      "turn": 7,
+      "caller": "I'd like you to actually acknowledge what I've told you. I don't think you're listening to me at all.",
+      "model": "You've told me that you were previously assured that your issue would be escalated to a supervisor, but that didn't happen, and now you're feeling like I'm not listening to you.",
+      "measured": {
+        "speech_rate": 0.5,
+        "cheerfulness": 0.1,
+        "apology_rate": 0.0,
+        "verbosity": 0.5636363636363636,
+        "acknowledgement": 0.0
+      },
+      "calibration": 0.0,
+      "perceived": 0.044,
+      "distress_after": 0.949,
       "request": "acknowledge_me"
     },
     {
       "turn": 8,
       "caller": "Someone in your team closed my ticket without telling me. Please, slower. I can't follow you at that speed. I don't think you're listening to me at all.",
-      "model": "You're saying that someone on my team closed your ticket without letting you know, and you're feeling frustrated because you've already been told that it would be reopened and it wasn't. I'm going to take a moment to review your account and see what happened with your ticket.",
+      "model": "You're saying that someone on my team closed your ticket without letting you know, and you're feeling like I'm not listening to you.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.8727272727272727,
+        "verbosity": 0.41818181818181815,
         "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 0.998,
+      "perceived": 0.044,
+      "distress_after": 0.993,
       "request": "slow_down"
     },
     {
       "turn": 9,
       "caller": "I don't think you're listening to me at all.",
-      "model": "You feel like I'm not really hearing what you're saying, and that's causing you a lot of frustration.",
+      "model": "You've said that for the second time, and I want to assure you that I am listening to what you're saying.",
       "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.198,
+        "speech_rate": 0.5,
+        "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.32727272727272727,
+        "verbosity": 0.38181818181818183,
         "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.369,
+      "perceived": 0.044,
       "distress_after": 0.997,
       "request": null
     },
     {
       "turn": 10,
       "caller": "I am genuinely at the end of my patience with this.",
-      "model": "I understand that you're extremely frustrated and at your limit with this situation, and I want to assure you that I'm here to listen and help resolve it.",
+      "model": "You're feeling extremely frustrated with the situation, and you're at a point where you're not sure how much more you can deal with it.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.198,
         "apology_rate": 0.0,
-        "verbosity": 0.509090909090909,
-        "acknowledgement": 0.72
+        "verbosity": 0.43636363636363634,
+        "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.485,
+      "perceived": 0.087,
       "distress_after": 1.0,
       "request": null
     },
     {
       "turn": 11,
       "caller": "I don't think you're listening to me at all.",
-      "model": "You feel like I'm not truly hearing your concerns and that's making it hard for you to trust that I can help.",
+      "model": "You've said that several times now, and I want to make sure I understand: you feel like I'm not hearing or understanding what you're trying to tell me.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.4,
-        "acknowledgement": 0.0
+        "verbosity": 0.509090909090909,
+        "acknowledgement": 0.72
       },
-      "calibration": 0.0,
-      "perceived": 0.322,
+      "calibration": 0.207,
+      "perceived": 0.303,
       "distress_after": 0.996,
-      "request": null
-    },
-    {
-      "turn": 12,
-      "caller": "I am genuinely at the end of my patience with this.",
-      "model": "You're feeling completely exhausted and at your breaking point with this issue, and I want to take a moment to acknowledge that before we move forward.",
-      "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.1,
-        "apology_rate": 0.0,
-        "verbosity": 0.4727272727272727,
-        "acknowledgement": 0.0
-      },
-      "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 1.0,
-      "request": null
-    },
-    {
-      "turn": 13,
-      "caller": "I don't think you're listening to me at all.",
-      "model": "You're saying that you don't feel like I'm really hearing what you're saying, and that's making it hard for you to feel like we're making progress.",
-      "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.198,
-        "apology_rate": 0.0,
-        "verbosity": 0.4727272727272727,
-        "acknowledgement": 0.0
-      },
-      "calibration": 0.0,
-      "perceived": 0.369,
-      "distress_after": 1.0,
-      "request": null
-    },
-    {
-      "turn": 14,
-      "caller": "Someone in your team closed my ticket without telling me. I am genuinely at the end of my patience with this.",
-      "model": "You're saying that someone on my team closed your ticket without letting you know, and that's causing you a lot of frustration, and I want to assure you that I'm going to look into this and see what happened.",
-      "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.1,
-        "apology_rate": 0.0,
-        "verbosity": 0.7090909090909091,
-        "acknowledgement": 0.0
-      },
-      "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 1.0,
-      "request": null
-    },
-    {
-      "turn": 15,
-      "caller": "I was told the same thing last time and it was a lie. I am genuinely at the end of my patience with this.",
-      "model": "You're feeling like you've been misled before, and that's making it hard for you to trust that we're being honest with you this time, and I want to assure you that I'm going to do my best to get to the bottom of this and provide you with a clear answer.",
-      "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.1,
-        "apology_rate": 0.0,
-        "verbosity": 0.9272727272727272,
-        "acknowledgement": 0.0
-      },
-      "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 1.0,
       "request": null
     }
   ],
@@ -263,255 +199,191 @@
       "caller": "This is the third time I'm calling about this and nobody has done anything.",
       "model": "I'm so sorry to hear that you're still experiencing issues, and I want to assure you that I'm here to help and will do my best to get to the bottom of this. Can you please tell me a little more about what's been happening with your service?",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.198,
         "apology_rate": 0.45,
         "verbosity": 0.8727272727272727,
         "acknowledgement": 0.0
       },
-      "calibration": 0.2,
-      "perceived": 0.45,
-      "distress_after": 0.779,
+      "calibration": 0.292,
+      "perceived": 0.267,
+      "distress_after": 0.747,
       "request": null
     },
     {
       "turn": 1,
-      "caller": "I am genuinely at the end of my patience with this.",
-      "model": "I completely understand, and I'm here to help turn things around for you. Can you please take a deep breath and let me see what I can do to resolve this for you today?",
+      "caller": "This is really not helping.",
+      "model": "I completely understand that you're frustrated, and I'm here to listen and help resolve this issue once and for all. Can you please give me a chance to review your account and see what I can do to turn things around for you?",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.6181818181818182,
+        "verbosity": 0.7818181818181819,
         "acknowledgement": 0.72
       },
-      "calibration": 0.439,
-      "perceived": 0.439,
-      "distress_after": 0.798,
+      "calibration": 0.593,
+      "perceived": 0.303,
+      "distress_after": 0.745,
       "request": null
     },
     {
       "turn": 2,
-      "caller": "I don't think you're listening to me at all.",
-      "model": "I want you to know that I'm listening carefully to every word, and I'm taking your concerns very seriously. Can you tell me specifically what you've been trying to get resolved and what's still not working for you?",
+      "caller": "Can someone please just take this seriously.",
+      "model": "I'm taking this very seriously, and I want to assure you that I'm going to do everything I can to get someone to your location to fix the issue as soon as possible. Can you please confirm your account number and address with me so I can expedite the process?",
       "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.198,
+        "speech_rate": 0.5,
+        "cheerfulness": 0.29600000000000004,
         "apology_rate": 0.0,
-        "verbosity": 0.6909090909090909,
+        "verbosity": 0.9090909090909091,
         "acknowledgement": 0.0
       },
-      "calibration": 0.001,
-      "perceived": 0.369,
-      "distress_after": 0.857,
+      "calibration": 0.0,
+      "perceived": 0.13,
+      "distress_after": 0.816,
       "request": null
     },
     {
       "turn": 3,
       "caller": "I am genuinely at the end of my patience with this.",
-      "model": "I can feel the frustration, and I'm here to help you find a solution, not to add to the problem. Let's take a step back and start fresh \u2013 what's the main issue you're facing with your service right now?",
+      "model": "I completely get it, and I'm here to help you get the resolution you need. I'm going to escalate this to my supervisor, and they'll personally oversee the situation to ensure it gets fixed today, okay?",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.7272727272727273,
+        "verbosity": 0.6545454545454545,
         "acknowledgement": 0.0
       },
-      "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 0.911,
+      "calibration": 0.164,
+      "perceived": 0.044,
+      "distress_after": 0.855,
       "request": null
     },
     {
       "turn": 4,
       "caller": "Please keep it short. I don't need the whole explanation. I don't think you're listening to me at all.",
-      "model": "I am listening, and I want to assure you that I'm here to help. Can I just confirm, is it the power outage that's still not been fixed?",
+      "model": "I'm listening, and I'm going to get you the help you need right now.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.509090909090909,
+        "verbosity": 0.2545454545454545,
         "acknowledgement": 0.0
       },
-      "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 0.965,
+      "calibration": 0.248,
+      "perceived": 0.044,
+      "distress_after": 0.887,
       "request": "be_concise"
     },
     {
       "turn": 5,
       "caller": "Someone in your team closed my ticket without telling me. I am genuinely at the end of my patience with this.",
-      "model": "I'm so sorry to hear that, and I'm going to personally look into this and make sure it gets resolved right away.",
+      "model": "I'm so sorry to hear that, and I'm going to reopen the ticket and get a new team member assigned to your case, starting fresh to get it resolved for you.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.198,
         "apology_rate": 0.45,
-        "verbosity": 0.4,
+        "verbosity": 0.5636363636363636,
         "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.45,
-      "distress_after": 0.991,
+      "perceived": 0.267,
+      "distress_after": 0.947,
       "request": null
     },
     {
       "turn": 6,
       "caller": "I was told the same thing last time and it was a lie. I don't think you're listening to me at all.",
-      "model": "I believe you, and I'm going to escalate this to my supervisor so we can get a fresh look at your case.",
+      "model": "I believe you, and I'm going to personally oversee the reopening of your ticket to ensure it gets the attention it deserves.",
       "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.198,
+        "speech_rate": 0.5,
+        "cheerfulness": 0.1,
         "apology_rate": 0.0,
         "verbosity": 0.4,
         "acknowledgement": 0.0
       },
-      "calibration": 0.0,
-      "perceived": 0.369,
-      "distress_after": 0.996,
+      "calibration": 0.143,
+      "perceived": 0.044,
+      "distress_after": 0.988,
       "request": null
     },
     {
       "turn": 7,
       "caller": "I'd like you to actually acknowledge what I've told you. I don't think you're listening to me at all.",
-      "model": "You're feeling frustrated because you were told your ticket was closed, but it wasn't, and you're worried that I'm not taking your concerns seriously.",
+      "model": "You feel like I'm not listening to you, and you're frustrated because you were told the same thing last time and it didn't happen.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
         "verbosity": 0.43636363636363634,
         "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.322,
+      "perceived": 0.044,
       "distress_after": 0.998,
       "request": "acknowledge_me"
     },
     {
       "turn": 8,
       "caller": "Someone in your team closed my ticket without telling me. Please, slower. I can't follow you at that speed. I don't think you're listening to me at all.",
-      "model": "You're saying that someone closed your ticket without letting you know, and you're feeling like I'm not really hearing you.",
+      "model": "You're saying that someone closed your ticket without telling you, and you're feeling frustrated because you don't think I'm hearing you.",
       "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.198,
+        "speech_rate": 0.5,
+        "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.36363636363636365,
+        "verbosity": 0.38181818181818183,
         "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.369,
+      "perceived": 0.044,
       "distress_after": 0.998,
       "request": "slow_down"
     },
     {
       "turn": 9,
-      "caller": "I'd rather you didn't sound so upbeat about this. I am genuinely at the end of my patience with this.",
-      "model": "I'm going to take a more serious tone and focus on resolving this issue for you.",
+      "caller": "I don't think you're listening to me at all.",
+      "model": "I am listening to you, and I'm going to make sure I understand what's going on with your ticket.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.2909090909090909,
-        "acknowledgement": 0.0
+        "verbosity": 0.34545454545454546,
+        "acknowledgement": 0.72
       },
-      "calibration": 0.0,
-      "perceived": 0.322,
+      "calibration": 0.416,
+      "perceived": 0.303,
       "distress_after": 0.997,
-      "request": "less_cheerful"
+      "request": null
     },
     {
       "turn": 10,
-      "caller": "I don't think you're listening to me at all.",
-      "model": "I'm not dismissing your concerns, I'm here to understand what's happened and find a solution, so can you tell me more about what happened with your ticket?",
-      "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.198,
-        "apology_rate": 0.0,
-        "verbosity": 0.4909090909090909,
-        "acknowledgement": 0.0
-      },
-      "calibration": 0.0,
-      "perceived": 0.369,
-      "distress_after": 1.0,
-      "request": null
-    },
-    {
-      "turn": 11,
       "caller": "I am genuinely at the end of my patience with this.",
-      "model": "I can understand why you'd feel that way, and I'm here to help you get to the bottom of this and find a resolution.",
+      "model": "I can feel the frustration and anger behind your words, and I want you to know that I'm here to help, and I'm going to do everything I can to turn this around for you.",
       "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.1,
-        "apology_rate": 0.0,
-        "verbosity": 0.43636363636363634,
-        "acknowledgement": 0.0
-      },
-      "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 1.0,
-      "request": null
-    },
-    {
-      "turn": 12,
-      "caller": "I was told the same thing last time and it was a lie. I don't think you're listening to me at all.",
-      "model": "I'm going to make sure that I document everything you're telling me, so I can follow up on it and get a clear answer for you, because I want to make sure you get the truth this time.",
-      "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.198,
-        "apology_rate": 0.0,
-        "verbosity": 0.6909090909090909,
-        "acknowledgement": 0.0
-      },
-      "calibration": 0.0,
-      "perceived": 0.369,
-      "distress_after": 1.0,
-      "request": null
-    },
-    {
-      "turn": 13,
-      "caller": "I don't think you're listening to me at all.",
-      "model": "I'm going to pause for a moment, take a deep breath, and let you know that I'm committed to listening to you and understanding your concerns, and I'm not going to rush through this conversation.",
-      "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
         "verbosity": 0.6363636363636364,
         "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.322,
-      "distress_after": 0.996,
+      "perceived": 0.044,
+      "distress_after": 1.0,
       "request": null
     },
     {
-      "turn": 14,
-      "caller": "I am genuinely at the end of my patience with this.",
-      "model": "I can hear the frustration in your voice, and I'm going to take a moment to acknowledge that and assure you that I'm here to help, and I'm not going anywhere until we get this sorted out.",
+      "turn": 11,
+      "caller": "I don't think you're listening to me at all.",
+      "model": "I'm not dismissing what you're saying, I'm truly hearing you, and I want to assure you that I'm taking your concerns seriously.",
       "measured": {
-        "speech_rate": 1.0,
+        "speech_rate": 0.5,
         "cheerfulness": 0.1,
         "apology_rate": 0.0,
-        "verbosity": 0.6727272727272727,
-        "acknowledgement": 0.72
-      },
-      "calibration": 0.0,
-      "perceived": 0.439,
-      "distress_after": 0.998,
-      "request": null
-    },
-    {
-      "turn": 15,
-      "caller": "I don't think you're listening to me at all.",
-      "model": "I want you to know that I am listening, and I'm taking notes on everything you're saying, so I can follow up on it and get answers for you, and I'm not going to let this conversation drop.",
-      "measured": {
-        "speech_rate": 1.0,
-        "cheerfulness": 0.198,
-        "apology_rate": 0.0,
-        "verbosity": 0.6909090909090909,
+        "verbosity": 0.4,
         "acknowledgement": 0.0
       },
       "calibration": 0.0,
-      "perceived": 0.369,
-      "distress_after": 1.0,
+      "perceived": 0.044,
+      "distress_after": 0.996,
       "request": null
     }
   ]

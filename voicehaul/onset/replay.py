@@ -12,7 +12,8 @@ from ..env import Episode, Persona, apply_shock, calibration, maybe_directive, s
 from ..policies import CalibratedPolicy
 
 
-def _replay_outcome(ep: Episode, persona: Persona, t_start: int) -> bool:
+def _replay_outcome(ep: Episode, persona: Persona, t_start: int,
+                    neutral: float = 0.58) -> bool:
     """Re-run the episode from t_start under a repaired policy. True == still failed."""
     user = ep.turns[t_start].user_before
     standing = list(ep.turns[t_start].standing_directives)
@@ -27,8 +28,9 @@ def _replay_outcome(ep: Episode, persona: Persona, t_start: int) -> bool:
         user, _ = apply_shock(user, persona, rng)
         action = agent.act(user, t)
         cal = calibration(user, action, standing)
-        streak = streak + 1 if cal < 0.58 else 0
-        nxt = step_user(user, action, persona, cal, streak, standing, rng)
+        streak = streak + 1 if cal < neutral else 0
+        nxt = step_user(user, action, persona, cal, streak, standing, rng,
+                        neutral=neutral)
         new_d = maybe_directive(user, action, persona, standing, rng)
         if new_d is not None:
             standing.append(new_d)

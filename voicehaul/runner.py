@@ -17,7 +17,8 @@ _DEGRADED = Action(speech_rate=0.68, cheerfulness=0.82, apology_rate=0.26,
 
 def run_episode(policy: VoicePolicy, persona: Persona, seed: int, n_turns: int = 40,
                 fault_turn: Optional[int] = None, corrupt_p: float = 0.0,
-                fault_severity: float = 1.0) -> Episode:
+                fault_severity: float = 1.0,
+                neutral: float = 0.58) -> Episode:
     """Roll out one conversation.
 
     fault_turn -- if set, the agent is forced into a degraded policy from that
@@ -64,8 +65,9 @@ def run_episode(policy: VoicePolicy, persona: Persona, seed: int, n_turns: int =
         cal = calibration(user, action, standing)
         perc = perceived_empathy(user, action)
         violated = any(not satisfies(action, d) for d in standing)
-        streak = streak + 1 if cal < 0.58 else 0
-        nxt = step_user(user, action, persona, cal, streak, standing, rng)
+        streak = streak + 1 if cal < neutral else 0
+        nxt = step_user(user, action, persona, cal, streak, standing, rng,
+                        neutral=neutral)
 
         new_d = pending
         if new_d is not None:

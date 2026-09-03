@@ -44,11 +44,21 @@ def main() -> int:
     ap.add_argument("--episodes", type=int, default=5)
     ap.add_argument("--turns", type=int, default=12)
     ap.add_argument("--out", default="artifacts")
+    ap.add_argument("--config", default=None,
+                    help="suite config; anchors neutral_calibration")
     args = ap.parse_args()
 
     register(args.provider, args.model, args.turns)
-    cfg = SuiteConfig(name="llm-prompt-change", episodes=args.episodes,
-                      turns=args.turns, seed=0)
+    if args.config:
+        cfg = SuiteConfig.load(args.config)
+        if args.episodes != 5:
+            cfg = cfg.replace(episodes=args.episodes)
+        if args.turns != 12:
+            cfg = cfg.replace(turns=args.turns)
+    else:
+        cfg = SuiteConfig(name="llm-prompt-change", episodes=args.episodes,
+                          turns=args.turns, seed=0)
+    print("break-even calibration: {:.2f}".format(cfg.neutral_calibration))
 
     probe = LLMPolicy("probe", "x", provider=args.provider, model=args.model)
     print("provider : {}".format(probe.provider))

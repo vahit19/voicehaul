@@ -1,0 +1,62 @@
+------------------------------------------------------------------------------------
+JUDGE SUBSTITUTION   how much of the human panel can be automated?
+------------------------------------------------------------------------------------
+turns scored   : 96
+human panel    : 3 raters, sd 0.90 Likert points
+judge          : meta-llama/llama-3.1-8b-instruct
+target          : panel reliability 0.80
+
+  scored 25/96  (0 cached)
+  scored 50/96  (1 cached)
+  scored 75/96  (1 cached)
+  judge calls 87 | cached 9 | unreadable 0 | 107s
+
+------------------------------------------------------------------------------------
+CAN THE JUDGE STAND IN?   by dimension
+------------------------------------------------------------------------------------
+dimension                   n judge rho 1 judge =  human saving     verdict
+                                 (est.)  N humans     at target            
+perceived_empathy          96      0.17      0.35            5%  supplement
+actual_help                96      0.03      0.00            1%  human only
+
+------------------------------------------------------------------------------------
+WHERE THE AVERAGE LIES   by caller segment
+------------------------------------------------------------------------------------
+An aggregate agreement figure hides the segments a judge is blind
+to, and those are the calls that generate escalations.
+
+  actual_help
+    hostile_escalation          0.01 judge rho     0.00 = 1 judge
+    distressed_billing          0.03 judge rho     0.00 = 1 judge
+    confused_elderly            0.09 judge rho     0.01 = 1 judge
+
+  perceived_empathy
+    distressed_billing          0.03 judge rho     0.08 = 1 judge
+    hostile_escalation          0.06 judge rho     0.09 = 1 judge
+    confused_elderly            0.31 judge rho     3.88 = 1 judge
+
+------------------------------------------------------------------------------------
+IS THE ESTIMATOR ITSELF ANY GOOD?
+------------------------------------------------------------------------------------
+The left column is what a customer can compute without ground truth.
+The right is the real answer, available here because this suite knows
+the latent quality it generated. Real data cannot run this check.
+
+dimension                estimated rho      true rho       error
+perceived_empathy                0.173         0.119      +0.054
+actual_help                      0.029         0.026      +0.003
+
+------------------------------------------------------------------------------------
+WHAT THIS MEANS FOR A RATING BUDGET
+------------------------------------------------------------------------------------
+  perceived_empathy: the judge carries too little signal to substitute here.
+  Keep the human panel; the judge can pre-screen but not replace.
+
+  actual_help: the judge carries too little signal to substitute here.
+  Keep the human panel; the judge can pre-screen but not replace.
+
+  The calibration itself needs human ratings, and it expires: a new
+  judge model, a new domain or a changed rubric all move these
+  numbers. This is a recurring measurement, not a one-off setting.
+
+wrote artifacts\judge-substitution.json

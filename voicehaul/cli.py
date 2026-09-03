@@ -6,6 +6,7 @@
     voicehaul localize POLICY               diagnose a failed conversation
     voicehaul bench                         score the localizer against injected faults
     voicehaul budget                        rating budget and which conversations to rate
+    voicehaul calibrate POLICY              anchor the environment to a system class
     voicehaul policies                      what is registered
 
 Exit codes are meaningful: `gate` returns 1 on BLOCK, so it can sit in CI.
@@ -240,6 +241,63 @@ def cmd_budget(args) -> int:
     return 0
 
 
+def cmd_calibrate(args) -> int:
+    """Measure where a class of system actually sits, before grading it.
+
+    The environment's break-even calibration decides whether a caller settles
+    or escalates. It has to sit inside the range the systems under test can
+    reach: anchored on simulated policies it is 0.58, and a real model measured
+    through a transcript sits far below that, which pins every conversation to
+    the failure floor and leaves the suite with no discriminative power.
+    """
+    from . import metrics as M
+    cfg = _cfg(args)
+    names = list(cfg.personas)
+    per_turn = []
+    for i in range(cfg.episodes):
+        ep = run_episode(get_policy(args.policy),
+                         get_persona(names[i % len(names)]),
+                         seed=cfg.seed + i, n_turns=cfg.turns,
+                         neutral=cfg.neutral_calibration)
+        per_turn.extend(t.calibration for t in ep.turns)
+    per_turn.sort()
+
+    def q(p):
+        return per_turn[min(len(per_turn) - 1, int(p * len(per_turn)))]
+
+    print(BANNER)
+    print("calibrating the environment against: {}".format(args.policy))
+    print("suite: {}".format(cfg.describe()))
+    print()
+    print("  observed calibration over {:,} turns".format(len(per_turn)))
+    for label, p in (("10th percentile", .10), ("median", .50),
+                     ("75th percentile", .75), ("90th percentile", .90)):
+        print("    {:<18}{:.3f}".format(label, q(p)))
+    print()
+    suggested = round(q(0.60), 2)
+    print("  current break-even : {:.2f}".format(cfg.neutral_calibration))
+    print("  suggested          : {:.2f}".format(suggested))
+    print()
+    if cfg.neutral_calibration > q(0.90):
+        print("  The current value sits above the 90th percentile of what this")
+        print("  system reaches. Every conversation escalates and the suite")
+        print("  cannot separate two systems of this class.")
+    elif cfg.neutral_calibration < q(0.10):
+        print("  The current value sits below the 10th percentile. Nothing")
+        print("  escalates, and a regression has nowhere to show up.")
+    else:
+        print("  The current value sits inside the achievable range.")
+    print()
+    print("  Set it in the suite config:")
+    print("    neutral_calibration: {:.2f}".format(suggested))
+    print()
+    print("  This is an anchoring step, not a knob to tune until the answer")
+    print("  looks good: it is measured from a reference system and then fixed,")
+    print("  and it is part of the suite id, so a report always says which")
+    print("  anchoring produced it.")
+    return 0
+
+
 def cmd_policies(args) -> int:
     from .registry import dimensions
     print(BANNER)
@@ -317,6 +375,11 @@ def build_parser() -> argparse.ArgumentParser:
     sp = common(sub.add_parser("budget", help="rating budget, and which conversations to rate"))
     sp.add_argument("--policy", default="calibrated")
     sp.set_defaults(func=cmd_budget)
+
+    sp = common(sub.add_parser(
+        "calibrate", help="anchor the environment to the systems under test"))
+    sp.add_argument("policy")
+    sp.set_defaults(func=cmd_calibrate)
 
     sp = sub.add_parser("policies", help="what is registered")
     sp.set_defaults(func=cmd_policies)

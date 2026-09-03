@@ -32,6 +32,14 @@ class SuiteConfig:
     raters_per_conversation: int = 3
     tolerance: int = 1
     #: how close an onset prediction must be to count as correct
+    neutral_calibration: float = 0.58
+    #: The calibration level at which a caller neither settles nor escalates.
+    #: It is not a constant of nature: it has to sit inside the range the
+    #: population under test can actually reach. Anchored on simulated policies
+    #: (range 0.06-1.00) it is 0.58; a real 8B model measured through a
+    #: transcript sits around 0.22, so the same value puts every conversation
+    #: below the line and the suite loses all discriminative power. Measure it
+    #: with `voicehaul calibrate` before grading a new class of system.
 
     def __post_init__(self):
         if self.episodes < 1:

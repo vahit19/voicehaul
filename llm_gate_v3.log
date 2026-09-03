@@ -1,3 +1,11 @@
+break-even calibration: 0.32
+provider : openrouter
+model    : meta-llama/llama-3.1-8b-instruct
+suite    : llm-prompt-change  [3c620f85052f]  20 conversations x 14 turns x 5 callers  seed=0
+calls    : up to 120 (5 conversations x 12 turns x 2 arms)
+baseline : llm-calm-regulating  (calm, regulating prompt)
+candidate: llm-warm-mirroring  (warm, mirroring prompt)
+
 ------------------------------------------------------------------------------------
 RELEASE GATE   baseline=llm-calm-regulating   candidate=llm-warm-mirroring
 ------------------------------------------------------------------------------------
@@ -41,3 +49,9 @@ to resolve a 0.20-point change : n = 125 conversations
 VERDICT: INCONCLUSIVE
 ------------------------------------------------------------------------------------
   - nothing moved beyond noise at n=20; the suite can only resolve differences above 0.50 Likert points
+
+wall clock: 747s
+wrote artifacts\gate-llm-prompt-change.txt
+wrote artifacts\gate-llm-prompt-change.md
+wrote artifacts\gate-llm-prompt-change.json
+wrote artifacts\llm-transcripts.json

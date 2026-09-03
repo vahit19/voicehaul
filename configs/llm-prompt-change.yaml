@@ -1,0 +1,18 @@
+# A real language model under two system prompts.
+#
+# neutral_calibration is anchored on the model class under test, not on the
+# simulated policies: `voicehaul calibrate` measured llama-3.1-8b through a
+# transcript at a median of 0.25 and a 90th percentile of 0.63, so the default
+# 0.58 sits near the top of what this class reaches and pins every conversation
+# to the failure floor. 0.32 is its 60th percentile - inside the achievable
+# range, so a regression has somewhere to show up.
+#
+# This is an anchoring step, fixed before the comparison and recorded in the
+# suite id, not a knob turned until the answer looked good.
+name: llm-prompt-change
+episodes: 20
+turns: 14
+seed: 0
+neutral_calibration: 0.32
+rater_sigma: 0.9
+raters_per_conversation: 3
