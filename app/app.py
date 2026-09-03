@@ -289,6 +289,122 @@ def caller_legend():
                    "Who are the five callers?")
 
 
+
+AUTHOR_CARD = """
+<div style="display:flex;flex-wrap:wrap;gap:1.4rem;align-items:flex-start;
+ justify-content:space-between;border:1px solid #dbe3e1;border-radius:6px;
+ background:#fff;padding:16px 20px;margin:0 0 1.1rem;
+ font-family:'IBM Plex Sans',system-ui,sans-serif">
+  <div style="flex:1 1 340px;min-width:280px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.64rem;
+     letter-spacing:.13em;text-transform:uppercase;color:#8b9d99">
+     built by</div>
+    <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:1.35rem;
+     font-weight:600;color:#131c1b;margin:.2rem 0 .1rem">Vahit Feryad, PhD</div>
+    <div style="font-size:.9rem;color:#3a4b49">Applied AI research engineer
+     &middot; evaluation, benchmarking and agent reliability</div>
+    <div style="font-size:.84rem;color:#61756f;margin-top:.45rem;line-height:1.55">
+     PhD in electrical and electronics engineering &middot; 10+ years industrial
+     R&amp;D &middot; 237 Google Scholar citations &middot; Istanbul</div>
+  </div>
+  <div style="flex:0 1 330px;min-width:270px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:.64rem;
+     letter-spacing:.13em;text-transform:uppercase;color:#8b9d99;
+     margin-bottom:.4rem">the work this is built on</div>
+    <div style="font-size:.85rem;line-height:1.6;color:#3a4b49">
+      <a href="https://github.com/vahit19/LongHaul-Bench"
+       style="color:#0d6f66;font-weight:500">LongHaul-Bench</a>
+      &mdash; long-horizon agent reliability over 1,000+ sequential episodes,
+      five-world programme, memory ablations<br>
+      <a href="https://github.com/vahit19/runopsy"
+       style="color:#0d6f66;font-weight:500">Runopsy</a>
+      &mdash; causal failure-onset diagnosis with counterfactual replay
+      (Apache-2.0, on PyPI)
+    </div>
+    <div style="margin-top:.6rem;font-family:'IBM Plex Mono',monospace;
+     font-size:.78rem">
+      <a href="https://github.com/vahit19/voicehaul" style="color:#0d6f66">source</a>
+      &nbsp;&middot;&nbsp;
+      <a href="https://scholar.google.com/citations?hl=en&amp;user=JUtYZ1oAAAAJ"
+       style="color:#0d6f66">scholar</a>
+      &nbsp;&middot;&nbsp;
+      <a href="https://www.linkedin.com/in/vahit-feryad-19517256/"
+       style="color:#0d6f66">linkedin</a>
+      &nbsp;&middot;&nbsp;
+      <a href="https://vahit19.github.io/voicehaul/" style="color:#0d6f66">static report</a>
+    </div>
+  </div>
+</div>
+"""
+
+TABS_MAP = """
+<div style="border:1px solid #dbe3e1;border-radius:6px;background:#f6f8f7;
+ padding:14px 18px;margin:.2rem 0 1.2rem;font-family:'IBM Plex Sans',system-ui,
+ sans-serif">
+ <div style="font-family:'IBM Plex Mono',monospace;font-size:.64rem;
+  letter-spacing:.13em;text-transform:uppercase;color:#8b9d99;
+  margin-bottom:.6rem">what you can do on this page</div>
+ <div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;
+  font-size:.86rem">
+ <tr><th style="text-align:left;padding:.3rem .8rem .45rem 0;font-size:.64rem;
+  letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;font-weight:500">
+  tab</th>
+ <th style="text-align:left;padding:.3rem .8rem .45rem;font-size:.64rem;
+  letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;font-weight:500">
+  you choose</th>
+ <th style="text-align:left;padding:.3rem 0 .45rem .8rem;font-size:.64rem;
+  letter-spacing:.09em;text-transform:uppercase;color:#8b9d99;font-weight:500">
+  you get</th></tr>
+ {rows}
+ </table></div>
+ <div style="font-size:.82rem;color:#61756f;margin-top:.7rem">
+  Every tab already shows a result. Nothing calls an external service &mdash;
+  the harness is pure Python and runs in this tab.</div>
+</div>
+"""
+
+_TABS = [
+    ("Judge substitution",
+     "nothing - it is precomputed",
+     "how many human ratings one LLM judge rating is worth, per dimension and "
+     "per caller, with the estimator checked against ground truth"),
+    ("Release gate",
+     "a baseline and a candidate policy, suite size",
+     "ship or block, every dimension with its scale, where the regression "
+     "lands by caller, and what the sample size could not resolve"),
+    ("Watch a conversation",
+     "a policy and a caller",
+     "the call turn by turn, with the turn it broke on marked and named"),
+    ("Which turn broke it",
+     "how subtle the injected fault is, and where",
+     "the four signals that flagged each turn, the evidence at the one named, "
+     "and accuracy across 30 injected faults"),
+    ("Rating budget",
+     "conversations, raters, how much raters disagree",
+     "the smallest regression you could detect, and which conversations to "
+     "spend the budget on"),
+    ("How to read the numbers",
+     "nothing",
+     "every metric with its bands and where each threshold came from"),
+    ("What's real here",
+     "nothing",
+     "what is simulated, what is not, and the faults this exposed in the "
+     "instrument itself"),
+]
+
+
+def tabs_map():
+    rows = "".join(
+        ('<tr><td style="padding:.4rem .8rem .4rem 0;vertical-align:top;'
+         'border-top:1px solid #e4ebe9;font-weight:500;white-space:nowrap">{t}</td>'
+         '<td style="padding:.4rem .8rem;vertical-align:top;'
+         'border-top:1px solid #e4ebe9;color:#61756f">{i}</td>'
+         '<td style="padding:.4rem 0 .4rem .8rem;vertical-align:top;'
+         'border-top:1px solid #e4ebe9;color:#3a4b49">{o}</td></tr>'
+         ).format(t=t, i=i, o=o) for t, i, o in _TABS)
+    return TABS_MAP.format(rows=rows)
+
+
 VERDICT_STYLE = {
     "BLOCK": (ALARM, "#f3ddd9", "Do not ship"),
     "SHIP": (ACCENT, "#d3e7e3", "Safe to ship"),
@@ -807,24 +923,18 @@ POLICIES = ["calibrated", "mirror", "flat_cheerful", "drifter", "oracle"]
 
 with gr.Blocks(css=CSS, title="VoiceHaul",
                theme=gr.themes.Soft(primary_hue="teal")) as demo:
+    gr.HTML(AUTHOR_CARD)
     gr.Markdown(
         "# Sounding right on every turn, and getting the conversation wrong\n"
-        "**Long-horizon evaluation and failure-onset diagnosis for empathic "
-        "voice agents.**\n\n"
+        "**VoiceHaul &mdash; long-horizon evaluation, failure-onset diagnosis "
+        "and judge-substitution analysis for empathic voice agents.**\n\n"
         "A turn-level rating tells you whether a response sounded right. It "
         "cannot tell you whether a model still honours what the caller asked "
         "for twenty turns ago, whether its calibration decays as a session runs "
         "long, whether it is regulating the caller's affect or mirroring it "
-        "back, or which turn broke a call that ended badly.\n\n"
-        "Everything below runs live. "
-        "[Source](https://github.com/vahit19/voicehaul) &middot; "
-        "[Static report](https://vahit19.github.io/voicehaul/)")
-    gr.Markdown(
-        "*Six tabs, each one already showing a result &mdash; the controls are "
-        "there to change the question, not to make something appear. Nothing "
-        "here calls an external service; the harness is pure Python and runs "
-        "in this tab.*")
+        "back, or which turn broke a call that ended badly.")
     gr.HTML(headline_strip())
+    gr.HTML(tabs_map())
     gr.HTML(LOOP_SVG)
 
     with gr.Tabs():
