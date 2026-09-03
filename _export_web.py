@@ -126,6 +126,16 @@ for name, cls in AGENTS:
                        "sh": bool(t.shock > 0)} for t in ep.turns]}
 out["episodes"] = episodes
 
+# ---- judge substitution, if it has been run ------------------------------
+try:
+    with open("artifacts/judge-substitution.json", encoding="utf-8") as f:
+        sub = json.load(f)
+    out["substitution"] = {
+        "judge_model": sub["judge_model"], "raters": sub["raters"],
+        "rows": sub["rows"], "pairs": sub["pairs"]}
+except (IOError, KeyError, ValueError):
+    out["substitution"] = None
+
 with open("web_data.json", "w", encoding="utf-8") as f:
     json.dump(out, f, separators=(",", ":"))
 print("wrote web_data.json")

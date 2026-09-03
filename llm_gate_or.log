@@ -1,7 +1,0 @@
-provider : openrouter
-model    : meta-llama/llama-3.1-8b-instruct
-suite    : llm-prompt-change  [5f47434cd83e]  10 conversations x 16 turns x 5 callers  seed=0
-calls    : up to 320 (10 conversations x 16 turns x 2 arms)
-baseline : llm-calm-regulating  (calm, regulating prompt)
-candidate: llm-warm-mirroring  (warm, mirroring prompt)
-

@@ -1,50 +1,28 @@
-# Publishing
+# Where this lives
 
-## Live already
+| | |
+|---|---|
+| source | https://github.com/vahit19/voicehaul |
+| report | https://vahit19.github.io/voicehaul/ |
+| mirror | https://huggingface.co/spaces/renderfy/voicehaul |
+| notebook | [Colab](https://colab.research.google.com/github/vahit19/voicehaul/blob/main/VoiceHaul_demo.ipynb) |
 
-- **Hugging Face Space (public, static):**
-  https://huggingface.co/spaces/renderfy/voicehaul
-  Direct: https://renderfy-voicehaul.static.hf.space/
-  Update it by editing `_web_template.html`, then:
+## Regenerating the report
 
-      py -3 _export_web.py
-      py -3 -c "tpl=open('_web_template.html',encoding='utf-8').read(); data=open('web_data.json',encoding='utf-8').read().replace('</','<\/'); out=tpl.replace('__DATA__',data); open('voicehaul_report.html','w',encoding='utf-8').write(out); open('docs/index.html','w',encoding='utf-8').write(out)"
+`docs/index.html` is the page GitHub Pages serves. It is generated, not edited:
 
-  then copy `voicehaul_report.html` to `index.html` in the Space clone and push.
+    python _export_web.py          # recompute every number
+    python _build_report.py        # template + data -> docs/index.html
 
-## GitHub — two commands, run these yourself
+Then commit and push. To mirror it on the Space, copy `docs/index.html` to
+`index.html` in a clone of the Space repo and push there.
 
-The repo is committed locally and ready. Create the empty repo at
-https://github.com/new (name: `voicehaul`, **public**, no README, no licence,
-no .gitignore — this repo already has all three), then:
+## Regenerating the numbers it shows
 
-    cd voicehaul
-    git remote add origin https://github.com/vahit19/voicehaul.git
-    git push -u origin main
+    python run_demo.py             # the simulated suite, plus the static chart
+    python run_llm_gate.py --config configs/llm-prompt-change.yaml
+    python run_substitution.py --source llm
 
-## GitHub Pages — a second public URL, free
-
-Repo → Settings → Pages → Source "Deploy from a branch", branch `main`,
-folder `/docs`. Live in about a minute at https://vahit19.github.io/voicehaul/
-
-`docs/index.html` is the same report the Space serves.
-
-## Colab
-
-Works as soon as the repo is public:
-
-    https://colab.research.google.com/github/vahit19/voicehaul/blob/main/VoiceHaul_demo.ipynb
-
-## Streamlit version
-
-`space/` holds a Streamlit build of the same report that recomputes the whole
-suite on every parameter change. It runs locally:
-
-    cd space
-    pip install -r requirements.txt
-    streamlit run app.py
-
-It is **not** deployed: Hugging Face now requires a PRO subscription to host
-Docker or Gradio Spaces on free CPU (only `static` is free). The static Space
-is arguably better for a cold link anyway — it loads instantly, where a free
-Streamlit Space sleeps and shows a 30-second wake-up screen.
+The last two need a model. They try a local ollama first, then OpenRouter or
+the Hugging Face router if a key is set. Responses are cached under
+`.voicehaul-cache/`, so a second run is free and produces identical numbers.

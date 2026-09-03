@@ -107,6 +107,7 @@ def main() -> int:
     print()
 
     rows = []
+    raw = {}
     for rubric in RUBRICS:
         keep = [(p, t, s) for (p, t), s in zip(pairs, scores) if s is not None]
         theta = [rubric.truth(t) for _p, t, _s in keep]
@@ -114,6 +115,12 @@ def main() -> int:
         panel = simulate_panel(theta, args.raters, args.rater_sigma, seed=7)
         rows.append(analyse(theta, gjudge, panel, rubric.key, "all",
                             args.target, judge.failures))
+        # Kept so the report can show the scatter the correlation summarises.
+        raw[rubric.key] = [
+            {"theta": round(th, 4), "judge": g, "panel": round(sum(pr) / len(pr), 3),
+             "segment": p}
+            for th, g, pr, p in zip(theta, gjudge, panel,
+                                    [pp for pp, _t, _s in keep])]
 
         for persona in [p.name for p in PERSONAS]:
             sub = [(p, t, s) for p, t, s in keep if p == persona]
@@ -131,7 +138,8 @@ def main() -> int:
         json.dump({"schema": "voicehaul.substitution/1",
                    "judge_model": args.model, "raters": args.raters,
                    "rater_sigma": args.rater_sigma, "target": args.target,
-                   "rows": [r.__dict__ for r in rows]}, fh, indent=2)
+                   "rows": [r.__dict__ for r in rows], "pairs": raw}, fh,
+                  indent=2)
     print("wrote {}".format(path))
     return 0
 
