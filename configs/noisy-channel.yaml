@@ -1,0 +1,9 @@
+# The same suite with a lossy feedback channel: one request in five reaches the
+# model as its opposite. The caller still expects the original.
+name: noisy-channel
+episodes: 40
+turns: 40
+seed: 0
+corrupt_p: 0.2
+rater_sigma: 0.9
+raters_per_conversation: 3

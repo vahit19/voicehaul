@@ -12,8 +12,10 @@ VoiceHaul measures those four things, and then measures how much rating budget
 you need before any of them is detectable.
 
 ```
-py -3 run_demo.py        # ~2 seconds, no API key, no network
-py -3 test_voicehaul.py  # 16 property checks on the harness itself
+pip install -e .
+voicehaul demo                          # the worked example, end to end
+voicehaul gate calibrated mirror        # should this candidate ship?
+python test_voicehaul.py                # 37 property checks on the harness itself
 ```
 
 **Interactive version:** [huggingface.co/spaces/renderfy/voicehaul](https://huggingface.co/spaces/renderfy/voicehaul)
@@ -224,24 +226,139 @@ earns authority by being maintained, versioned, contamination-checked and
 re-validated as the models it measures keep moving — and stops being cited about
 a year after anyone stops doing that.
 
-## Layout
+## Architecture
+
+Layered after Runopsy, and for the same reason: an evaluation result is only
+actionable if you can say which layer produced it and what it cost.
 
 ```
-voicehaul/affect.py     compact affect basis, projection from a 48-dim readout
-voicehaul/env.py        personas, action space, calibration and perceived-empathy
-voicehaul/agents.py     five policies, each one known failure mode
-voicehaul/runner.py     rollout, fault injection, feedback corruption
-voicehaul/metrics.py    FUR, drift, mimicry/regulation, turn panel, power
-voicehaul/onset.py      failure-onset localization + counterfactual replay
-voicehaul/adapters.py   integration seams for real models and real raters
-run_demo.py             the report above
-test_voicehaul.py       16 property checks on the harness itself
-docs/index.html         the interactive report (GitHub Pages / HF Space)
-space/                  Streamlit version of the same report
-VoiceHaul_demo.ipynb    Colab notebook
+voicehaul/
+  config.py         SuiteConfig - every field that changes a number, hashed
+                    into a suite id stamped on every artifact
+  registry.py       policies, personas, and gate dimensions by name
+  affect.py         the compact affect basis; projection from a 48-dim readout
+  env/              action space, caller personas, dynamics, and the TWO
+                    scoring channels kept deliberately separate
+  policies/         five deterministic policies, one known failure mode each
+  runner.py         rollout, fault injection, feedback-channel corruption
+  metrics/          stats (Welch, Holm, bootstrap) - uptake - drift -
+                    regulation - outcome - power
+  onset/            signals (L1, deterministic) - replay (L2, counterfactual)
+                    - localize (propose, walk back, gate)
+  select.py         which conversations to spend the rating budget on
+  gate.py           the release gate: baseline vs candidate, all dimensions
+  report.py         one report object, three surfaces: text, Markdown, JSON
+  cli.py            demo | gate | run | localize | bench | budget | policies
+  adapters/         audio -> action vector; Hume API seams, unmocked
+  integrations/     Inspect AI tasks and scorers (optional extra)
 ```
 
-Pure standard library. `matplotlib` is optional and only draws the chart.
+Two design rules run through it. **The core has no dependencies** - standard
+library only, because the first thing that stops people reproducing your numbers
+is your dependency list. And **every layer can refuse to answer**: replay
+abstains rather than name a wrong turn, the gate reports what the sample size
+could not resolve, and a dimension whose sign is ambiguous is marked diagnostic
+and is not allowed to block a release.
+
+### The release gate
+
+The question a leaderboard cannot answer, and the one an evaluation suite exists
+for. `voicehaul gate calibrated mirror` runs both arms on the same suite, tests
+every dimension with Welch two-sample tests using conversations as the unit,
+corrects across dimensions with Holm, and exits non-zero on BLOCK so it can sit
+in CI.
+
+```
+  what a fixed-prompt leaderboard reports
+  UP    perceived empathy              0.575      0.633    +0.058   0.0000
+ DOWN   calibration                    0.941      0.795    -0.146   0.0000
+
+  what the conversations report
+ DOWN   calibration                    0.961      0.842    -0.118   0.0000
+  --    feedback uptake @10            1.000      1.000    +0.000   1.0000
+  ...
+VERDICT: BLOCK
+  - calibration regressed by -0.118 (Holm p=0.0000)
+  - the fixed-context turn panel rated the candidate HIGHER on perceived
+    empathy - a leaderboard would have passed this release
+```
+
+It then says where the regression lands (`hostile_escalation` takes -0.243
+against -0.068 for the calm caller), which turn each failed conversation broke
+on, and what the suite was too small to see.
+
+### Which conversations to rate
+
+`voicehaul budget` answers the question `metrics/power.py` leaves open. Human
+rating is the dominant cost line in voice evaluation, and a suite of 200
+conversations that all sit in one corner of caller-state space measures one
+corner 200 times. k-center selection over a conversation signature:
+
+```
+  budget         diverse      random      saving
+  20               0.390       0.639         39%
+
+  10 diversity-selected conversations cover as much as 17 sampled at
+  random - 59% of the rating cost for the same coverage.
+```
+
+### Inspect AI
+
+`pip install "voicehaul[inspect]"`. The suite becomes a dataset, the rollout a
+solver, the metrics scorers, and the output an ordinary Inspect eval log:
+
+```
+inspect eval voicehaul/integrations/inspect_ai.py@long_horizon     -T policy=mirror --model mockllm/model
+
+inspect eval voicehaul/integrations/inspect_ai.py@onset_localization     -T severity=0.35 --model mockllm/model
+```
+
+The second task is graded against ground truth: half the dataset carries an
+injected fault at a known turn and half does not, so it measures localization
+accuracy *and* the false positive rate together. At severity 1.00 it scores
+100%; at 0.35 - the realistic blend - 95.8%, abstaining correctly on 12 of 12
+healthy conversations.
+
+`--model mockllm/model` is not a placeholder for something missing. The policies
+under test are deterministic simulators, so no model is called; the flag
+satisfies Inspect's requirement that every eval names one.
+
+Why Inspect and not a framework of my own: a team that already runs evals adopts
+a task, not a tool. And an Inspect log is what
+[Runopsy](https://github.com/vahit19/runopsy) already reads through its Inspect
+adapter - so the eval and the diagnosis close a loop rather than living in two
+formats.
+
+### What is deliberately absent
+
+**LangGraph.** The conversation loop is linear; there is no branching state
+machine to orchestrate. It appears in
+[LongHaul-Bench](https://github.com/vahit19/LongHaul-Bench), where agent
+workflows justified it. Here it would be a dependency with no capability behind
+it.
+
+**Ragas.** RAG evaluation. There is no retrieval in this system.
+
+**A vector database.** The coverage method in `select.py` needs vectors, and the
+caller state already is one - so no embedding model, and nothing to run. On real
+audio the signature would come from expression measurement over the caller
+channel, and a corpus large enough to need a store would put those vectors in
+one. That is a storage decision, and it belongs in `adapters/`.
+
+## Layout and commands
+
+```
+voicehaul demo                      the worked example
+voicehaul gate BASE CANDIDATE       release gate; exit 1 on BLOCK
+voicehaul run POLICY                measure one policy
+voicehaul localize POLICY --fault N diagnose one conversation, with evidence
+voicehaul bench                     score the localizer against injected faults
+voicehaul budget                    how many conversations, and which ones
+voicehaul policies                  what is registered
+
+--config configs/support-en-40turn.yaml    every suite is a file
+--out artifacts/                            txt, md and json artifacts
+```
 
 ---
 

@@ -1,0 +1,209 @@
+{
+  "schema": "voicehaul.gate/1",
+  "suite": {
+    "name": "support-en-40turn",
+    "episodes": 40,
+    "turns": 40,
+    "seed": 0,
+    "personas": [
+      "distressed_billing",
+      "hostile_escalation",
+      "confused_elderly",
+      "grieving_claim",
+      "cautious_optimist"
+    ],
+    "corrupt_p": 0.0,
+    "rater_sigma": 0.9,
+    "raters_per_conversation": 3,
+    "tolerance": 1,
+    "suite_id": "3f81f83d255b"
+  },
+  "baseline": "calibrated",
+  "candidate": "mirror",
+  "verdict": "BLOCK",
+  "reasons": [
+    "calibration regressed by -0.118 (Holm p=0.0000)",
+    "the fixed-context turn panel rated the candidate HIGHER on perceived empathy - a leaderboard would have passed this release"
+  ],
+  "dimensions": [
+    {
+      "name": "panel: perceived empathy",
+      "unit": "",
+      "kind": "panel",
+      "gating": false,
+      "baseline": 0.5749181343281207,
+      "candidate": 0.6334028454488966,
+      "delta": 0.05848471112077591,
+      "ci95": [
+        0.04301980127114297,
+        0.07394962097040884
+      ],
+      "p": 1.241229341530925e-13,
+      "p_holm": 6.206146707654625e-13,
+      "verdict": "improved",
+      "n_baseline": 40,
+      "n_candidate": 40
+    },
+    {
+      "name": "panel: calibration",
+      "unit": "",
+      "kind": "panel",
+      "gating": false,
+      "baseline": 0.9406354674657547,
+      "candidate": 0.7949089794377885,
+      "delta": -0.14572648802796617,
+      "ci95": [
+        -0.1602975213253263,
+        -0.13115545473060605
+      ],
+      "p": 0.0,
+      "p_holm": 0.0,
+      "verdict": "regressed",
+      "n_baseline": 40,
+      "n_candidate": 40
+    },
+    {
+      "name": "calibration",
+      "unit": "",
+      "kind": "conversation",
+      "gating": true,
+      "baseline": 0.9607095509219044,
+      "candidate": 0.8424854485184113,
+      "delta": -0.11822410240349301,
+      "ci95": [
+        -0.15254553860553363,
+        -0.0839026662014524
+      ],
+      "p": 1.4638068535077764e-11,
+      "p_holm": 5.855227414031106e-11,
+      "verdict": "regressed",
+      "n_baseline": 40,
+      "n_candidate": 40
+    },
+    {
+      "name": "feedback uptake @10",
+      "unit": "",
+      "kind": "conversation",
+      "gating": true,
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "p": 1.0,
+      "p_holm": 1.0,
+      "verdict": "unchanged",
+      "n_baseline": 40,
+      "n_candidate": 40
+    },
+    {
+      "name": "left-over distress",
+      "unit": "",
+      "kind": "conversation",
+      "gating": true,
+      "baseline": 0.12799813787165443,
+      "candidate": 0.1927307827492108,
+      "delta": 0.06473264487755637,
+      "ci95": [
+        -0.04055943064043167,
+        0.1700247203955444
+      ],
+      "p": 0.22820684747895315,
+      "p_holm": 0.4564136949579063,
+      "verdict": "unchanged",
+      "n_baseline": 40,
+      "n_candidate": 40
+    },
+    {
+      "name": "conversation failure rate",
+      "unit": "",
+      "kind": "conversation",
+      "gating": true,
+      "baseline": 0.0,
+      "candidate": 0.125,
+      "delta": 0.125,
+      "ci95": [
+        0.021203478147300392,
+        0.2287965218526996
+      ],
+      "p": 0.018255860587459427,
+      "p_holm": 0.05476758176237828,
+      "verdict": "unchanged",
+      "n_baseline": 40,
+      "n_candidate": 40
+    },
+    {
+      "name": "calibration drift",
+      "unit": "pts/10turns",
+      "kind": "conversation",
+      "gating": false,
+      "baseline": 0.31833944543411125,
+      "candidate": 5.675663521484904,
+      "delta": 5.357324076050793,
+      "ci95": [
+        4.092378313553805,
+        6.622269838547782
+      ],
+      "p": 0.0,
+      "p_holm": 0.0,
+      "verdict": "improved",
+      "n_baseline": 40,
+      "n_candidate": 40
+    }
+  ],
+  "segments": [
+    {
+      "persona": "hostile_escalation",
+      "baseline": 0.9572057810117239,
+      "candidate": 0.714416448547028,
+      "delta": -0.24278933246469592
+    },
+    {
+      "persona": "distressed_billing",
+      "baseline": 0.956841208624766,
+      "candidate": 0.831662437739519,
+      "delta": -0.12517877088524698
+    },
+    {
+      "persona": "cautious_optimist",
+      "baseline": 0.9547002754999934,
+      "candidate": 0.8732488812254177,
+      "delta": -0.0814513942745757
+    },
+    {
+      "persona": "grieving_claim",
+      "baseline": 0.9665933451138075,
+      "candidate": 0.8924570964938593,
+      "delta": -0.07413624861994816
+    },
+    {
+      "persona": "confused_elderly",
+      "baseline": 0.9682071443592303,
+      "candidate": 0.9006423785862312,
+      "delta": -0.06756476577299908
+    }
+  ],
+  "worst_dimension": "calibration",
+  "diagnosis": {
+    "failures_baseline": 0,
+    "failures_candidate": 5,
+    "onsets": [
+      4,
+      4,
+      2,
+      6,
+      14
+    ],
+    "causes": {
+      "affect escalation": 5
+    }
+  },
+  "power": {
+    "min_detectable_effect": 0.40090335287229156,
+    "n_for_0.20": 161,
+    "raters_per_conversation": 3,
+    "rater_sigma": 0.9
+  }
+}

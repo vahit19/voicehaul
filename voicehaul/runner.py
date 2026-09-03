@@ -3,7 +3,7 @@
 import random
 from typing import List, Optional
 
-from .agents import VoiceAgent
+from .policies import VoicePolicy
 from .env import (Action, DIRECTIVES, Episode, Persona, Turn, apply_shock,
                   calibration, maybe_directive, perceived_empathy, satisfies,
                   step_user)
@@ -14,7 +14,7 @@ _DEGRADED = Action(speech_rate=0.68, cheerfulness=0.82, apology_rate=0.26,
                    verbosity=0.72, acknowledgement=0.26)
 
 
-def run_episode(agent: VoiceAgent, persona: Persona, seed: int, n_turns: int = 40,
+def run_episode(policy: VoicePolicy, persona: Persona, seed: int, n_turns: int = 40,
                 fault_turn: Optional[int] = None, corrupt_p: float = 0.0,
                 fault_severity: float = 1.0) -> Episode:
     """Roll out one conversation.
@@ -31,8 +31,8 @@ def run_episode(agent: VoiceAgent, persona: Persona, seed: int, n_turns: int = 4
                   be reported against severity, not as a single number.
     """
     rng = random.Random(seed * 7919 + 13)
-    agent.reset(seed)
-    ep = Episode(persona=persona.name, agent=agent.name, seed=seed,
+    policy.reset(seed)
+    ep = Episode(persona=persona.name, agent=policy.name, seed=seed,
                  true_fault_turn=fault_turn)
     user = persona.start
     standing: List[str] = []
@@ -41,7 +41,7 @@ def run_episode(agent: VoiceAgent, persona: Persona, seed: int, n_turns: int = 4
     for t in range(n_turns):
         user, shock = apply_shock(user, persona, rng)
 
-        action = agent.act(user, t)
+        action = policy.act(user, t)
         faulted = fault_turn is not None and t >= fault_turn
         if faulted:
             w = max(0.0, min(1.0, fault_severity))
@@ -61,7 +61,7 @@ def run_episode(agent: VoiceAgent, persona: Persona, seed: int, n_turns: int = 4
             if rng.random() < corrupt_p:
                 delivered = rng.choice([d for d in DIRECTIVES if d != new_d])
                 ep.corrupted_turns.append(t)
-            agent.observe_directive(delivered)
+            policy.observe_directive(delivered)
 
         ep.turns.append(Turn(index=t, user_before=user, action=action,
                              user_after=nxt, calibration=cal,
@@ -73,7 +73,7 @@ def run_episode(agent: VoiceAgent, persona: Persona, seed: int, n_turns: int = 4
     return ep
 
 
-def run_suite(agent: VoiceAgent, personas: List[Persona], n_episodes: int,
+def run_suite(policy: VoicePolicy, personas: List[Persona], n_episodes: int,
               n_turns: int = 40, corrupt_p: float = 0.0,
               seed0: int = 0) -> List[Episode]:
     out = []

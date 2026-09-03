@@ -1,0 +1,56 @@
+------------------------------------------------------------------------------------
+RELEASE GATE   baseline=calibrated   candidate=mirror
+------------------------------------------------------------------------------------
+suite   : support-en-40turn  [3f81f83d255b]  40 conversations x 40 turns x 5 callers  seed=0
+unit    : one conversation (panel rows: one block of held-out states)
+testing : Welch two-sample, Holm-corrected across 7 dimensions
+
+      DIMENSION                     baseline  candidate     delta   holm p
+
+  what a fixed-prompt leaderboard reports
+  UP    perceived empathy              0.575      0.633    +0.058   0.0000
+ DOWN   calibration                    0.941      0.795    -0.146   0.0000
+
+  what the conversations report
+ DOWN   calibration                    0.961      0.842    -0.118   0.0000
+  --    feedback uptake @10            1.000      1.000    +0.000   1.0000
+  --    left-over distress             0.128      0.193    +0.065   0.4564
+  --    conversation failure rate      0.000      0.125    +0.125   0.0548
+  UP    calibration drift              0.318      5.676    +5.357   0.0000  (diagnostic)
+
+------------------------------------------------------------------------------------
+WHERE IT LANDS   worst gating regression: calibration
+------------------------------------------------------------------------------------
+An aggregate hides this. A regression that only hits angry callers is
+still a regression, and it is the segment that generates escalations.
+
+caller                        baseline   candidate       delta
+hostile_escalation               0.957       0.714      -0.243
+distressed_billing               0.957       0.832      -0.125
+cautious_optimist                0.955       0.873      -0.081
+grieving_claim                   0.967       0.892      -0.074
+confused_elderly                 0.968       0.901      -0.068
+
+------------------------------------------------------------------------------------
+DIAGNOSIS
+------------------------------------------------------------------------------------
+conversations that ended badly : 0 baseline / 5 candidate
+onset localized in            : 5 of 5 failed candidate runs
+median onset turn             : 4
+  affect escalation           5
+
+That turn number is the deliverable. A score says a model is worse;
+this says which turn to look at and what changed there.
+
+------------------------------------------------------------------------------------
+WHAT THIS SUITE COULD NOT SEE
+------------------------------------------------------------------------------------
+smallest detectable regression : 0.40 Likert points
+  at n=40 conversations and 3 raters each, 80% power, alpha=0.05
+to resolve a 0.20-point change : n = 161 conversations
+
+------------------------------------------------------------------------------------
+VERDICT: BLOCK
+------------------------------------------------------------------------------------
+  - calibration regressed by -0.118 (Holm p=0.0000)
+  - the fixed-context turn panel rated the candidate HIGHER on perceived empathy - a leaderboard would have passed this release

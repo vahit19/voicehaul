@@ -11,8 +11,11 @@ import sys
 import time
 from typing import Dict, List
 
-from voicehaul.agents import (CalibratedAgent, DrifterAgent, FlatAgent,
-                              MirrorAgent, OracleAgent)
+from voicehaul.policies import (CalibratedPolicy as CalibratedAgent,
+                                DrifterPolicy as DrifterAgent,
+                                FlatPolicy as FlatAgent,
+                                MirrorPolicy as MirrorAgent,
+                                OraclePolicy as OracleAgent)
 from voicehaul.env import PERSONAS
 from voicehaul import metrics as M
 from voicehaul.onset import false_positive_rate, localize, score_localization

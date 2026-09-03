@@ -1,0 +1,11 @@
+# A support-line suite: five callers, forty turns, clean feedback channel.
+# Every field here changes a number, so every field is part of the suite id.
+name: support-en-40turn
+episodes: 40
+turns: 40
+seed: 0
+personas: [distressed_billing, hostile_escalation, confused_elderly, grieving_claim, cautious_optimist]
+corrupt_p: 0.0
+rater_sigma: 0.9
+raters_per_conversation: 3
+tolerance: 1

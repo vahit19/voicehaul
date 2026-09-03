@@ -1,42 +1,18 @@
-"""Voice agents under test.
+"""Five deterministic policies, each embodying exactly one known failure mode.
 
-These are deterministic policy simulators, not language models. That is a
-feature of the harness, not a shortcut: each agent embodies exactly one known
-failure mode, so every metric below has a ground-truth answer to be validated
-against. A real speech-to-speech model plugs in through the same interface
-(see adapters.py) once the instrument has been shown to measure what it claims.
-"""
+These are simulators, not language models. That is deliberate: every metric
+in this package has a ground-truth answer to be validated against before it
+is pointed at a real system."""
 
 import random
-from typing import Dict, List, Optional
+from typing import Dict, List
 
-from .affect import Affect
-from .env import Action, DIRECTIVES, constrain, ideal_action, satisfies
-
-
-class VoiceAgent:
-    """Interface every agent - simulated or real - implements."""
-
-    name = "base"
-
-    def reset(self, seed: int) -> None:
-        self.rng = random.Random(seed)
-        self.standing: List[str] = []
-
-    def observe_directive(self, directive: str) -> None:
-        if directive not in self.standing:
-            self.standing.append(directive)
-
-    def act(self, user: Affect, turn: int) -> Action:
-        raise NotImplementedError
-
-    # -- shared helper: apply standing directives to a base action -----------
-    @staticmethod
-    def _apply(action: Action, directives: List[str]) -> Action:
-        return constrain(action, directives)
+from ..affect import Affect
+from ..env import Action, constrain, ideal_action, satisfies
+from .base import VoicePolicy
 
 
-class MirrorAgent(VoiceAgent):
+class MirrorPolicy(VoicePolicy):
     """Mirrors the user's prosody. Sounds deeply empathic; regulates nothing.
 
     This is the agent that a turn-level 'does it sound empathic?' rating scores
@@ -58,7 +34,7 @@ class MirrorAgent(VoiceAgent):
         return self._apply(base, self.standing)
 
 
-class FlatAgent(VoiceAgent):
+class FlatPolicy(VoicePolicy):
     """Constant upbeat persona. Ignores affect and ignores directives."""
 
     name = "flat_cheerful"
@@ -71,7 +47,7 @@ class FlatAgent(VoiceAgent):
                       verbosity=0.60, acknowledgement=0.42)
 
 
-class DrifterAgent(VoiceAgent):
+class DrifterPolicy(VoicePolicy):
     """Well calibrated early; degrades as the conversation lengthens.
 
     Models the practical failure of long voice sessions: instructions given at
@@ -109,7 +85,7 @@ class DrifterAgent(VoiceAgent):
         return self._apply(base, live)
 
 
-class CalibratedAgent(VoiceAgent):
+class CalibratedPolicy(VoicePolicy):
     """Tracks affect, regulates toward calm, and holds directives indefinitely."""
 
     name = "calibrated"
@@ -122,7 +98,7 @@ class CalibratedAgent(VoiceAgent):
         return self._apply(base, self.standing)
 
 
-class OracleAgent(VoiceAgent):
+class OraclePolicy(VoicePolicy):
     """Noiseless upper bound; the ceiling every metric is read against."""
 
     name = "oracle"
@@ -131,5 +107,5 @@ class OracleAgent(VoiceAgent):
         return self._apply(ideal_action(user), self.standing)
 
 
-def build_agents() -> List[VoiceAgent]:
-    return [MirrorAgent(), FlatAgent(), DrifterAgent(), CalibratedAgent(), OracleAgent()]
+def build_policies() -> List[VoicePolicy]:
+    return [MirrorPolicy(), FlatPolicy(), DrifterPolicy(), CalibratedPolicy(), OraclePolicy()]
