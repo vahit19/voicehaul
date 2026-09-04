@@ -15,12 +15,45 @@ you need before any of them is detectable.
 pip install -e .
 voicehaul demo                          # the worked example, end to end
 voicehaul gate calibrated mirror        # should this candidate ship?
-python test_voicehaul.py                # 37 property checks on the harness itself
+python test_voicehaul.py                # 44 property checks on the harness itself
 ```
 
 **Interactive report:** [huggingface.co/spaces/renderfy/voicehaul-app](https://huggingface.co/spaces/renderfy/voicehaul-app)
 · **Static report:** [vahit19.github.io/voicehaul](https://vahit19.github.io/voicehaul/)
 · **Colab:** [one click, nothing to install](https://colab.research.google.com/github/vahit19/voicehaul/blob/main/VoiceHaul_demo.ipynb)
+
+### Scope, stated up front
+
+**What this is.** A measurement instrument, and the evidence that the
+instrument itself is correct. The callers are simulated on purpose: latent
+quality is known by construction, so every estimator here can be checked
+against ground truth. That is the one validation real data cannot perform, and
+it is why the synthetic environment is a feature rather than a shortcut.
+
+**What this is not.** It does not listen. Hume-style expression measurement
+from audio is exactly the input this pipeline is missing, and the delivery
+signals here are lexical proxies read from text. It does not train anything -
+the harness is standard library, and the only model in the loop is the LLM
+judge being graded. And it runs at suite scale, not production scale: 160
+scored turns, not a rating pipeline.
+
+**What it found.** Pointing the instrument at a real model and then at a real
+user exposed eleven faults, every one of them in the instrument rather than in
+the system under test. Each has a regression test. The worst was mine and the
+most instructive: the report quoted a four-figure annual saving from a
+twenty-eight turn segment with no interval anywhere on the page. Bootstrapping
+that cell put the ratio between 0.18 and effectively unbounded. An evaluation
+harness that is wrong is worse than no harness, because it is believed.
+
+### Related work
+
+This sits in a line rather than on its own. [Runopsy](https://github.com/vahit19/runopsy)
+localises *when* a run went wrong by counterfactual replay; VoiceHaul carries
+that method into dialogue, where the failure is a slow drift rather than a
+single bad step. [LongHaul-Bench](https://github.com/vahit19/LongHaul-Bench)
+measures long-horizon agent reliability over 1,000+ sequential episodes;
+VoiceHaul asks the same question about conversations, where the model creates
+the state it is later scored on.
 
 ### Bring your own call
 
@@ -283,18 +316,36 @@ truth, a human panel, and a real LLM judge - and reports how many human ratings
 one judge rating is worth, per dimension and per caller segment.
 
 ```
-dimension                   n judge rho 1 judge =  human saving     verdict
-perceived_empathy         160      0.18      0.29            5%  supplement
-actual_help               160      0.01      0.01            0%  human only
+dimension                   n  judge rho   1 judge =   95% CI          verdict
+perceived_empathy         160       0.18        0.29   [0.09, 0.81]    unresolved
+actual_help               160       0.01        0.01   [0.00, 0.03]    human only
 
   perceived_empathy, by segment
-    confused_elderly            0.07 judge rho     0.04 = 1 judge
-    grieving_claim              0.37 judge rho     1.56 = 1 judge
+    confused_elderly           0.07 rho    0.04 = 1 judge   [0.00, 0.36]
+    grieving_claim             0.37 rho    1.56 = 1 judge   [0.18, unbounded]
 ```
 
 A single agreement figure would have reported 0.18 and hidden a twenty-fold
 spread across segments. On `actual_help` with hostile callers the judge scores
 0.00 - it is blind exactly on the calls that generate escalations.
+
+**The intervals are the point, and they are wider than the estimates.** The
+substitution ratio is a nonlinear function of a correlation - it runs away as
+the correlation approaches one - so a twenty-eight turn segment produces a
+confident-looking number with almost no content in it. `grieving_claim` reads
+1.56, and resampling puts it anywhere from 0.18 to effectively unbounded.
+
+So no cost saving is quoted unless the whole interval clears the floor, which
+on this suite silences every cell. That is the honest reading, and the claim
+that survives is the negative one: **on whether a turn actually helped, one
+judge rating is worth 0.01 human ratings, CI [0.00, 0.03], and the panel cannot
+be replaced.**
+
+`judge.turns_needed` answers what comes next, because "not measurable" is not
+actionable on its own: about 59 rated turns would settle `grieving_claim`
+against the 28 it has, 7,631 would be needed for the pooled dimension, and on
+`actual_help` no amount of data helps because the point estimate is itself
+below the floor.
 
 The method is standard psychometrics: reliability of one human rating, the
 Spearman-Brown formula for a panel of k, and the disattenuated correlation
