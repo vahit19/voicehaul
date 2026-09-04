@@ -1315,293 +1315,377 @@ else:
 
 POLICIES = ["calibrated", "mirror", "flat_cheerful", "drifter", "oracle"]
 
+# --------------------------------------------------------------------------
+# Sigma is needed to price anything, and measuring it costs a suite run. It
+# does not depend on any control on the page, so it is measured once.
+# --------------------------------------------------------------------------
+_SIGMA = [None]
+
+
+def _sigma_between():
+    if _SIGMA[0] is None:
+        eps = [run_episode(get_policy("calibrated"), PERSONAS[i % len(PERSONAS)],
+                           seed=i, n_turns=40) for i in range(30)]
+        _SIGMA[0] = M.stdev([1.0 + 6.0 * e.mean_perceived for e in eps])
+    return _SIGMA[0]
+
+
+DIM_LABEL = {"perceived empathy": "perceived_empathy",
+             "did it actually help": "actual_help"}
+SEG_LABEL = {"every caller": "all",
+             "billing dispute": "distressed_billing",
+             "hostile caller": "hostile_escalation",
+             "confused caller": "confused_elderly",
+             "grieving claimant": "grieving_claim",
+             "calm caller": "cautious_optimist"}
+
+
+def _big(label, value, sub, colour):
+    return (
+        '<div style="flex:1;min-width:190px;padding:.85rem 1rem;'
+        'background:var(--vh-surface);border:1px solid var(--vh-rule);'
+        'border-left:3px solid {c};border-radius:7px">'
+        '<div style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;'
+        'color:var(--vh-faint);margin-bottom:.35rem">{l}</div>'
+        '<div style="font-family:IBM Plex Mono,monospace;font-size:1.75rem;'
+        'line-height:1.1;color:{c};font-variant-numeric:tabular-nums">{v}</div>'
+        '<div style="font-size:.78rem;color:var(--vh-ink2);margin-top:.4rem">{s}</div>'
+        '</div>').format(l=label, v=value, s=sub, c=colour)
+
+
+def run_substitution(dimension, segment, cost_human, cost_judge,
+                     releases, raters):
+    """How much of a human panel this judge can take over, and what that saves.
+
+    The two questions are one question. A ratio on its own does not tell a
+    budget holder anything; a saving computed from a ratio nobody checked is
+    worse. Both are shown, with the reliability they rest on.
+    """
+    if not SUB:
+        return ("<p>Run <code>python run_substitution.py --source llm</code> "
+                "first.</p>", "", None)
+
+    dim = DIM_LABEL.get(dimension, "actual_help")
+    seg = SEG_LABEL.get(segment, "all")
+    row = None
+    for r in SUB["rows"]:
+        if r["dimension"] == dim and r["segment"] == seg:
+            row = r
+            break
+    if row is None:
+        return ("<p>No measurement for that combination.</p>", "", None)
+
+    ratio = row["ratio_estimated"]
+    rho = row["rho_judge_estimated"]
+    d_rho = describe("judge reliability", rho)
+    d_ratio = describe("substitution ratio", ratio)
+
+    model = CostModel(cost_per_human_rating=float(cost_human),
+                      cost_per_judge_rating=float(cost_judge),
+                      releases_per_year=int(releases),
+                      raters_per_conversation=int(raters))
+    res = cost_estimate(0.20, _sigma_between(), 0.9, ratio, model, 1.0)
+
+    money_colour = ACCENT if res.saving_per_year > 0 else ALARM
+    cards = (
+        '<div style="display:flex;gap:.7rem;flex-wrap:wrap;margin:.2rem 0 .9rem">'
+        + _big("1 judge rating is worth", "{:.2f}".format(ratio),
+               "human ratings &mdash; <b>{}</b>".format(d_ratio["label"]),
+               d_ratio["colour"])
+        + _big("judge reliability", "{:.2f}".format(rho),
+               "rho on n={} turns &mdash; <b>{}</b>".format(row["n"],
+                                                            d_rho["label"]),
+               d_rho["colour"])
+        + _big("saving per year", _money(res.saving_per_year),
+               "against {} on the panel alone".format(
+                   _money(res.cost_baseline * model.releases_per_year)),
+               money_colour)
+        + '</div>')
+
+    if res.usable:
+        verdict = ("**This judge can carry part of the load here.** "
+                   "{} of the {} conversations still go to the panel every "
+                   "release to keep the ratio honest.").format(
+                       res.calibration_conversations, res.conversations)
+    else:
+        verdict = ("**The panel cannot be replaced on this dimension.** " +
+                   res.note)
+
+    md = (verdict + "\n\n"
+          "| | panel only | with this judge |\n|---|---:|---:|\n"
+          "| conversations per release | {n} | {n} |\n"
+          "| human ratings | {hb:,} | {hw:,} |\n"
+          "| judge ratings | 0 | {j:,} |\n"
+          "| cost per release | {cb} | {cw} |\n"
+          "\n*Sized for a suite that can detect a {t:.0%} regression. "
+          "The ratio comes from the Spearman-Brown formula inverted, and it "
+          "expires whenever the judge model, the domain or the rubric "
+          "changes.*").format(
+              n=res.conversations, hb=res.human_ratings_baseline,
+              hw=res.human_ratings_with_judge, j=res.judge_ratings,
+              cb=_money(res.cost_baseline), cw=_money(res.cost_with_judge),
+              t=0.20)
+    path = _write("voicehaul-judge-substitution.json", json.dumps(SUB, indent=2))
+    return cards, md, path
+
+
+MASTHEAD = """
+<div style="padding:.2rem 0 .9rem">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;
+              flex-wrap:wrap;gap:.6rem;border-bottom:1px solid var(--vh-rule2);
+              padding-bottom:.7rem;margin-bottom:.8rem">
+    <div>
+      <span style="font-size:1.35rem;font-weight:600;color:var(--vh-ink);
+                   letter-spacing:-.01em">VoiceHaul</span>
+      <span style="font-size:.86rem;color:var(--vh-muted);margin-left:.6rem">
+        evaluation and diagnosis for empathic voice agents</span>
+    </div>
+    <div style="font-size:.78rem;color:var(--vh-muted)">
+      <b style="color:var(--vh-ink2)">Vahit Feryad, PhD</b> &middot;
+      <a href="https://github.com/vahit19/voicehaul">source</a> &middot;
+      <a href="https://vahit19.github.io/voicehaul/">full report</a>
+    </div>
+  </div>
+  <p style="margin:0 0 .3rem;font-size:1.02rem;color:var(--vh-ink);max-width:70ch">
+    A turn-level rating tells you whether a reply <i>sounded</i> right. It cannot
+    tell you whether the agent still honours what the caller asked for twenty
+    turns ago &mdash; or how much of your rating panel an LLM judge could
+    actually replace.</p>
+  <p style="margin:0;font-size:.84rem;color:var(--vh-muted)">
+    Pick a tab, set the inputs on the left, press the button. Results appear on
+    the right. Every tab already shows a worked example, nothing calls an
+    external service, and the harness is pure Python.</p>
+</div>
+"""
+
 with gr.Blocks(css=CSS, title="VoiceHaul",
                theme=gr.themes.Soft(
                    primary_hue="teal", secondary_hue="teal",
                    neutral_hue="slate",
                    font=["IBM Plex Sans", "system-ui", "sans-serif"],
                    font_mono=["IBM Plex Mono", "monospace"])) as demo:
-    gr.HTML(AUTHOR_CARD)
-    gr.Markdown(
-        "# Sounding right on every turn, and getting the conversation wrong\n"
-        "**VoiceHaul &mdash; long-horizon evaluation, failure-onset diagnosis "
-        "and judge-substitution analysis for empathic voice agents.**\n\n"
-        "A turn-level rating tells you whether a response sounded right. It "
-        "cannot tell you whether a model still honours what the caller asked "
-        "for twenty turns ago, whether its calibration decays as a session runs "
-        "long, whether it is regulating the caller's affect or mirroring it "
-        "back, or which turn broke a call that ended badly.")
-    gr.HTML(headline_strip())
-    gr.HTML(tabs_map())
-    gr.HTML(LOOP_SVG)
+
+    gr.HTML(MASTHEAD)
 
     with gr.Tabs():
-        with gr.Tab("Judge substitution"):
-            gr.Markdown(
-                "### When can an automated rater replace a human one?\n"
-                "A human panel is the trusted measurement and the dominant cost "
-                "line; an LLM judge is cheap and of unknown trustworthiness. The "
-                "answer is not one number &mdash; it is a number per dimension "
-                "and per caller segment.")
-            gr.HTML(RATERS_SVG)
-            s_scatter, s_bars, s_md = substitution_figs()
-            if SUB:
-                _sub_path = _write("voicehaul-judge-substitution.json",
-                                   json.dumps(SUB, indent=2))
-                gr.File(value=[_sub_path], label="the full result as JSON - "
-                        "every dimension, every segment, and the raw per-turn "
-                        "ratings behind the correlations", interactive=False)
-            gr.Markdown(s_md)
-            if s_scatter is not None:
-                gr.Markdown(
-                    "Each dot is one turn. Horizontal axis: the quality the turn "
-                    "actually had; vertical: what each rater said. The shaded "
-                    "band is one standard deviation around each fit.\n\n"
-                    "**Both lines slope the same way** &mdash; the judge is not "
-                    "backwards, it points in the right direction on average. What "
-                    "separates them is the spread around the line, and that is "
-                    "exactly what reliability measures. A rater can be unbiased "
-                    "and still be useless for deciding anything about a single "
-                    "call.")
-                gr.Plot(value=s_scatter)
-                gr.Markdown("**And how far the answer moves between segments.** "
-                            "Anything left of the dashed line cannot substitute.")
-                gr.Plot(value=s_bars)
 
-        with gr.Tab("Score your own call"):
-            gr.Markdown(
-                "### Paste a real transcript\n"
-                "Everything else on this page runs a simulated caller. This runs "
-                "nothing &mdash; it reads a call that already happened.\n\n"
-                "Only what a transcript can honestly answer is reported: what the "
-                "agent's delivery was, whether the caller asked for a change, and "
-                "whether the agent did it **and kept doing it**. Nothing is "
-                "inferred that you could not check by hand.\n\n"
-                "Prefix lines with `Caller:` and `Agent:`. The box starts with a "
-                "worked example; replace it with your own.")
-            tr_in = gr.Textbox(value=SAMPLE_CALL, lines=12, max_lines=30,
-                               label="the call", show_copy_button=True)
-            tr_btn = gr.Button("Measure this call", variant="primary")
-            _t0 = run_transcript(SAMPLE_CALL)
-            tr_card = gr.HTML(value=_t0[0])
-            tr_plot = gr.Plot(value=_t0[1])
-            tr_tbl = gr.Dataframe(
-                value=_t0[2],
-                headers=["turn", "speaker", "what was said", "asked for",
-                         "apology", "length", "acknowledgement", "ignored"],
-                label="turn by turn", wrap=True)
-            tr_md = gr.Markdown(value=_t0[3])
-            tr_file = gr.File(value=_t0[4], label="this analysis as CSV",
-                              interactive=False)
+        # ------------------------------------------------------------------
+        with gr.Tab("1 - Can a judge replace your raters?"):
+            with gr.Row():
+                with gr.Column(scale=2, min_width=260):
+                    gr.Markdown("#### Your inputs")
+                    x_dim = gr.Dropdown(list(DIM_LABEL), value="did it actually help",
+                                        label="which quality is being rated")
+                    x_seg = gr.Dropdown(list(SEG_LABEL), value="every caller",
+                                        label="which callers")
+                    x_btn = gr.Button("Measure it", variant="primary")
+                    with gr.Accordion("Your costs", open=False):
+                        x_ch = gr.Number(value=3.0,
+                                         label="cost of one human rating ($)")
+                        x_cj = gr.Number(value=0.01,
+                                         label="cost of one judge rating ($)")
+                        x_rel = gr.Number(value=12, precision=0,
+                                          label="releases per year")
+                        x_r = gr.Number(value=3, precision=0,
+                                        label="raters per conversation")
+                    gr.Markdown(
+                        "*The judge and the model being graded here are real; "
+                        "the callers are simulated so the true quality of each "
+                        "turn is known and the estimator can be checked.*")
+                with gr.Column(scale=3, min_width=340):
+                    gr.Markdown("#### What you get")
+                    _x0 = run_substitution("did it actually help", "every caller",
+                                           3.0, 0.01, 12, 3)
+                    x_card = gr.HTML(value=_x0[0])
+                    x_md = gr.Markdown(value=_x0[1])
+                    _s_scatter, _s_bars, _s_md = substitution_figs()
+                    if _s_bars is not None:
+                        gr.Markdown("**Every segment at once.** Anything left of "
+                                    "the dashed line cannot substitute.")
+                        gr.Plot(value=_s_bars)
+                    x_file = gr.File(value=_x0[2], interactive=False,
+                                     label="the full result as JSON")
+            x_btn.click(run_substitution,
+                        [x_dim, x_seg, x_ch, x_cj, x_rel, x_r],
+                        [x_card, x_md, x_file])
+
+            with gr.Accordion("Why one agreement number would have hidden this",
+                              open=False):
+                gr.HTML(RATERS_SVG)
+                gr.Markdown(_s_md)
+                if _s_scatter is not None:
+                    gr.Markdown(
+                        "Each dot is one turn. Horizontal: the quality the turn "
+                        "actually had; vertical: what each rater said. **Both "
+                        "lines slope the same way** &mdash; the judge is not "
+                        "backwards. What separates them is the spread, and "
+                        "spread is what reliability measures.")
+                    gr.Plot(value=_s_scatter)
+
+        # ------------------------------------------------------------------
+        with gr.Tab("2 - Score your own call"):
+            with gr.Row():
+                with gr.Column(scale=2, min_width=260):
+                    gr.Markdown(
+                        "#### Your input\n"
+                        "Paste a transcript. Prefix lines with `Caller:` and "
+                        "`Agent:`. The box starts with a worked example &mdash; "
+                        "replace it with one of yours.")
+                    tr_in = gr.Textbox(value=SAMPLE_CALL, lines=16, max_lines=30,
+                                       label="the call", show_copy_button=True)
+                    tr_btn = gr.Button("Measure this call", variant="primary")
+                    gr.Markdown(
+                        "*Only what a transcript can honestly answer is "
+                        "reported: what the agent's delivery was, whether the "
+                        "caller asked for a change, and whether the agent did "
+                        "it **and kept doing it**. Nothing is inferred that you "
+                        "could not check by hand.*")
+                with gr.Column(scale=3, min_width=340):
+                    gr.Markdown("#### What you get")
+                    _t0 = run_transcript(SAMPLE_CALL)
+                    tr_card = gr.HTML(value=_t0[0])
+                    tr_plot = gr.Plot(value=_t0[1])
+                    tr_md = gr.Markdown(value=_t0[3])
+                    tr_file = gr.File(value=_t0[4], interactive=False,
+                                      label="this analysis as CSV")
+            with gr.Accordion("Turn by turn", open=False):
+                tr_tbl = gr.Dataframe(
+                    value=_t0[2],
+                    headers=["turn", "speaker", "what was said", "asked for",
+                             "apology", "length", "acknowledgement", "ignored"],
+                    label="", wrap=True)
             tr_btn.click(run_transcript, tr_in,
                          [tr_card, tr_plot, tr_tbl, tr_md, tr_file])
 
-        with gr.Tab("Release gate"):
-            gr.Markdown(
-                "### Should this candidate ship?\n"
-                "Both arms run on the same suite. Welch two-sample tests with "
-                "conversations as the unit, Holm-corrected across dimensions. "
-                "Panel rows are what a fixed-prompt leaderboard reports; the "
-                "rest is what the conversations report.\n\n"
-                "*Try `calibrated` against `mirror`: the panel rates the "
-                "candidate higher and the gate blocks it.*")
-            gr.HTML(policy_legend())
+        # ------------------------------------------------------------------
+        with gr.Tab("3 - Should this candidate ship?"):
             with gr.Row():
-                g_base = gr.Dropdown(POLICIES, value="calibrated",
-                                     label="baseline (what is in production)")
-                g_cand = gr.Dropdown(POLICIES, value="mirror",
-                                     label="candidate (what you want to ship)")
-                g_ep = gr.Slider(10, 60, 30, step=5,
-                                 label="conversations per arm")
-                g_tn = gr.Slider(20, 60, 40, step=5, label="turns per conversation")
-            g_btn = gr.Button("Run the gate", variant="primary")
-            _g0 = run_gate("calibrated", "mirror", 30, 40)
-            g_card = gr.HTML(value=_g0[0])
-            g_tbl = gr.HTML(value=_g0[1])
-            g_delta = gr.Plot(value=_g0[2],
-                              label="every dimension, signed so positive is better")
-            g_segtitle = gr.Markdown(value=_g0[3])
-            g_seg = gr.Plot(value=_g0[4])
-            g_notes = gr.Markdown(value=_g0[5])
-            gr.Markdown("#### Take the report with you")
-            g_files = gr.File(
-                value=_g0[6], label="JSON for a pipeline, Markdown for a pull "
-                "request, CSV of the per-conversation rows",
-                file_count="multiple", interactive=False)
-            gr.HTML(CI_SNIPPET)
+                with gr.Column(scale=2, min_width=260):
+                    gr.Markdown(
+                        "#### Your inputs\n"
+                        "*Try `calibrated` against `mirror`: the panel rates the "
+                        "candidate higher and the gate blocks it anyway.*")
+                    g_base = gr.Dropdown(POLICIES, value="calibrated",
+                                         label="baseline (in production)")
+                    g_cand = gr.Dropdown(POLICIES, value="mirror",
+                                         label="candidate (want to ship)")
+                    g_ep = gr.Slider(10, 60, 30, step=5,
+                                     label="conversations per arm")
+                    g_tn = gr.Slider(20, 60, 40, step=5,
+                                     label="turns per conversation")
+                    g_btn = gr.Button("Run the gate", variant="primary")
+                    gr.HTML(policy_legend())
+                with gr.Column(scale=3, min_width=340):
+                    gr.Markdown("#### What you get")
+                    _g0 = run_gate("calibrated", "mirror", 30, 40)
+                    g_card = gr.HTML(value=_g0[0])
+                    g_tbl = gr.HTML(value=_g0[1])
+                    g_delta = gr.Plot(value=_g0[2], label="every dimension, "
+                                      "signed so positive is better")
+                    g_files = gr.File(
+                        value=_g0[6], file_count="multiple", interactive=False,
+                        label="JSON for a pipeline, Markdown for a pull "
+                              "request, CSV of the per-conversation rows")
+            with gr.Accordion("Where the regression lands, and what the sample "
+                              "could not resolve", open=False):
+                g_segtitle = gr.Markdown(value=_g0[3])
+                g_seg = gr.Plot(value=_g0[4])
+                g_notes = gr.Markdown(value=_g0[5])
+                gr.HTML(CI_SNIPPET)
             g_btn.click(run_gate, [g_base, g_cand, g_ep, g_tn],
                         [g_card, g_tbl, g_delta, g_segtitle, g_seg, g_notes,
                          g_files])
 
-        with gr.Tab("Watch a conversation"):
-            gr.Markdown(
-                "### One conversation, turn by turn\n"
-                "*Put `mirror` against the hostile caller: perceived empathy "
-                "stays respectable the whole way down while distress never "
-                "comes down. No turn is bad. The conversation is.*")
-            gr.HTML(policy_legend())
-            gr.HTML(caller_legend())
-            with gr.Row():
-                c_pol = gr.Dropdown(POLICIES, value="mirror", label="policy")
-                c_per = gr.Dropdown(list(PLABEL.values()), value="hostile caller",
-                                    label="caller")
-                c_tn = gr.Slider(20, 60, 40, step=5, label="turns")
-            c_btn = gr.Button("Run it", variant="primary")
-            _c0 = run_conversation("mirror", "hostile caller", 40)
-            c_msg = gr.Markdown(value=_c0[2])
-            c_plot = gr.Plot(value=_c0[0])
-            c_tbl = gr.Dataframe(
-                value=_c0[1],
-                headers=["turn", "distress", "perceived", "calibration",
-                         "speech rate", "what the caller did"],
-                label="turn log", wrap=True)
-            c_file = gr.File(value=_c0[3], label="this conversation as CSV - "
-                             "every turn, what was said, and what was measured",
-                             interactive=False)
-            c_btn.click(run_conversation, [c_pol, c_per, c_tn],
-                        [c_plot, c_tbl, c_msg, c_file])
+    # ----------------------------------------------------------------------
+    # Everything below is reference. It sits under the controls, not above.
+    # ----------------------------------------------------------------------
+    with gr.Accordion("How to read these numbers", open=False):
+        gr.Markdown(
+            "A metric without a band is a number nobody can act on. But half of "
+            "these cannot honestly carry a fixed threshold, and pretending "
+            "otherwise is how a dashboard starts lying.\n\n"
+            "- **Absolute** &mdash; means the same thing on any suite.\n"
+            "- **Anchored** &mdash; a distance from an ideal defined for one "
+            "action space, read against the range the suite can actually reach.\n"
+            "- **Conventional** &mdash; thresholds from psychometrics, cited "
+            "rather than invented.")
+        gr.HTML(reading_panel([
+            "feedback uptake @10", "conversation failure rate",
+            "left-over distress", "calibration", "panel: perceived empathy",
+            "judge reliability", "substitution ratio"]))
 
-        with gr.Tab("Which turn broke it"):
-            gr.Markdown(
-                "### Failure-onset localization\n"
-                "A regression is injected at a turn the diagnostic is never "
-                "told about. Deterministic signals propose candidates, a "
-                "walk-back finds where the anomalous stretch begins, and "
-                "counterfactual replay refuses to answer if repairing the model "
-                "from that turn would not have changed the outcome.")
-            with gr.Row():
-                o_sev = gr.Slider(0.35, 1.0, 1.0, step=0.05,
-                                  label="fault severity - 1.00 obvious, 0.35 subtle")
-                o_ft = gr.Slider(6, 30, 18, step=1,
-                                 label="inject the fault at this turn")
-                o_tn = gr.Slider(24, 60, 40, step=4, label="turns per conversation")
-            o_btn = gr.Button("Diagnose", variant="primary")
-            _o0 = run_onset(1.0, 18, 40)
-            o_md = gr.Markdown(value=_o0[1])
-            o_plot = gr.Plot(value=_o0[0])
-            o_ev = gr.HTML(value=_o0[2])
-            o_btn.click(run_onset, [o_sev, o_ft, o_tn], [o_plot, o_md, o_ev])
+    with gr.Accordion("How it works", open=False):
+        gr.HTML(LOOP_SVG)
+        gr.Markdown(
+            "Every reply is scored twice. **Perceived empathy** is what a rater "
+            "scoring one held-out turn in isolation would reward. "
+            "**Calibration** is how close the reply came to the best available "
+            "response for the caller's actual state, and it is hidden from the "
+            "rater. Where those two diverge is the finding.\n\n"
+            "Five reference policies each embody exactly one known failure mode; "
+            "five caller personas each need a different kind of handling. "
+            "Soothing requires delivering *below* the caller's energy, so a "
+            "policy that mirrors warmth back scores well on every single turn "
+            "and loses the conversation.")
 
-        with gr.Tab("Rating budget"):
-            gr.Markdown(
-                "### How many conversations, and which ones\n"
-                "Human ratings are both the ground truth and the cost line. "
-                "This is the calculation that turns \"we track regressions\" "
-                "into a number of conversations and a bill.")
-            with gr.Row():
-                b_n = gr.Slider(20, 600, 100, step=20,
-                                label="conversations per arm - what you would buy")
-                b_r = gr.Slider(1, 10, 3, step=1,
-                                label="human raters per conversation")
-                b_sd = gr.Slider(0.4, 1.6, 0.9, step=0.05,
-                                 label="how much raters disagree (Likert sd)")
-                b_ep = gr.Slider(20, 60, 40, step=10,
-                                 label="suite size used to measure the spread")
-            b_btn = gr.Button("Compute", variant="primary")
-            _b0 = run_budget(100, 3, 0.9, 40)
-            b_plot = gr.Plot(value=_b0[0])
-            b_md = gr.Markdown(value=_b0[1])
+    with gr.Accordion("What's real here, and the seven faults this exposed",
+                      open=False):
+        gr.Markdown(
+            "**Simulated:** the callers, the five reference policies, the "
+            "affect dynamics.\n\n"
+            "**Real:** the metrics, the estimators, the statistics, the "
+            "localization algorithm &mdash; and, in the first tab, the model "
+            "being graded and the judge grading it.\n\n"
+            "The reason for a synthetic environment is not convenience. **You "
+            "cannot validate a measurement instrument without ground truth you "
+            "control.** If you only run an eval against real models, a metric "
+            "that reports the wrong thing and a model that behaves badly are "
+            "indistinguishable.\n\n"
+            "---\n\n"
+            "Pointing it at a real model exposed seven faults, every one of "
+            "them in the instrument rather than the model:\n\n"
+            "1. An unmeasured speech rate was scored as if measured, injecting "
+            "a fabricated error and making soothing structurally impossible.\n"
+            "2. The acknowledgement pattern matched *I understand* but not "
+            "*I can understand*, which is what instruction-tuned models write.\n"
+            "3. The fixed-context panel gave a speaking policy no utterance, so "
+            "it measured a real model's reply to an empty turn.\n"
+            "4. Both panel dimensions replayed each block separately, doubling "
+            "the cost of every hosted call.\n"
+            "5. The break-even calibration was anchored on simulated policies "
+            "and sat at the 88th percentile of what a real model reaches, "
+            "pinning every conversation to the failure floor. It is now a "
+            "measured parameter recorded in the suite id, and the gate detects "
+            "that saturation and refuses to report a meaningless delta.\n"
+            "6. A scatter caption claimed the judge was flat. It is not; the "
+            "slopes agree and the spread does not.\n"
+            "7. An entire tab was written and never rendered.\n\n"
+            "Every one has a regression test. **An evaluation harness that is "
+            "wrong is worse than no harness, because it is believed.**")
 
-            gr.Markdown(
-                "---\n### What that costs\n\n"
-                "A statistic is not a decision until it has a price on it. "
-                "Enter what a rating costs you and the same measurements become "
-                "a line in a budget. Nothing below is estimated that is not "
-                "measured above.")
-            with gr.Row():
-                k_target = gr.Slider(0.05, 0.60, 0.20, step=0.05,
-                                     label="regression you want to catch (Likert)")
-                k_ch = gr.Slider(0.25, 12.0, 3.0, step=0.25,
-                                 label="cost of one human rating ($)")
-                k_cj = gr.Slider(0.001, 0.20, 0.01, step=0.001,
-                                 label="cost of one judge rating ($)")
-            with gr.Row():
-                k_rel = gr.Slider(1, 52, 12, step=1, label="releases per year")
-                k_r = gr.Slider(1, 10, 3, step=1, label="raters per conversation")
-                k_ep = gr.Slider(20, 60, 40, step=10,
-                                 label="suite size used to measure the spread")
-            k_btn = gr.Button("Price it", variant="primary")
-            _k0 = run_cost(0.20, 3.0, 0.01, 12, 3, 40)
-            k_tbl = gr.HTML(value=_k0[0])
-            k_md = gr.Markdown(value=_k0[1])
-            k_btn.click(run_cost, [k_target, k_ch, k_cj, k_rel, k_r, k_ep],
-                        [k_tbl, k_md])
-            b_btn.click(run_budget, [b_n, b_r, b_sd, b_ep], [b_plot, b_md])
+    with gr.Accordion("The parts that did not fit on this page", open=False):
+        gr.Markdown(
+            "Four more instruments run in the repository and are written up in "
+            "the full report:\n\n"
+            "- **Watch a conversation** &mdash; one call turn by turn, with the "
+            "turn that broke it marked and named.\n"
+            "- **Which turn broke it** &mdash; failure-onset localization, "
+            "97% top-1 against injected faults with no false positives on "
+            "healthy calls.\n"
+            "- **Rating budget** &mdash; the smallest regression a suite could "
+            "detect, and which conversations to spend the budget on.\n"
+            "- **Calibrate** &mdash; anchoring the break-even point on measured "
+            "behaviour instead of an assumption.\n\n"
+            "[Full report](https://vahit19.github.io/voicehaul/) &middot; "
+            "[Source](https://github.com/vahit19/voicehaul) &middot; "
+            "[Runopsy](https://github.com/vahit19/runopsy) &middot; "
+            "[LongHaul-Bench](https://github.com/vahit19/LongHaul-Bench) "
+            "&middot; Apache-2.0")
+        probe_btn = gr.Button("Check the runtime", size="sm")
+        probe_out = gr.Markdown()
+        probe_btn.click(gpu_probe, None, probe_out)
 
-        with gr.Tab("How to read the numbers"):
-            gr.Markdown(
-                "### Every number here has a scale, and the scale has a source\n\n"
-                "A metric without a band is a number nobody can act on. But half "
-                "of these cannot honestly carry a fixed threshold, and "
-                "pretending otherwise is how a dashboard starts lying.\n\n"
-                "- **Absolute** - means the same thing on any suite. \"Ninety "
-                "per cent of requests still honoured\" is ninety per cent "
-                "whoever is measuring.\n"
-                "- **Anchored** - a distance from an ideal that was defined for "
-                "one action space. A simulated policy reaches 0.96 and the same "
-                "real model measured through a transcript reaches 0.25; neither "
-                "is \"good\" on its own. These are read against the range the "
-                "suite can actually reach, drawn as a bar under the name in the "
-                "release gate.\n"
-                "- **Conventional** - thresholds from psychometrics rather than "
-                "from this package, cited rather than invented.\n\n"
-                "Getting this distinction wrong is the same mistake as anchoring "
-                "the environment's break-even point on simulated policies, which "
-                "put every real conversation on the failure floor and left the "
-                "suite with no discriminative power at all.")
-            gr.HTML(reading_panel([
-                "feedback uptake @10", "conversation failure rate",
-                "left-over distress", "calibration", "panel: perceived empathy",
-                "judge reliability", "substitution ratio"]))
-
-        with gr.Tab("What's real here"):
-            gr.Markdown(
-                "### What is simulated and what is not\n\n"
-                "**Simulated:** the callers, the five reference policies, and the "
-                "affect dynamics. Each policy embodies exactly one known failure "
-                "mode.\n\n"
-                "**Real:** the metrics, the estimators, the statistics, the "
-                "localization algorithm &mdash; and, in the judge-substitution "
-                "tab, the model being graded and the judge grading it.\n\n"
-                "The reason for a synthetic environment is not convenience. "
-                "**You cannot validate a measurement instrument without ground "
-                "truth you control.** If you only run an eval against real "
-                "models, a metric that reports the wrong thing and a model that "
-                "behaves badly are indistinguishable.\n\n"
-                "---\n\n"
-                "### What pointing it at a real model exposed\n\n"
-                "Five faults, all in the instrument rather than the model:\n\n"
-                "1. An unmeasured speech rate was scored as if measured, which "
-                "injected a fabricated error and made soothing structurally "
-                "impossible. `Action` now carries the set of fields an adapter "
-                "actually observed, and every scorer renormalises over it.\n"
-                "2. The acknowledgement pattern matched *I understand* but not "
-                "*I can understand*, which is what instruction-tuned models "
-                "produce.\n"
-                "3. The fixed-context panel gave a speaking policy no utterance, "
-                "so it measured a real model's reply to an empty turn.\n"
-                "4. Both panel dimensions replayed each block separately, "
-                "doubling the cost of every hosted call.\n"
-                "5. The environment's break-even calibration was anchored on "
-                "simulated policies and sat at the 88th percentile of what a real "
-                "model reaches, pinning every conversation to the failure floor. "
-                "It is now a measurable parameter, recorded in the suite id, and "
-                "the gate detects that saturation and refuses to report a "
-                "meaningless delta.\n\n"
-                "Every one has a regression test. An evaluation harness that is "
-                "wrong is worse than no harness, because it is believed.\n\n"
-                "---\n\n"
-                "Vahit Feryad &middot; "
-                "[Runopsy](https://github.com/vahit19/runopsy) &middot; "
-                "[LongHaul-Bench](https://github.com/vahit19/LongHaul-Bench) "
-                "&middot; Apache-2.0")
-            gr.Markdown("---\n#### Runtime")
-            gr.Markdown(
-                "This Space runs on ZeroGPU because that is the free tier that "
-                "allows an interactive Gradio app. Nothing here needs a GPU.")
-            probe_btn = gr.Button("Check the runtime", size="sm")
-            probe_out = gr.Markdown()
-            probe_btn.click(gpu_probe, None, probe_out)
+    gr.HTML(AUTHOR_CARD)
 
 if __name__ == "__main__":
     demo.launch()
