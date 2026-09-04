@@ -29,11 +29,15 @@ from inspect_ai.dataset import MemoryDataset, Sample
 from inspect_ai.scorer import Score, Target, accuracy, mean, scorer, stderr
 from inspect_ai.solver import Generate, TaskState, solver
 
-from ..config import DEFAULT_PERSONAS
-from ..metrics import feedback_uptake, ols_slope
-from ..onset import localize
-from ..registry import get_persona, get_policy
-from ..runner import run_episode
+# Absolute, not relative. Inspect loads a task file as a standalone module
+# rather than importing it as part of its package, so `from ..config import`
+# raises ModuleNotFoundError under `inspect eval` even though it is correct
+# Python. Absolute imports work in both paths.
+from voicehaul.config import DEFAULT_PERSONAS
+from voicehaul.metrics import feedback_uptake, ols_slope
+from voicehaul.onset import localize
+from voicehaul.registry import get_persona, get_policy
+from voicehaul.runner import run_episode
 
 EPISODE_KEY = "voicehaul:episode"
 PERSONA_KEY = "voicehaul:persona"
