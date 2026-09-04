@@ -1377,6 +1377,7 @@ def run_substitution(dimension, segment, cost_human, cost_judge,
 
     ratio = row["ratio_estimated"]
     rho = row["rho_judge_estimated"]
+    rho_h = row.get("rho_human_one")
     d_rho = describe("judge reliability", rho)
     d_ratio = describe("substitution ratio", ratio)
 
@@ -1393,8 +1394,10 @@ def run_substitution(dimension, segment, cost_human, cost_judge,
                "human ratings &mdash; <b>{}</b>".format(d_ratio["label"]),
                d_ratio["colour"])
         + _big("judge reliability", "{:.2f}".format(rho),
-               "rho on n={} turns &mdash; <b>{}</b>".format(row["n"],
-                                                            d_rho["label"]),
+               "rho on n={} turns &mdash; <b>{}</b>{}".format(
+                   row["n"], d_rho["label"],
+                   "<br>one human rater: {:.2f}".format(rho_h)
+                   if rho_h is not None else ""),
                d_rho["colour"])
         + _big("saving per year", _money(res.saving_per_year),
                "against {} on the panel alone".format(
@@ -1407,6 +1410,19 @@ def run_substitution(dimension, segment, cost_human, cost_judge,
                    "{} of the {} conversations still go to the panel every "
                    "release to keep the ratio honest.").format(
                        res.calibration_conversations, res.conversations)
+        # A "poor" reliability sitting next to a substitution ratio above 1
+        # looks contradictory until you see what it is being compared against.
+        if ratio > 1.0 and rho_h is not None and rho > rho_h:
+            verdict += (
+                "\n\nThe two readings above look like they disagree, and the "
+                "reason is the finding. The judge scores {jr:.2f} against an "
+                "absolute reliability scale, which is poor. But one of your "
+                "human raters scores {hr:.2f} on the same turns: **on these "
+                "callers the raters disagree with each other more than the "
+                "judge disagrees with the truth.** A weak rater can still "
+                "replace a rater when the thing it replaces is weaker. The "
+                "number to fix here is the rubric, not the judge."
+                .format(jr=rho, hr=rho_h))
     else:
         verdict = ("**The panel cannot be replaced on this dimension.** " +
                    res.note)
