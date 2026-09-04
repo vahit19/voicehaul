@@ -1,4 +1,4 @@
-"""Use the live Space the way Andrew would, and assert on what comes back.
+"""Use the deployed page the way a first-time visitor would.
 
 Every step is a real click or keystroke through Playwright. A control that
 only looks clickable fails here exactly as it would for a person.
