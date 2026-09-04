@@ -1,2079 +1,2132 @@
 {
-  "schema": "voicehaul.substitution/1",
-  "judge_model": "meta-llama/llama-3.1-8b-instruct",
-  "raters": 3,
-  "rater_sigma": 0.9,
-  "target": 0.8,
-  "rows": [
-    {
-      "dimension": "perceived_empathy",
-      "segment": "all",
-      "n": 160,
-      "rho_human_one": 0.43033069699283316,
-      "rho_judge_true": 0.18923433319398186,
-      "rho_judge_estimated": 0.17838337650075942,
-      "ratio_true": 0.30897623414723596,
-      "ratio_estimated": 0.2874125007402937,
-      "human_saving": 0.05427816678691022,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "perceived_empathy",
-      "segment": "distressed_billing",
-      "n": 48,
-      "rho_human_one": 0.6428659149798935,
-      "rho_judge_true": 0.1267919199071216,
-      "rho_judge_estimated": 0.16214873291711834,
-      "ratio_true": 0.08066492490637978,
-      "ratio_estimated": 0.1075121458368277,
-      "human_saving": 0.04838231416706751,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "perceived_empathy",
-      "segment": "hostile_escalation",
-      "n": 28,
-      "rho_human_one": 0.4467993794860928,
-      "rho_judge_true": 0.11405712222294108,
-      "rho_judge_estimated": 0.1423942791487478,
-      "ratio_true": 0.15939943799447037,
-      "ratio_estimated": 0.20557721072192417,
-      "human_saving": 0.04150924943906875,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "perceived_empathy",
-      "segment": "confused_elderly",
-      "n": 28,
-      "rho_human_one": 0.6334377522527406,
-      "rho_judge_true": 0.09949966255021925,
-      "rho_judge_estimated": 0.0705562521993026,
-      "ratio_true": 0.06394130851465052,
-      "ratio_estimated": 0.04392949241160351,
-      "human_saving": 0.01897808564699488,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "perceived_empathy",
-      "segment": "grieving_claim",
-      "n": 28,
-      "rho_human_one": 0.2771944917200582,
-      "rho_judge_true": 0.36570168086282545,
-      "rho_judge_estimated": 0.3746983790387503,
-      "ratio_true": 1.5033851411418604,
-      "ratio_estimated": 1.5625327093066643,
-      "human_saving": 0.1498070556984733,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "perceived_empathy",
-      "segment": "cautious_optimist",
-      "n": 28,
-      "rho_human_one": 0.4616989888271527,
-      "rho_judge_true": 0.2978159942692107,
-      "rho_judge_estimated": 0.19635917916749798,
-      "ratio_true": 0.4944966538933453,
-      "ratio_estimated": 0.2848757565920509,
-      "human_saving": 0.06108424748884922,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "actual_help",
-      "segment": "all",
-      "n": 160,
-      "rho_human_one": 0.7069966950832899,
-      "rho_judge_true": 0.015809318277245136,
-      "rho_judge_estimated": 0.013812713648342521,
-      "ratio_true": 0.006657160526369837,
-      "ratio_estimated": 0.005804632704887708,
-      "human_saving": 0.003501544239999821,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "actual_help",
-      "segment": "distressed_billing",
-      "n": 48,
-      "rho_human_one": 0.8244685188841833,
-      "rho_judge_true": 0.001187439363356349,
-      "rho_judge_estimated": 0.012429496134819251,
-      "ratio_true": 0.00025310946529191546,
-      "ratio_estimated": 0.0026795776909836018,
-      "human_saving": 0.0031464832349114014,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "actual_help",
-      "segment": "hostile_escalation",
-      "n": 28,
-      "rho_human_one": 0.7800049429771673,
-      "rho_judge_true": 0.01926852262516712,
-      "rho_judge_estimated": 0.0011217221698024936,
-      "ratio_true": 0.005541328169761616,
-      "ratio_estimated": 0.00031672934499439847,
-      "human_saving": 0.0002807454608581006,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "actual_help",
-      "segment": "confused_elderly",
-      "n": 28,
-      "rho_human_one": 0.6262852856291032,
-      "rho_judge_true": 0.002291259416609029,
-      "rho_judge_estimated": 0.01619243449705666,
-      "ratio_true": 0.0013703719971554459,
-      "ratio_estimated": 0.009821322690001789,
-      "human_saving": 0.004114736220995341,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "actual_help",
-      "segment": "grieving_claim",
-      "n": 28,
-      "rho_human_one": 0.6515503213495747,
-      "rho_judge_true": 0.030617703496676824,
-      "rho_judge_estimated": 0.00882660867329759,
-      "ratio_true": 0.01689155509013579,
-      "ratio_estimated": 0.004762514851766321,
-      "human_saving": 0.002226302872568864,
-      "judge_failures": 0
-    },
-    {
-      "dimension": "actual_help",
-      "segment": "cautious_optimist",
-      "n": 28,
-      "rho_human_one": 0.7933726558448964,
-      "rho_judge_true": 0.11739384648891853,
-      "rho_judge_estimated": 0.05274087580665615,
-      "ratio_true": 0.03464088248756615,
-      "ratio_estimated": 0.014500704606939741,
-      "human_saving": 0.013919336974338559,
-      "judge_failures": 0
-    }
-  ],
-  "pairs": {
-    "perceived_empathy": [
-      {
-        "theta": 0.1672,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 5.0,
-        "panel": 3.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.224,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 2.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 2.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.4264,
-        "judge": 6.0,
-        "panel": 3.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3463,
-        "judge": 4.0,
-        "panel": 3.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.4334,
-        "judge": 6.0,
-        "panel": 3.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.1672,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 2.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 2.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.2103,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 3.0,
-        "panel": 1.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.4264,
-        "judge": 5.0,
-        "panel": 4.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 5.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 2.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.1672,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.1672,
-        "judge": 2.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3463,
-        "judge": 6.0,
-        "panel": 3.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.6126,
-        "judge": 6.0,
-        "panel": 4.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 4.0,
-        "panel": 2.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.2103,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 7.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.1302,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3102,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.224,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.2671,
-        "judge": 6.0,
-        "panel": 3.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.2904,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.224,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.224,
-        "judge": 4.0,
-        "panel": 2.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 2.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.1672,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.2671,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3102,
-        "judge": 7.0,
-        "panel": 2.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.1672,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.3032,
-        "judge": 6.0,
-        "panel": 3.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 6.0,
-        "panel": 2.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.1672,
-        "judge": 6.0,
-        "panel": 2.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 3.0,
-        "panel": 2.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.4695,
-        "judge": 6.0,
-        "panel": 2.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.6126,
-        "judge": 6.0,
-        "panel": 4.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.1672,
-        "judge": 4.0,
-        "panel": 2.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.2671,
-        "judge": 6.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.044,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0871,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      }
-    ],
-    "actual_help": [
-      {
-        "theta": 0.6059,
-        "judge": 2.0,
-        "panel": 4.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.4702,
-        "judge": 2.0,
-        "panel": 3.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3213,
-        "judge": 3.0,
-        "panel": 3.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.4383,
-        "judge": 4.0,
-        "panel": 4.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0797,
-        "judge": 5.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.1296,
-        "judge": 3.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.2409,
-        "judge": 4.0,
-        "panel": 2.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 3.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.5213,
-        "judge": 4.0,
-        "panel": 4.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3329,
-        "judge": 4.0,
-        "panel": 4.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 3.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.277,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.1919,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.4054,
-        "judge": 4.0,
-        "panel": 3.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.8107,
-        "judge": 4.0,
-        "panel": 5.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.347,
-        "judge": 2.0,
-        "panel": 3.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.4234,
-        "judge": 2.0,
-        "panel": 3.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3777,
-        "judge": 3.0,
-        "panel": 4.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.4547,
-        "judge": 7.0,
-        "panel": 3.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3348,
-        "judge": 3.0,
-        "panel": 3.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.2961,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0285,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.4381,
-        "judge": 4.0,
-        "panel": 4.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3969,
-        "judge": 3.0,
-        "panel": 3.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3194,
-        "judge": 4.0,
-        "panel": 3.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.4348,
-        "judge": 4.0,
-        "panel": 3.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.2331,
-        "judge": 2.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3494,
-        "judge": 2.0,
-        "panel": 3.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.2704,
-        "judge": 2.0,
-        "panel": 2.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.2725,
-        "judge": 3.0,
-        "panel": 3.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0816,
-        "judge": 2.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.2382,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0993,
-        "judge": 2.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.2835,
-        "judge": 5.0,
-        "panel": 3.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.4772,
-        "judge": 1.0,
-        "panel": 4.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.4873,
-        "judge": 3.0,
-        "panel": 5.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.2804,
-        "judge": 6.0,
-        "panel": 2.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.1894,
-        "judge": 5.0,
-        "panel": 2.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.3289,
-        "judge": 4.0,
-        "panel": 3.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.115,
-        "judge": 5.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0576,
-        "judge": 3.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.1707,
-        "judge": 3.0,
-        "panel": 2.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0994,
-        "judge": 1.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.4766,
-        "judge": 2.0,
-        "panel": 3.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.2698,
-        "judge": 4.0,
-        "panel": 2.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.6756,
-        "judge": 4.0,
-        "panel": 5.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3827,
-        "judge": 2.0,
-        "panel": 2.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3677,
-        "judge": 3.0,
-        "panel": 3.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0874,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.8604,
-        "judge": 4.0,
-        "panel": 6.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 2.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.1199,
-        "judge": 3.0,
-        "panel": 1.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.2505,
-        "judge": 5.0,
-        "panel": 2.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.2862,
-        "judge": 3.0,
-        "panel": 2.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3174,
-        "judge": 4.0,
-        "panel": 2.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0,
-        "judge": 3.0,
-        "panel": 1.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3117,
-        "judge": 5.0,
-        "panel": 3.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.4148,
-        "judge": 2.0,
-        "panel": 3.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3958,
-        "judge": 1.0,
-        "panel": 3.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.4842,
-        "judge": 6.0,
-        "panel": 4.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3018,
-        "judge": 5.0,
-        "panel": 3.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3213,
-        "judge": 3.0,
-        "panel": 3.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.2279,
-        "judge": 3.0,
-        "panel": 2.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.627,
-        "judge": 4.0,
-        "panel": 4.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.127,
-        "judge": 5.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.1834,
-        "judge": 2.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.3989,
-        "judge": 4.0,
-        "panel": 4.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.4843,
-        "judge": 4.0,
-        "panel": 4.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.7611,
-        "judge": 4.0,
-        "panel": 5.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.6958,
-        "judge": 5.0,
-        "panel": 5.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.1815,
-        "judge": 3.0,
-        "panel": 2.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.4481,
-        "judge": 3.0,
-        "panel": 3.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 6.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0032,
-        "judge": 5.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 6.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 5.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 5.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.2922,
-        "judge": 4.0,
-        "panel": 3.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.7424,
-        "judge": 4.0,
-        "panel": 5.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.675,
-        "judge": 5.0,
-        "panel": 5.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.2017,
-        "judge": 5.0,
-        "panel": 2.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.4521,
-        "judge": 3.0,
-        "panel": 4.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.1209,
-        "judge": 5.0,
-        "panel": 2.333,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0867,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0523,
-        "judge": 6.0,
-        "panel": 1.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0571,
-        "judge": 2.0,
-        "panel": 1.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0903,
-        "judge": 4.0,
-        "panel": 1.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.2983,
-        "judge": 4.0,
-        "panel": 2.667,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0,
-        "judge": 3.0,
-        "panel": 2.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "hostile_escalation"
-      },
-      {
-        "theta": 0.3599,
-        "judge": 5.0,
-        "panel": 2.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3168,
-        "judge": 2.0,
-        "panel": 3.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3766,
-        "judge": 5.0,
-        "panel": 3.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.4101,
-        "judge": 2.0,
-        "panel": 3.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.1872,
-        "judge": 3.0,
-        "panel": 2.667,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.4716,
-        "judge": 4.0,
-        "panel": 4.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.3679,
-        "judge": 5.0,
-        "panel": 2.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 3.0,
-        "panel": 1.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 5.0,
-        "panel": 1.333,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.0,
-        "judge": 3.0,
-        "panel": 1.0,
-        "segment": "confused_elderly"
-      },
-      {
-        "theta": 0.4692,
-        "judge": 6.0,
-        "panel": 3.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.5232,
-        "judge": 5.0,
-        "panel": 4.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.49,
-        "judge": 3.0,
-        "panel": 3.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.3593,
-        "judge": 7.0,
-        "panel": 3.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.1971,
-        "judge": 5.0,
-        "panel": 1.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.3079,
-        "judge": 3.0,
-        "panel": 3.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.3647,
-        "judge": 3.0,
-        "panel": 3.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.345,
-        "judge": 3.0,
-        "panel": 3.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.293,
-        "judge": 2.0,
-        "panel": 3.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0816,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0014,
-        "judge": 3.0,
-        "panel": 1.333,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.5158,
-        "judge": 4.0,
-        "panel": 5.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 2.0,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.0,
-        "judge": 2.0,
-        "panel": 1.667,
-        "segment": "grieving_claim"
-      },
-      {
-        "theta": 0.6084,
-        "judge": 5.0,
-        "panel": 5.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3421,
-        "judge": 2.0,
-        "panel": 2.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.2767,
-        "judge": 2.0,
-        "panel": 3.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3429,
-        "judge": 2.0,
-        "panel": 3.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3316,
-        "judge": 1.0,
-        "panel": 3.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.465,
-        "judge": 6.0,
-        "panel": 3.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.356,
-        "judge": 2.0,
-        "panel": 2.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3483,
-        "judge": 2.0,
-        "panel": 2.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.5023,
-        "judge": 7.0,
-        "panel": 4.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.389,
-        "judge": 2.0,
-        "panel": 3.667,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.4124,
-        "judge": 3.0,
-        "panel": 3.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.3984,
-        "judge": 2.0,
-        "panel": 3.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.4,
-        "judge": 1.0,
-        "panel": 3.0,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.8127,
-        "judge": 6.0,
-        "panel": 4.333,
-        "segment": "cautious_optimist"
-      },
-      {
-        "theta": 0.701,
-        "judge": 4.0,
-        "panel": 4.667,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.5535,
-        "judge": 6.0,
-        "panel": 5.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.2941,
-        "judge": 6.0,
-        "panel": 3.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.2164,
-        "judge": 5.0,
-        "panel": 1.333,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.1001,
-        "judge": 1.0,
-        "panel": 2.0,
-        "segment": "distressed_billing"
-      },
-      {
-        "theta": 0.0,
-        "judge": 4.0,
-        "panel": 1.0,
-        "segment": "distressed_billing"
-      }
-    ]
+ "schema": "voicehaul.substitution/2",
+ "judge_model": "meta-llama/llama-3.1-8b-instruct",
+ "raters": 3,
+ "rater_sigma": 0.9,
+ "target": 0.8,
+ "rows": [
+  {
+   "dimension": "perceived_empathy",
+   "segment": "all",
+   "n": 160,
+   "rho_human_one": 0.43033069699283316,
+   "rho_judge_true": 0.18923433319398186,
+   "rho_judge_estimated": 0.17838337650075942,
+   "ratio_true": 0.30897623414723596,
+   "ratio_estimated": 0.2874125007402937,
+   "human_saving": 0.05427816678691022,
+   "judge_failures": 0,
+   "rho_lo": 0.073694,
+   "rho_hi": 0.32088,
+   "ratio_lo": 0.089957,
+   "ratio_hi": 0.812576
+  },
+  {
+   "dimension": "perceived_empathy",
+   "segment": "distressed_billing",
+   "n": 48,
+   "rho_human_one": 0.6428659149798935,
+   "rho_judge_true": 0.1267919199071216,
+   "rho_judge_estimated": 0.16214873291711834,
+   "ratio_true": 0.08066492490637978,
+   "ratio_estimated": 0.1075121458368277,
+   "human_saving": 0.04838231416706751,
+   "judge_failures": 0,
+   "rho_lo": 0.033933,
+   "rho_hi": 0.353718,
+   "ratio_lo": 0.027509,
+   "ratio_hi": 0.416867
+  },
+  {
+   "dimension": "perceived_empathy",
+   "segment": "hostile_escalation",
+   "n": 28,
+   "rho_human_one": 0.4467993794860928,
+   "rho_judge_true": 0.11405712222294108,
+   "rho_judge_estimated": 0.1423942791487478,
+   "ratio_true": 0.15939943799447037,
+   "ratio_estimated": 0.20557721072192417,
+   "human_saving": 0.04150924943906875,
+   "judge_failures": 0,
+   "rho_lo": 0.003649,
+   "rho_hi": 0.617468,
+   "ratio_lo": 0.003604,
+   "ratio_hi": 5.452823
+  },
+  {
+   "dimension": "perceived_empathy",
+   "segment": "confused_elderly",
+   "n": 28,
+   "rho_human_one": 0.6334377522527406,
+   "rho_judge_true": 0.09949966255021925,
+   "rho_judge_estimated": 0.0705562521993026,
+   "ratio_true": 0.06394130851465052,
+   "ratio_estimated": 0.04392949241160351,
+   "human_saving": 0.01897808564699488,
+   "judge_failures": 0,
+   "rho_lo": 9.4e-05,
+   "rho_hi": 0.322516,
+   "ratio_lo": 4.8e-05,
+   "ratio_hi": 0.364669
+  },
+  {
+   "dimension": "perceived_empathy",
+   "segment": "grieving_claim",
+   "n": 28,
+   "rho_human_one": 0.2771944917200582,
+   "rho_judge_true": 0.36570168086282545,
+   "rho_judge_estimated": 0.3746983790387503,
+   "ratio_true": 1.5033851411418604,
+   "ratio_estimated": 1.5625327093066643,
+   "human_saving": 0.1498070556984733,
+   "judge_failures": 0,
+   "rho_lo": 0.045162,
+   "rho_hi": 0.999,
+   "ratio_lo": 0.176199,
+   "ratio_hi": 7366.578506
+  },
+  {
+   "dimension": "perceived_empathy",
+   "segment": "cautious_optimist",
+   "n": 28,
+   "rho_human_one": 0.4616989888271527,
+   "rho_judge_true": 0.2978159942692107,
+   "rho_judge_estimated": 0.19635917916749798,
+   "ratio_true": 0.4944966538933453,
+   "ratio_estimated": 0.2848757565920509,
+   "human_saving": 0.06108424748884922,
+   "judge_failures": 0,
+   "rho_lo": 0.00378,
+   "rho_hi": 0.824682,
+   "ratio_lo": 0.00506,
+   "ratio_hi": 43.583824
+  },
+  {
+   "dimension": "actual_help",
+   "segment": "all",
+   "n": 160,
+   "rho_human_one": 0.7069966950832899,
+   "rho_judge_true": 0.015809318277245136,
+   "rho_judge_estimated": 0.013812713648342521,
+   "ratio_true": 0.006657160526369837,
+   "ratio_estimated": 0.005804632704887708,
+   "human_saving": 0.003501544239999821,
+   "judge_failures": 0,
+   "rho_lo": 0.0001,
+   "rho_hi": 0.068352,
+   "ratio_lo": 4.1e-05,
+   "ratio_hi": 0.032163
+  },
+  {
+   "dimension": "actual_help",
+   "segment": "distressed_billing",
+   "n": 48,
+   "rho_human_one": 0.8244685188841833,
+   "rho_judge_true": 0.001187439363356349,
+   "rho_judge_estimated": 0.012429496134819251,
+   "ratio_true": 0.00025310946529191546,
+   "ratio_estimated": 0.0026795776909836018,
+   "human_saving": 0.0031464832349114014,
+   "judge_failures": 0,
+   "rho_lo": 7.1e-05,
+   "rho_hi": 0.144845,
+   "ratio_lo": 1.7e-05,
+   "ratio_hi": 0.027062
+  },
+  {
+   "dimension": "actual_help",
+   "segment": "hostile_escalation",
+   "n": 28,
+   "rho_human_one": 0.7800049429771673,
+   "rho_judge_true": 0.01926852262516712,
+   "rho_judge_estimated": 0.0011217221698024936,
+   "ratio_true": 0.005541328169761616,
+   "ratio_estimated": 0.00031672934499439847,
+   "human_saving": 0.0002807454608581006,
+   "judge_failures": 0,
+   "rho_lo": 1.9e-05,
+   "rho_hi": 0.198757,
+   "ratio_lo": 6e-06,
+   "ratio_hi": 0.094412
+  },
+  {
+   "dimension": "actual_help",
+   "segment": "confused_elderly",
+   "n": 28,
+   "rho_human_one": 0.6262852856291032,
+   "rho_judge_true": 0.002291259416609029,
+   "rho_judge_estimated": 0.01619243449705666,
+   "ratio_true": 0.0013703719971554459,
+   "ratio_estimated": 0.009821322690001789,
+   "human_saving": 0.004114736220995341,
+   "judge_failures": 0,
+   "rho_lo": 1.6e-05,
+   "rho_hi": 0.222894,
+   "ratio_lo": 8e-06,
+   "ratio_hi": 0.164188
+  },
+  {
+   "dimension": "actual_help",
+   "segment": "grieving_claim",
+   "n": 28,
+   "rho_human_one": 0.6515503213495747,
+   "rho_judge_true": 0.030617703496676824,
+   "rho_judge_estimated": 0.00882660867329759,
+   "ratio_true": 0.01689155509013579,
+   "ratio_estimated": 0.004762514851766321,
+   "human_saving": 0.002226302872568864,
+   "judge_failures": 0,
+   "rho_lo": 4.4e-05,
+   "rho_hi": 0.180323,
+   "ratio_lo": 1.3e-05,
+   "ratio_hi": 0.143814
+  },
+  {
+   "dimension": "actual_help",
+   "segment": "cautious_optimist",
+   "n": 28,
+   "rho_human_one": 0.7933726558448964,
+   "rho_judge_true": 0.11739384648891853,
+   "rho_judge_estimated": 0.05274087580665615,
+   "ratio_true": 0.03464088248756615,
+   "ratio_estimated": 0.014500704606939741,
+   "human_saving": 0.013919336974338559,
+   "judge_failures": 0,
+   "rho_lo": 4.7e-05,
+   "rho_hi": 0.28656,
+   "ratio_lo": 1.5e-05,
+   "ratio_hi": 0.088478
   }
+ ],
+ "pairs": {
+  "perceived_empathy": [
+   {
+    "theta": 0.1672,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 5.0,
+    "panel": 3.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.224,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 2.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 2.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.4264,
+    "judge": 6.0,
+    "panel": 3.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3463,
+    "judge": 4.0,
+    "panel": 3.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.4334,
+    "judge": 6.0,
+    "panel": 3.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.1672,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 2.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 2.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.2103,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 3.0,
+    "panel": 1.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.4264,
+    "judge": 5.0,
+    "panel": 4.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 5.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 2.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.1672,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.1672,
+    "judge": 2.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3463,
+    "judge": 6.0,
+    "panel": 3.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.6126,
+    "judge": 6.0,
+    "panel": 4.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 4.0,
+    "panel": 2.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.2103,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 7.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.1302,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3102,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.224,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.2671,
+    "judge": 6.0,
+    "panel": 3.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.2904,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.224,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.224,
+    "judge": 4.0,
+    "panel": 2.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 2.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.1672,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.2671,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3102,
+    "judge": 7.0,
+    "panel": 2.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.1672,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.3032,
+    "judge": 6.0,
+    "panel": 3.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 6.0,
+    "panel": 2.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.1672,
+    "judge": 6.0,
+    "panel": 2.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 3.0,
+    "panel": 2.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.4695,
+    "judge": 6.0,
+    "panel": 2.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.6126,
+    "judge": 6.0,
+    "panel": 4.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.1672,
+    "judge": 4.0,
+    "panel": 2.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.2671,
+    "judge": 6.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.044,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0871,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   }
+  ],
+  "actual_help": [
+   {
+    "theta": 0.6059,
+    "judge": 2.0,
+    "panel": 4.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.4702,
+    "judge": 2.0,
+    "panel": 3.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3213,
+    "judge": 3.0,
+    "panel": 3.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.4383,
+    "judge": 4.0,
+    "panel": 4.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0797,
+    "judge": 5.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.1296,
+    "judge": 3.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.2409,
+    "judge": 4.0,
+    "panel": 2.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 3.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.5213,
+    "judge": 4.0,
+    "panel": 4.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3329,
+    "judge": 4.0,
+    "panel": 4.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 3.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.277,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.1919,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.4054,
+    "judge": 4.0,
+    "panel": 3.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.8107,
+    "judge": 4.0,
+    "panel": 5.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.347,
+    "judge": 2.0,
+    "panel": 3.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.4234,
+    "judge": 2.0,
+    "panel": 3.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3777,
+    "judge": 3.0,
+    "panel": 4.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.4547,
+    "judge": 7.0,
+    "panel": 3.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3348,
+    "judge": 3.0,
+    "panel": 3.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.2961,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0285,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.4381,
+    "judge": 4.0,
+    "panel": 4.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3969,
+    "judge": 3.0,
+    "panel": 3.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3194,
+    "judge": 4.0,
+    "panel": 3.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.4348,
+    "judge": 4.0,
+    "panel": 3.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.2331,
+    "judge": 2.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3494,
+    "judge": 2.0,
+    "panel": 3.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.2704,
+    "judge": 2.0,
+    "panel": 2.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.2725,
+    "judge": 3.0,
+    "panel": 3.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0816,
+    "judge": 2.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.2382,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0993,
+    "judge": 2.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.2835,
+    "judge": 5.0,
+    "panel": 3.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.4772,
+    "judge": 1.0,
+    "panel": 4.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.4873,
+    "judge": 3.0,
+    "panel": 5.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.2804,
+    "judge": 6.0,
+    "panel": 2.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.1894,
+    "judge": 5.0,
+    "panel": 2.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.3289,
+    "judge": 4.0,
+    "panel": 3.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.115,
+    "judge": 5.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0576,
+    "judge": 3.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.1707,
+    "judge": 3.0,
+    "panel": 2.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0994,
+    "judge": 1.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.4766,
+    "judge": 2.0,
+    "panel": 3.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.2698,
+    "judge": 4.0,
+    "panel": 2.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.6756,
+    "judge": 4.0,
+    "panel": 5.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3827,
+    "judge": 2.0,
+    "panel": 2.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3677,
+    "judge": 3.0,
+    "panel": 3.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0874,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.8604,
+    "judge": 4.0,
+    "panel": 6.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 2.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.1199,
+    "judge": 3.0,
+    "panel": 1.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.2505,
+    "judge": 5.0,
+    "panel": 2.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.2862,
+    "judge": 3.0,
+    "panel": 2.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3174,
+    "judge": 4.0,
+    "panel": 2.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0,
+    "judge": 3.0,
+    "panel": 1.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3117,
+    "judge": 5.0,
+    "panel": 3.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.4148,
+    "judge": 2.0,
+    "panel": 3.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3958,
+    "judge": 1.0,
+    "panel": 3.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.4842,
+    "judge": 6.0,
+    "panel": 4.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3018,
+    "judge": 5.0,
+    "panel": 3.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3213,
+    "judge": 3.0,
+    "panel": 3.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.2279,
+    "judge": 3.0,
+    "panel": 2.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.627,
+    "judge": 4.0,
+    "panel": 4.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.127,
+    "judge": 5.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.1834,
+    "judge": 2.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.3989,
+    "judge": 4.0,
+    "panel": 4.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.4843,
+    "judge": 4.0,
+    "panel": 4.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.7611,
+    "judge": 4.0,
+    "panel": 5.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.6958,
+    "judge": 5.0,
+    "panel": 5.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.1815,
+    "judge": 3.0,
+    "panel": 2.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.4481,
+    "judge": 3.0,
+    "panel": 3.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 6.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0032,
+    "judge": 5.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 6.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 5.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 5.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.2922,
+    "judge": 4.0,
+    "panel": 3.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.7424,
+    "judge": 4.0,
+    "panel": 5.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.675,
+    "judge": 5.0,
+    "panel": 5.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.2017,
+    "judge": 5.0,
+    "panel": 2.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.4521,
+    "judge": 3.0,
+    "panel": 4.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.1209,
+    "judge": 5.0,
+    "panel": 2.333,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0867,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0523,
+    "judge": 6.0,
+    "panel": 1.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0571,
+    "judge": 2.0,
+    "panel": 1.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0903,
+    "judge": 4.0,
+    "panel": 1.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.2983,
+    "judge": 4.0,
+    "panel": 2.667,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0,
+    "judge": 3.0,
+    "panel": 2.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "hostile_escalation"
+   },
+   {
+    "theta": 0.3599,
+    "judge": 5.0,
+    "panel": 2.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3168,
+    "judge": 2.0,
+    "panel": 3.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3766,
+    "judge": 5.0,
+    "panel": 3.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.4101,
+    "judge": 2.0,
+    "panel": 3.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.1872,
+    "judge": 3.0,
+    "panel": 2.667,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.4716,
+    "judge": 4.0,
+    "panel": 4.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.3679,
+    "judge": 5.0,
+    "panel": 2.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 3.0,
+    "panel": 1.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 5.0,
+    "panel": 1.333,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.0,
+    "judge": 3.0,
+    "panel": 1.0,
+    "segment": "confused_elderly"
+   },
+   {
+    "theta": 0.4692,
+    "judge": 6.0,
+    "panel": 3.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.5232,
+    "judge": 5.0,
+    "panel": 4.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.49,
+    "judge": 3.0,
+    "panel": 3.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.3593,
+    "judge": 7.0,
+    "panel": 3.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.1971,
+    "judge": 5.0,
+    "panel": 1.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.3079,
+    "judge": 3.0,
+    "panel": 3.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.3647,
+    "judge": 3.0,
+    "panel": 3.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.345,
+    "judge": 3.0,
+    "panel": 3.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.293,
+    "judge": 2.0,
+    "panel": 3.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0816,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0014,
+    "judge": 3.0,
+    "panel": 1.333,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.5158,
+    "judge": 4.0,
+    "panel": 5.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 2.0,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.0,
+    "judge": 2.0,
+    "panel": 1.667,
+    "segment": "grieving_claim"
+   },
+   {
+    "theta": 0.6084,
+    "judge": 5.0,
+    "panel": 5.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3421,
+    "judge": 2.0,
+    "panel": 2.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.2767,
+    "judge": 2.0,
+    "panel": 3.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3429,
+    "judge": 2.0,
+    "panel": 3.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3316,
+    "judge": 1.0,
+    "panel": 3.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.465,
+    "judge": 6.0,
+    "panel": 3.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.356,
+    "judge": 2.0,
+    "panel": 2.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3483,
+    "judge": 2.0,
+    "panel": 2.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.5023,
+    "judge": 7.0,
+    "panel": 4.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.389,
+    "judge": 2.0,
+    "panel": 3.667,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.4124,
+    "judge": 3.0,
+    "panel": 3.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.3984,
+    "judge": 2.0,
+    "panel": 3.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.4,
+    "judge": 1.0,
+    "panel": 3.0,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.8127,
+    "judge": 6.0,
+    "panel": 4.333,
+    "segment": "cautious_optimist"
+   },
+   {
+    "theta": 0.701,
+    "judge": 4.0,
+    "panel": 4.667,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.5535,
+    "judge": 6.0,
+    "panel": 5.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.2941,
+    "judge": 6.0,
+    "panel": 3.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.2164,
+    "judge": 5.0,
+    "panel": 1.333,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.1001,
+    "judge": 1.0,
+    "panel": 2.0,
+    "segment": "distressed_billing"
+   },
+   {
+    "theta": 0.0,
+    "judge": 4.0,
+    "panel": 1.0,
+    "segment": "distressed_billing"
+   }
+  ]
+ },
+ "intervals": {
+  "method": "bootstrap over turns, 400 resamples",
+  "level": 0.95,
+  "replay_drift": 6.35e-06
+ }
 }

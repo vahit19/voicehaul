@@ -12,3 +12,6 @@ artifacts/inspect-logs/
 logs/
 .voicehaul-cache/
 llm_gate.log
+
+# build copy for the Space; the package lives at voicehaul/
+app/voicehaul/

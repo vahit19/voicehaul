@@ -21,7 +21,8 @@ from typing import Dict, List
 
 from voicehaul.config import SuiteConfig
 from voicehaul.env import PERSONAS
-from voicehaul.judge import (RUBRICS, LLMJudge, analyse, collect_turns,
+from voicehaul.judge import (RUBRICS, LLMJudge, analyse, bootstrap_interval,
+                             collect_turns,
                              simulate_panel, spearman_brown,
                              substitution_ratio)
 from voicehaul.policies import (CalibratedPolicy, DrifterPolicy, FlatPolicy,
@@ -113,8 +114,12 @@ def main() -> int:
         theta = [rubric.truth(t) for _p, t, _s in keep]
         gjudge = [s[rubric.key] for _p, _t, s in keep]
         panel = simulate_panel(theta, args.raters, args.rater_sigma, seed=7)
-        rows.append(analyse(theta, gjudge, panel, rubric.key, "all",
-                            args.target, judge.failures))
+        row = analyse(theta, gjudge, panel, rubric.key, "all",
+                      args.target, judge.failures)
+        (row.rho_lo, row.rho_hi, row.ratio_lo,
+         row.ratio_hi) = bootstrap_interval(theta, gjudge, panel, rubric.key,
+                                            "all", args.target)
+        rows.append(row)
         # Kept so the report can show the scatter the correlation summarises.
         raw[rubric.key] = [
             {"theta": round(th, 4), "judge": g, "panel": round(sum(pr) / len(pr), 3),
@@ -129,13 +134,17 @@ def main() -> int:
             th = [rubric.truth(t) for _p, t, _s in sub]
             gj = [s[rubric.key] for _p, _t, s in sub]
             pn = simulate_panel(th, args.raters, args.rater_sigma, seed=7)
-            rows.append(analyse(th, gj, pn, rubric.key, persona, args.target))
+            prow = analyse(th, gj, pn, rubric.key, persona, args.target)
+            (prow.rho_lo, prow.rho_hi, prow.ratio_lo,
+             prow.ratio_hi) = bootstrap_interval(th, gj, pn, rubric.key,
+                                                 persona, args.target)
+            rows.append(prow)
 
     _report(rows, args)
     os.makedirs(args.out, exist_ok=True)
     path = os.path.join(args.out, "judge-substitution.json")
     with open(path, "w", encoding="utf-8") as fh:
-        json.dump({"schema": "voicehaul.substitution/1",
+        json.dump({"schema": "voicehaul.substitution/2",
                    "judge_model": args.model, "raters": args.raters,
                    "rater_sigma": args.rater_sigma, "target": args.target,
                    "rows": [r.__dict__ for r in rows], "pairs": raw}, fh,

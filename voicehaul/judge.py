@@ -279,10 +279,128 @@ class DimensionSubstitution:
     ratio_estimated: float
     human_saving: float          # share of human ratings the judge can replace
     judge_failures: int = 0
+    #: 95% sampling intervals from the bootstrap. Zero width means not computed.
+    rho_lo: float = 0.0
+    rho_hi: float = 0.0
+    ratio_lo: float = 0.0
+    ratio_hi: float = 0.0
 
     @property
     def estimator_error(self) -> float:
         return self.rho_judge_estimated - self.rho_judge_true
+
+    @property
+    def has_interval(self) -> bool:
+        return self.ratio_hi > self.ratio_lo
+
+    def substitutes_confidently(self, floor: float) -> bool:
+        """True only when the whole interval clears the floor.
+
+        A point estimate above the floor is not the same claim as a measurement
+        that rules the floor out, and the difference is what a customer is
+        actually buying. Twenty-eight turns in a segment buy a wide interval.
+        """
+        return self.has_interval and self.ratio_lo >= floor
+
+
+def bootstrap_interval(theta: Sequence[float], judge: Sequence[float],
+                       panel: Sequence[Sequence[float]], dimension: str,
+                       segment: str = "all", target_reliability: float = 0.80,
+                       n_boot: int = 400, seed: int = 11):
+    """Sampling intervals for the two numbers a customer would act on.
+
+    The substitution ratio is a nonlinear function of a correlation - it runs
+    away as the correlation approaches one - so a modest error in rho becomes a
+    large error in "how many raters this replaces". A point estimate on a
+    twenty-eight turn segment hides that completely, and pricing a contract off
+    the point estimate is the same mistake as reporting a single agreement
+    figure for every segment at once.
+
+    Resampling turns with replacement and re-running the whole estimator is the
+    cheapest honest answer. Returns (rho_lo, rho_hi, ratio_lo, ratio_hi) at 95%.
+    """
+    import random as _random
+
+    theta, judge = list(theta), list(judge)
+    panel = [list(row) for row in panel]
+    n = len(theta)
+    if n < 8:
+        return (0.0, 0.0, 0.0, 0.0)
+
+    rnd = _random.Random(seed)
+    rhos, ratios = [], []
+    for _ in range(n_boot):
+        idx = [rnd.randrange(n) for _ in range(n)]
+        try:
+            r = analyse([theta[i] for i in idx], [judge[i] for i in idx],
+                        [panel[i] for i in idx], dimension, segment,
+                        target_reliability)
+        except Exception:            # a degenerate resample, not a result
+            continue
+        if r.ratio_estimated != r.ratio_estimated:      # NaN
+            continue
+        rhos.append(r.rho_judge_estimated)
+        ratios.append(min(r.ratio_estimated, 1e6))      # cap the runaway tail
+    if len(rhos) < n_boot // 4:
+        return (0.0, 0.0, 0.0, 0.0)
+
+    def pct(vals, p):
+        vals = sorted(vals)
+        k = max(0, min(len(vals) - 1, int(round(p * (len(vals) - 1)))))
+        return vals[k]
+
+    return (pct(rhos, 0.025), pct(rhos, 0.975),
+            pct(ratios, 0.025), pct(ratios, 0.975))
+
+
+def turns_needed(rho_judge: float, rho_human_one: float, n_raters: int,
+                 floor: float, max_n: int = 20000):
+    """How many rated turns would settle the question this sample cannot.
+
+    "Not measurable here" is a finding, but on its own it is not actionable.
+    What a buyer needs next is the size of the order: at the effect this sample
+    suggests, how many rated turns put the whole interval on one side of the
+    floor?
+
+    The interval comes from the correlation behind the estimate, so the search
+    is over n in the Fisher transform of that correlation. Returns None when the
+    point estimate itself is below the floor - no amount of data makes a judge
+    worth more than it is.
+    """
+    if rho_judge <= 0 or rho_human_one <= 0:
+        return None
+    if substitution_ratio(rho_judge, rho_human_one) < floor:
+        return None                      # more data will not move it above
+
+    rel = spearman_brown(rho_human_one, n_raters)
+    if rel <= 0:
+        return None
+    r = math.sqrt(max(0.0, min(0.999, rho_judge * rel)))
+    if r <= 0 or r >= 0.999:
+        return None
+    z = math.atanh(r)
+
+    lo_n, hi_n = 8, max_n
+    if _ratio_lower_bound(z, rel, rho_human_one, hi_n) < floor:
+        return None                      # not reachable within a sane budget
+    while lo_n < hi_n:                   # smallest n that clears the floor
+        mid = (lo_n + hi_n) // 2
+        if _ratio_lower_bound(z, rel, rho_human_one, mid) >= floor:
+            hi_n = mid
+        else:
+            lo_n = mid + 1
+    return lo_n
+
+
+def _ratio_lower_bound(z: float, rel: float, rho_human_one: float,
+                       n: int) -> float:
+    if n < 5:
+        return 0.0
+    r_lo = math.tanh(z - 1.96 / math.sqrt(n - 3))
+    if r_lo <= 0:
+        return 0.0
+    return substitution_ratio(max(0.0, min(0.999, (r_lo * r_lo) / rel)),
+                              rho_human_one)
 
 
 def analyse(theta: Sequence[float], judge: Sequence[float],

@@ -22,10 +22,12 @@ import plotly.graph_objects as go
 
 from voicehaul.bands import BANDS, COLOURS, describe
 from voicehaul.config import SuiteConfig
-from voicehaul.cost import CostModel, estimate as cost_estimate
+from voicehaul.cost import (SUBSTITUTION_FLOOR, CostModel,
+                            estimate as cost_estimate)
 from voicehaul.transcript import SAMPLE as SAMPLE_CALL
 from voicehaul.transcript import analyse as analyse_transcript
 from voicehaul.env import PERSONAS
+from voicehaul.judge import turns_needed
 from voicehaul.gate import compare
 from voicehaul import metrics as M
 from voicehaul.onset import (COMPONENTS, anomaly_components, dominant_cause,
@@ -1353,6 +1355,30 @@ def _big(label, value, sub, colour):
         '</div>').format(l=label, v=value, s=sub, c=colour)
 
 
+def _order_size(row, need):
+    """Turn "not measurable" into the next thing a buyer can actually do."""
+    if need is None:
+        return ("**More turns will not rescue this cell.** The point estimate "
+                "itself sits below the floor, so the honest answer is not "
+                "\"measure harder\" - it is that this judge does not carry "
+                "enough signal on this quality. Keep the panel here and spend "
+                "the rating budget where it can change a decision.")
+    have = row["n"]
+    if need <= have:
+        return "The sample is already large enough to settle this."
+    return ("**What would settle it: about {need:,} rated turns on this "
+            "segment, against the {have} you have.** At the effect this sample "
+            "suggests, that is where the whole interval clears the floor. "
+            "{verdict}").format(
+        need=need, have=have,
+        verdict=("That is a small, cheap piece of labelling - buy it before "
+                 "you decide anything."
+                 if need <= 4 * have else
+                 "That is a large order, which is itself the answer: the "
+                 "effect here is too close to the floor to be worth "
+                 "establishing."))
+
+
 def run_substitution(dimension, segment, cost_human, cost_judge,
                      releases, raters):
     """How much of a human panel this judge can take over, and what that saves.
@@ -1381,17 +1407,34 @@ def run_substitution(dimension, segment, cost_human, cost_judge,
     d_rho = describe("judge reliability", rho)
     d_ratio = describe("substitution ratio", ratio)
 
+    # A point estimate is not a measurement until it carries its interval, and
+    # the substitution ratio runs away as the correlation approaches one, so a
+    # thin segment can produce a confident-looking number with no content. The
+    # saving is quoted only when the whole interval clears the floor.
+    lo = row.get("ratio_lo", 0.0)
+    hi = row.get("ratio_hi", 0.0)
+    has_ci = hi > lo
+    need = turns_needed(rho, rho_h, int(raters), SUBSTITUTION_FLOOR)         if rho_h else None
+    confident = has_ci and lo >= SUBSTITUTION_FLOOR
+    if has_ci:
+        ci_txt = "95% CI {:.2f} to {}".format(
+            lo, "{:.2f}".format(hi) if hi < 100 else "unbounded")
+    else:
+        ci_txt = "no interval computed"
+
     model = CostModel(cost_per_human_rating=float(cost_human),
                       cost_per_judge_rating=float(cost_judge),
                       releases_per_year=int(releases),
                       raters_per_conversation=int(raters))
     res = cost_estimate(0.20, _sigma_between(), 0.9, ratio, model, 1.0)
 
-    money_colour = ACCENT if res.saving_per_year > 0 else ALARM
+    quoted = res.saving_per_year if confident else 0.0
+    money_colour = ACCENT if quoted > 0 else ALARM
     cards = (
         '<div style="display:flex;gap:.7rem;flex-wrap:wrap;margin:.2rem 0 .9rem">'
         + _big("1 judge rating is worth", "{:.2f}".format(ratio),
-               "human ratings &mdash; <b>{}</b>".format(d_ratio["label"]),
+               "human ratings &mdash; <b>{}</b><br>{}".format(
+                   d_ratio["label"], ci_txt),
                d_ratio["colour"])
         + _big("judge reliability", "{:.2f}".format(rho),
                "rho on n={} turns &mdash; <b>{}</b>{}".format(
@@ -1399,17 +1442,35 @@ def run_substitution(dimension, segment, cost_human, cost_judge,
                    "<br>one human rater: {:.2f}".format(rho_h)
                    if rho_h is not None else ""),
                d_rho["colour"])
-        + _big("saving per year", _money(res.saving_per_year),
-               "against {} on the panel alone".format(
-                   _money(res.cost_baseline * model.releases_per_year)),
+        + _big("saving per year", _money(quoted),
+               ("against {} on the panel alone".format(
+                   _money(res.cost_baseline * model.releases_per_year))
+                if quoted > 0 else
+                "not quotable &mdash; the interval does not clear the floor"),
                money_colour)
         + '</div>')
 
-    if res.usable:
+    if res.usable and not confident:
+        verdict = (
+            "**The point estimate says {r:.2f}, and the sample cannot back it "
+            "up.** Resampling these {n} turns puts the ratio anywhere from "
+            "{lo:.2f} to {hi}, which spans both \"replaces two raters\" and "
+            "\"replaces nobody\". No saving is quoted from an interval like "
+            "that.\n\nThe ratio is a nonlinear function of a correlation - it "
+            "runs away as the correlation approaches one - so a thin segment "
+            "produces a confident-looking number with almost no content in "
+            "it.").format(
+                r=ratio, n=row["n"], lo=lo,
+                hi=("{:.2f}".format(hi) if hi < 100 else "effectively unbounded"))
+        verdict += "\n\n" + _order_size(row, need)
+    elif res.usable:
         verdict = ("**This judge can carry part of the load here.** "
                    "{} of the {} conversations still go to the panel every "
-                   "release to keep the ratio honest.").format(
-                       res.calibration_conversations, res.conversations)
+                   "release to keep the ratio honest. The interval ({}) stays "
+                   "above the {:.2f} floor, so the saving survives "
+                   "resampling.").format(
+                       res.calibration_conversations, res.conversations,
+                       ci_txt, SUBSTITUTION_FLOOR)
         # A "poor" reliability sitting next to a substitution ratio above 1
         # looks contradictory until you see what it is being compared against.
         if ratio > 1.0 and rho_h is not None and rho > rho_h:
