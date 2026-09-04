@@ -1488,8 +1488,14 @@ def run_substitution(dimension, segment, cost_human, cost_judge,
         verdict = ("**The panel cannot be replaced on this dimension.** " +
                    res.note)
 
+    # When the interval does not support substitution the second column is a
+    # hypothetical, not a plan, and the header has to say so - a table showing
+    # a lower cost next to a card saying "no saving" is the contradiction a
+    # reader trusts least.
+    col = ("with this judge" if confident
+           else "what the point estimate *would* imply")
     md = (verdict + "\n\n"
-          "| | panel only | with this judge |\n|---|---:|---:|\n"
+          "| | panel only | " + col + " |\n|---|---:|---:|\n"
           "| conversations per release | {n} | {n} |\n"
           "| human ratings | {hb:,} | {hw:,} |\n"
           "| judge ratings | 0 | {j:,} |\n"
