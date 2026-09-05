@@ -27,7 +27,7 @@ dependencies = []
 [project.optional-dependencies]
 inspect = ["inspect_ai>=0.3.100"]
 plot = ["matplotlib>=3.5"]
-app = ["streamlit>=1.40", "plotly>=6.0"]
+app = ["gradio>=5.0", "plotly>=6.0"]
 dev = ["inspect_ai>=0.3.100", "matplotlib>=3.5"]
 
 [project.scripts]
@@ -35,7 +35,8 @@ voicehaul = "voicehaul.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/vahit19/voicehaul"
-Demo = "https://huggingface.co/spaces/renderfy/voicehaul"
+Demo = "https://huggingface.co/spaces/renderfy/voicehaul-app"
+Report = "https://vahit19.github.io/voicehaul/"
 
 [tool.setuptools.packages.find]
 include = ["voicehaul*"]
